@@ -9,8 +9,8 @@ DROP TABLE IF EXISTS odcinki CASCADE;
 
 CREATE TABLE wagony (
     id_wagonu numeric(6, 0) NOT NULL,
-    model_wagonu numeric(6, 0) NOT NULL,
-    typ_wagonu varchar(10) CHECK (typ_wagonu = 'sypialny' OR typ_wagonu = 'jadalny' OR typ_wagonu = 'osobowy') NOT NULL,
+    model_wagonu varchar(8) NOT NULL,
+    typ_wagonu varchar(10) CHECK (typ_wagonu = 'sypialny' OR typ_wagonu = 'barowy' OR typ_wagonu = 'osobowy') NOT NULL,
     liczba_miejsc_I numeric(3, 0) CHECK (liczba_miejsc_I >= 0) NOT NULL,
     liczba_miejsc_II numeric(3, 0) CHECK (liczba_miejsc_II >= 0) NOT NULL,
     czy_przedzialowy char(1) CHECK (czy_przedzialowy = 'T' OR czy_przedzialowy = 'N') NOT NULL,
@@ -38,7 +38,7 @@ CREATE TABLE postoje (
 CREATE TABLE rozklady (
     id_kursu numeric(6, 0) NOT NULL,
     id_pociagu numeric(6, 0) NOT NULL,
-    dzien_tygodnia char(2) CHECK (dzien_tygodnia = 'PN' OR dzien_tygodnia = 'WT' OR dzien_tygodnia = 'SR' OR dzien_tygodnia = 'CZ' OR dzien_tygodnia = 'PT' OR dzien_tygodnia = 'SB' OR dzien_tygodnia = 'ND') NOT NULL
+    dzien_tygodnia numeric(1, 0) CHECK (dzien_tygodnia >= 0 AND dzien_tygodnia < 7) NOT NULL
 );
 
 CREATE TABLE pociagi (
