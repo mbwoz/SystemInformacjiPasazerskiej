@@ -1,5 +1,6 @@
 DROP TABLE IF EXISTS wagony CASCADE;
 DROP TABLE IF EXISTS sklady CASCADE;
+DROP TABLE IF EXISTS sklady_wagony CASCADE;
 DROP TABLE IF EXISTS postoje CASCADE;
 DROP TABLE IF EXISTS rozklady CASCADE;
 DROP TABLE IF EXISTS pociagi CASCADE;
@@ -14,17 +15,21 @@ CREATE TABLE wagony (
     liczba_miejsc_I numeric(3, 0) CHECK (liczba_miejsc_I >= 0) NOT NULL,
     liczba_miejsc_II numeric(3, 0) CHECK (liczba_miejsc_II >= 0) NOT NULL,
     czy_przedzialowy char(1) CHECK (czy_przedzialowy = 'T' OR czy_przedzialowy = 'N') NOT NULL,
-    czy_rowery char(1) CHECK (czy_przedzialowy = 'T' OR czy_przedzialowy = 'N') NOT NULL, 
-    czy_klimatyzacja char(1) CHECK (czy_przedzialowy = 'T' OR czy_przedzialowy = 'N') NOT NULL,
-    czy_wifi char(1) CHECK (czy_przedzialowy = 'T' OR czy_przedzialowy = 'N') NOT NULL,
-    czy_przesylki char(1) CHECK (czy_przedzialowy = 'T' OR czy_przedzialowy = 'N') NOT NULL,
+    czy_rowery char(1) CHECK (czy_rowery = 'T' OR czy_rowery = 'N') NOT NULL, 
+    czy_klimatyzacja char(1) CHECK (czy_klimatyzacja = 'T' OR czy_klimatyzacja = 'N') NOT NULL,
+    czy_wifi char(1) CHECK (czy_wifi = 'T' OR czy_wifi = 'N') NOT NULL,
     dlugosc_wagonu numeric(4, 2) CHECK (dlugosc_wagonu > 0) NOT NULL
+);
+
+CREATE TABLE sklady_wagony (
+    id_skladu numeric(6, 0) NOT NULL,
+    id_wagonu numeric(6, 0) NOT NULL,
+    liczba_wagonow numeric(2, 0) CHECK (liczba_wagonow > 0) NOT NULL
 );
 
 CREATE TABLE sklady (
     id_skladu numeric(6, 0) NOT NULL,
-    id_wagonu numeric(6, 0) NOT NULL,
-    liczba_wagonow numeric(2, 0) CHECK (liczba_wagonow > 0) NOT NULL
+    czy_przesylki char(1) CHECK (czy_przesylki= 'T' OR czy_przesylki = 'N') NOT NULL
 );
 
 CREATE TABLE postoje (
@@ -72,8 +77,11 @@ CREATE TABLE odcinki (
 ALTER TABLE ONLY wagony
     ADD CONSTRAINT pk_wagony PRIMARY KEY (id_wagonu);
 
+ALTER TABLE ONLY sklady_wagony
+    ADD CONSTRAINT pk_sklady_wagony PRIMARY KEY (id_skladu, id_wagonu);
+
 ALTER TABLE ONLY sklady
-    ADD CONSTRAINT pk_sklady PRIMARY KEY (id_skladu, id_wagonu);
+    ADD CONSTRAINT pk_sklady PRIMARY KEY (id_skladu);
 
 ALTER TABLE ONLY postoje
     ADD CONSTRAINT pk_postoje PRIMARY KEY (id_kursu, id_stacji);
@@ -95,13 +103,17 @@ ALTER TABLE ONLY stacje
 
 /*Set foreign keys*/
 
-ALTER TABLE ONLY sklady
-    ADD CONSTRAINT fk_sklady FOREIGN KEY (id_wagonu) REFERENCES wagony(id_wagonu);
+ALTER TABLE ONLY sklady_wagony
+    ADD CONSTRAINT fk_sklady_wagony_wagony FOREIGN KEY (id_wagonu) REFERENCES wagony(id_wagonu);
+ALTER TABLE ONLY sklady_wagony
+    ADD CONSTRAINT fk_sklady_wagony_sklady FOREIGN KEY (id_skladu) REFERENCES sklady(id_skladu);
 
 ALTER TABLE ONLY postoje
     ADD CONSTRAINT fk_postoje_kursy FOREIGN KEY (id_kursu) REFERENCES rozklady(id_kursu);
 ALTER TABLE ONLY postoje
     ADD CONSTRAINT fk_postoje_stacje FOREIGN KEY (id_stacji) REFERENCES stacje(id_stacji);
+ALTER TABLE ONLY postoje
+    ADD CONSTRAINT fk_postoje_nast_sklad FOREIGN KEY (nastepny_sklad) REFERENCES sklady(id_skladu);
 
 ALTER TABLE ONLY rozklady
     ADD CONSTRAINT fk_rozklady_pociagi FOREIGN KEY (id_pociagu) REFERENCES pociagi(id_pociagu);
