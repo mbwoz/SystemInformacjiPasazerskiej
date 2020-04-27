@@ -11,8 +11,8 @@ DROP TABLE IF EXISTS odcinki CASCADE;
 
 CREATE TABLE wagony (
     id_wagonu numeric(6, 0) NOT NULL,
-    model_wagonu varchar(8) NOT NULL,
-    typ_wagonu varchar(10) CHECK (typ_wagonu = 'sypialny' OR typ_wagonu = 'barowy' OR typ_wagonu = 'osobowy') NOT NULL,
+    model_wagonu varchar(15) NOT NULL,
+    typ_wagonu varchar(12) CHECK (typ_wagonu = 'sypialny' OR typ_wagonu = 'kuszetka' OR typ_wagonu = 'barowy' OR typ_wagonu = 'osobowy' OR typ_wagonu = 'business') NOT NULL,
     liczba_miejsc_I numeric(3, 0) CHECK (liczba_miejsc_I >= 0) NOT NULL,
     liczba_miejsc_II numeric(3, 0) CHECK (liczba_miejsc_II >= 0) NOT NULL,
     czy_przedzialowy char(1) CHECK (czy_przedzialowy = 'T' OR czy_przedzialowy = 'N') NOT NULL,
