@@ -1,10 +1,149 @@
 
 COPY stacje FROM STDIN DELIMITER '|';
-0|Kraków Główny|11|4|825.05
-1|Tarnów|9|5|961.91
-2|Rzeszów|4|4|438.01
-3|Przemyśl Główny|8|7|875.61
-4|Bochnia|10|2|701.16
-5|Jarosław|9|7|971.12
+0|Łódź Fabryczna|8|3|537.05
+1|Łódź Widzew|2|2|569.91
+2|Koluszki|12|8|797.28
+3|Skierniewice|13|9|658.52
+4|Żyrardów|6|4|803.66
+5|Warszawa Zachodnia|5|2|889.24
+6|Warszawa Centralna|13|9|775.74
+7|Kraków Główny|3|1|503.5
+8|Bochnia|12|5|930.08
+9|Brzesko Okocim|5|2|504.73
+10|Tarnów|2|2|624.36
+11|Miechów|2|2|653.18
+12|Włoszczowa Północ|10|7|894.79
+13|Opoczno Południe|14|4|739.59
+14|Sochaczew|10|2|863.23
+15|Łowicz Główny|3|2|848.66
+16|Kutno|8|7|859.31
+17|Krzewie|14|13|805.5
+18|Koło|11|3|956.92
+19|Konin|7|7|423.99
+20|Słupca|8|5|370.97
+21|Września|14|3|440.68
+22|Poznań Główny|3|3|564.4
+23|Zawiercie|12|6|416.19
+24|Dąbrowa Górnicza|5|2|379.49
+25|Będzin Miasto|13|6|856.75
+26|Sosnowiec Główny|3|3|669.62
+27|Katowice|14|11|452.96
+28|Włocławek|11|11|768.58
+29|Aleksandrów Kujawski|9|8|617.13
+30|Toruń Główny|8|7|832.0
+31|Solec Kujawski|3|2|521.89
+32|Bydgoszcz Wschód|9|7|955.68
+33|Bydgoszcz Leśna|6|6|488.67
+34|Bydgoszcz Główna|9|2|597.69
+35|Nakło nad Notecią|10|3|709.19
+36|Wyrzysk Osiek|3|1|823.28
+37|Piła Główna|8|4|540.8
+38|Jastrowie|13|5|878.82
+39|Szczecinek|5|5|669.42
+40|Białogard|9|9|655.74
+41|Kołobrzeg|9|8|874.12
+42|Piotrków Trybunalski|3|1|513.87
+43|Radomsko|4|3|875.38
+44|Częstochowa|12|6|443.87
+45|Częstochowa Stradom|4|3|543.45
+46|Lubliniec|2|1|793.45
+47|Opole Główne|13|9|794.58
+48|Brzeg|7|4|624.43
+49|Oława|12|3|675.07
+50|Wrocław Główny|7|7|889.78
+51|Warszawa Wschodnia|4|2|862.22
+52|Legionowo|9|9|484.5
+53|Nowy Dwór Mazowiecki|2|1|528.61
+54|Ciechanów|7|5|922.48
+55|Mława|12|3|517.86
+56|Działdowo|8|2|685.79
+57|Iława Główna|14|13|818.3
+58|Prabuty|4|3|985.15
+59|Malbork|6|2|521.92
+60|Tczew|7|5|431.91
+61|Gdańsk Główny|14|11|828.87
+62|Pilawa|5|4|750.92
+63|Dęblin|4|3|811.77
+64|Puławy Miasto|11|6|842.15
+65|Nałęczów|2|2|910.86
+66|Lublin Zachodni|12|3|577.28
+67|Lublin Główny|7|4|591.11
+68|Gniezno|8|8|514.21
+69|Szczecin Główny|12|12|700.04
+70|Szczecin Dąbie|10|8|776.07
+71|Goleniów|2|2|445.63
+72|Wysoka Kamieńska|6|5|541.13
+73|Międzyzdroje|9|5|628.75
+74|Świnoujście|7|7|817.42
+75|Legnica|5|5|810.63
+76|Środa Śląska|14|5|675.48
+77|Wrocław Leśnica|12|4|785.72
+78|Wrocław Nowy Dwór|7|7|950.77
+79|Leszno|8|5|637.07
+80|Kościan|3|2|633.06
+81|Opalenica|14|6|533.41
+82|Nowy Tomyśl|10|4|692.16
+83|Zbąszyń|10|2|786.57
+84|Zbąszynek|7|5|493.39
+85|Świebodzin|14|7|463.18
+86|Rzepin|3|2|954.61
+87|Kostrzyn|9|4|642.17
+88|Gryfino|6|3|612.22
+89|Tychy|14|10|971.65
+90|Pszczyna|12|6|472.35
+91|Czechowice-Dziedzice|12|5|595.62
+92|Bielsko-Biała Główna|12|10|378.8
+93|Gdańsk Wrzeszcz|2|1|720.61
+94|Gdańsk Oliwa|13|13|801.87
+95|Sopot|2|1|360.79
+96|Gdynia Główna|3|3|781.96
+97|Kielce|7|6|665.01
+98|Jędrzejów|12|11|645.6
+99|Sędziszów|7|5|679.26
+100|Zabrze|13|6|918.16
+101|Gliwice|3|1|410.3
+102|Strzelce Opolskie|4|3|531.24
+103|Rawicz|4|4|562.16
+104|Żmigród|6|3|379.0
+105|Oborniki Śląskie|8|3|508.12
+106|Wrocław Mikołajów|14|8|496.01
+107|Dębica|9|5|983.98
+108|Ropczyce|7|4|923.29
+109|Sędziszów Małopolski|2|1|622.26
+110|Rzeszów Główny|10|6|409.12
+111|Łańcut|13|3|906.97
+112|Leżajsk|8|6|887.86
+113|Nowa Sarzyna|5|3|445.11
+114|Rudnik nad Sanem|6|3|423.19
+115|Nisko|11|3|584.41
+116|Stalowa Wola Centrum|13|3|544.06
+117|Stalowa Wola Rozwadów|9|5|378.26
+118|Zaklików|3|1|749.35
+119|Kraśnik|14|9|830.75
+120|Wołomin|7|2|525.13
+121|Tłuszcz|6|4|950.52
+122|Łochów|4|4|837.68
+123|Małkinia|2|1|707.12
+124|Czyżew|9|3|892.28
+125|Szepietowo|3|3|455.55
+126|Łapy|4|1|610.39
+127|Białystok|6|6|964.38
+128|Chojnów|9|3|970.59
+129|Bolesławiec|11|6|754.85
+130|Węgliniec|4|2|715.09
+131|Pieńsk|10|9|545.79
+132|Zgorzelec Miasto|13|12|812.12
+133|Zgorzelec|8|7|431.69
+134|Rumia|13|6|919.39
+135|Wejherowo|14|9|901.63
+136|Lębork|7|7|630.19
+137|Słupsk|3|1|676.47
+138|Zielona Góra Główna|10|7|886.93
+139|Nowa Sól|14|13|900.38
+140|Bytom Odrzański|9|7|521.8
+141|Głogów|8|4|974.98
+142|Ścinawa|3|1|455.43
+143|Wołów|12|7|628.25
+144|Brzeg Dolny|4|1|970.97
 \.
 

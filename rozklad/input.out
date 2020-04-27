@@ -1,27 +1,54 @@
 4|7|Łódź Fabryczna|Łódź Widzew|Koluszki|Skierniewice|Żyrardów|Warszawa Zachodnia|Warszawa Centralna|5|2|2|2|2|2|5|10|12|22|14|25|5
+4|7|Warszawa Centralna|Warszawa Zachodnia|Żyrardów|Skierniewice|Koluszki|Łódź Widzew|Łódź Fabryczna|5|2|2|2|2|2|5|5|25|14|22|12|10
 5|4|Kraków Główny|Bochnia|Brzesko Okocim|Tarnów|5|2|2|5|50|10|15
+5|4|Tarnów|Brzesko Okocim|Bochnia|Kraków Główny|5|2|2|5|15|10|50
 5|6|Kraków Główny|Miechów|Włoszczowa Północ|Opoczno Południe|Warszawa Zachodnia|Warszawa Centralna|5|2|5|2|3|5|35|40|35|65|5
+5|6|Warszawa Centralna|Warszawa Zachodnia|Opoczno Południe|Włoszczowa Północ|Miechów|Kraków Główny|5|3|2|5|2|5|5|65|35|40|35
 3|11|Warszawa Centralna|Warszawa Zachodnia|Sochaczew|Łowicz Główny|Kutno|Krzewie|Koło|Konin|Słupca|Września|Poznań Główny|5|1|1|1|1|1|1|1|1|1|5|5|30|20|40|10|20|20|15|15|35
+3|11|Poznań Główny|Września|Słupca|Konin|Koło|Krzewie|Kutno|Łowicz Główny|Sochaczew|Warszawa Zachodnia|Warszawa Centralna|5|1|1|1|1|1|1|1|1|1|5|35|15|15|20|20|10|40|20|30|5
 3|9|Warszawa Centralna|Warszawa Zachodnia|Opoczno Południe|Włoszczowa Północ|Zawiercie|Dąbrowa Górnicza|Będzin Miasto|Sosnowiec Główny|Katowice|5|1|1|1|1|1|1|1|1|5|5|65|35|38|16|5|5|10
+3|9|Katowice|Sosnowiec Główny|Będzin Miasto|Dąbrowa Górnicza|Zawiercie|Włoszczowa Północ|Opoczno Południe|Warszawa Zachodnia|Warszawa Centralna|1|1|1|1|1|1|1|1|5|5|5|16|38|35|65|5|5
 2|19|Warszawa Centralna|Warszawa Zachodnia|Sochaczew|Łowicz Główny|Kutno|Włocławek|Aleksandrów Kujawski|Toruń Główny|Solec Kujawski|Bydgoszcz Wschód|Bydgoszcz Leśna|Bydgoszcz Główna|Nakło nad Notecią|Wyrzysk Osiek|Piła Główna|Jastrowie|Szczecinek|Białogard|Kołobrzeg|5|2|4|2|2|2|2|2|2|2|2|5|2|2|5|2|2|5|5|5|35|25|70|40|25|13|22|13|5|5|30|20|26|25|35|65|35
+2|19|Kołobrzeg|Białogard|Szczecinek|Jastrowie|Piła Główna|Wyrzysk Osiek|Nakło nad Notecią|Bydgoszcz Główna|Bydgoszcz Leśna|Bydgoszcz Wschód|Solec Kujawski|Toruń Główny|Aleksandrów Kujawski|Włocławek|Kutno|Łowicz Główny|Sochaczew|Warszawa Zachodnia|Warszawa Centralna|5|5|2|2|5|2|2|5|2|2|2|2|2|2|2|2|4|2|5|35|65|35|25|26|20|30|5|5|13|22|13|25|40|70|25|35|5
 3|14|Warszawa Centralna|Warszawa Zachodnia|Żyrardów|Skierniewice|Koluszki|Piotrków Trybunalski|Radomsko|Częstochowa|Częstochowa Stradom|Lubliniec|Opole Główne|Brzeg|Oława|Wrocław Główny|5|2|2|2|2|2|2|2|2|2|2|2|2|5|5|20|15|20|25|30|30|5|25|30|25|10|20
+3|14|Wrocław Główny|Oława|Brzeg|Opole Główne|Lubliniec|Częstochowa Stradom|Częstochowa|Radomsko|Piotrków Trybunalski|Koluszki|Skierniewice|Żyrardów|Warszawa Zachodnia|Warszawa Centralna|5|2|2|2|2|2|2|2|2|2|2|2|2|5|20|10|25|30|25|5|30|30|25|20|15|20|5
 3|12|Warszawa Centralna|Warszawa Wschodnia|Legionowo|Nowy Dwór Mazowiecki|Ciechanów|Mława|Działdowo|Iława Główna|Prabuty|Malbork|Tczew|Gdańsk Główny|5|5|2|2|2|2|2|2|2|2|2|5|6|20|10|33|18|12|35|20|20|13|20
+3|12|Gdańsk Główny|Tczew|Malbork|Prabuty|Iława Główna|Działdowo|Mława|Ciechanów|Nowy Dwór Mazowiecki|Legionowo|Warszawa Wschodnia|Warszawa Centralna|5|2|2|2|2|2|2|2|2|2|5|5|20|13|20|20|35|12|18|33|10|20|6
 4|8|Warszawa Centralna|Warszawa Wschodnia|Pilawa|Dęblin|Puławy Miasto|Nałęczów|Lublin Zachodni|Lublin Główny|5|2|5|2|2|2|2|5|6|45|35|20|20|20|5
+4|8|Lublin Główny|Lublin Zachodni|Nałęczów|Puławy Miasto|Dęblin|Pilawa|Warszawa Wschodnia|Warszawa Centralna|5|2|2|2|2|5|2|5|5|20|20|20|35|45|6
 5|2|Gniezno|Poznań Główny|5|5|45
+5|2|Poznań Główny|Gniezno|5|5|45
 4|6|Szczecin Główny|Szczecin Dąbie|Goleniów|Wysoka Kamieńska|Międzyzdroje|Świnoujście|5|2|2|2|2|5|15|16|20|22|12
+4|6|Świnoujście|Międzyzdroje|Wysoka Kamieńska|Goleniów|Szczecin Dąbie|Szczecin Główny|5|2|2|2|2|5|12|22|20|16|15
 5|2|Kraków Główny|Katowice|5|5|65
+5|2|Katowice|Kraków Główny|5|5|65
 3|5|Legnica|Środa Śląska|Wrocław Leśnica|Wrocław Nowy Dwór|Wrocław Główny|5|2|2|2|5|17|11|5|10
+3|5|Wrocław Główny|Wrocław Nowy Dwór|Wrocław Leśnica|Środa Śląska|Legnica|5|2|2|2|5|10|5|11|17
 3|3|Leszno|Kościan|Poznań Główny|5|2|5|32|25
+3|3|Poznań Główny|Kościan|Leszno|5|2|5|25|32
 2|20|Warszawa Centralna|Warszawa Zachodnia|Sochaczew|Łowicz Główny|Kutno|Krzewie|Koło|Konin|Słupca|Września|Poznań Główny|Opalenica|Nowy Tomyśl|Zbąszyń|Zbąszynek|Świebodzin|Rzepin|Kostrzyn|Gryfino|Szczecin Główny|5|1|1|1|1|1|1|1|1|1|15|2|2|2|2|2|2|2|2|5|5|30|20|40|10|20|20|15|15|35|30|15|15|10|15|30|22|46|18
+2|20|Szczecin Główny|Gryfino|Kostrzyn|Rzepin|Świebodzin|Zbąszynek|Zbąszyń|Nowy Tomyśl|Opalenica|Poznań Główny|Września|Słupca|Konin|Koło|Krzewie|Kutno|Łowicz Główny|Sochaczew|Warszawa Zachodnia|Warszawa Centralna|5|2|2|2|2|2|2|2|2|15|1|1|1|1|1|1|1|1|1|5|18|46|22|30|15|10|15|15|30|35|15|15|20|20|10|40|20|30|5
 4|5|Katowice|Tychy|Pszczyna|Czechowice-Dziedzice|Bielsko-Biała Główna|5|2|2|2|5|15|10|10|10
+4|5|Bielsko-Biała Główna|Czechowice-Dziedzice|Pszczyna|Tychy|Katowice|5|2|2|2|5|10|10|10|15
 4|4|Opole Główne|Brzeg|Oława|Wrocław Główny|5|2|2|5|25|10|25
+4|4|Wrocław Główny|Oława|Brzeg|Opole Główne|5|2|2|5|25|10|25
 2|16|Warszawa Centralna|Warszawa Wschodnia|Legionowo|Nowy Dwór Mazowiecki|Ciechanów|Mława|Działdowo|Iława Główna|Prabuty|Malbork|Tczew|Gdańsk Główny|Gdańsk Wrzeszcz|Gdańsk Oliwa|Sopot|Gdynia Główna|5|5|2|2|2|2|2|2|2|2|2|5|2|2|2|5|6|20|10|33|18|12|35|20|20|13|20|10|7|5|12
+2|16|Gdynia Główna|Sopot|Gdańsk Oliwa|Gdańsk Wrzeszcz|Gdańsk Główny|Tczew|Malbork|Prabuty|Iława Główna|Działdowo|Mława|Ciechanów|Nowy Dwór Mazowiecki|Legionowo|Warszawa Wschodnia|Warszawa Centralna|5|2|2|2|5|2|2|2|2|2|2|2|2|2|5|5|12|5|7|10|20|13|20|20|35|12|18|33|10|20|6
 3|5|Kielce|Jędrzejów|Sędziszów|Miechów|Kraków Główny|5|2|2|2|5|30|15|20|40
+3|5|Kraków Główny|Miechów|Sędziszów|Jędrzejów|Kielce|5|2|2|2|5|40|20|15|30
 3|8|Katowice|Zabrze|Gliwice|Strzelce Opolskie|Opole Główne|Brzeg|Oława|Wrocław Główny|5|2|2|2|2|2|2|5|15|5|30|30|25|10|17
+3|8|Wrocław Główny|Oława|Brzeg|Opole Główne|Strzelce Opolskie|Gliwice|Zabrze|Katowice|5|2|2|2|2|2|2|5|17|10|25|30|30|5|15
 2|10|Poznań Główny|Opalenica|Nowy Tomyśl|Zbąszyń|Zbąszynek|Świebodzin|Rzepin|Kostrzyn|Gryfino|Szczecin Główny|15|2|2|2|2|2|2|2|2|5|30|15|15|10|15|30|22|46|18
+2|10|Szczecin Główny|Gryfino|Kostrzyn|Rzepin|Świebodzin|Zbąszynek|Zbąszyń|Nowy Tomyśl|Opalenica|Poznań Główny|5|2|2|2|2|2|2|2|2|15|18|46|22|30|15|10|15|15|30
 3|8|Poznań Główny|Kościan|Leszno|Rawicz|Żmigród|Oborniki Śląskie|Wrocław Mikołajów|Wrocław Główny|5|2|5|2|2|2|2|5|35|43|30|15|15|15|10
+3|8|Wrocław Główny|Wrocław Mikołajów|Oborniki Śląskie|Żmigród|Rawicz|Leszno|Kościan|Poznań Główny|5|2|2|2|2|5|2|5|10|15|15|15|30|43|35
 2|18|Kraków Główny|Bochnia|Brzesko Okocim|Tarnów|Dębica|Ropczyce|Sędziszów Małopolski|Rzeszów Główny|Łańcut|Leżajsk|Nowa Sarzyna|Rudnik nad Sanem|Nisko|Stalowa Wola Centrum|Stalowa Wola Rozwadów|Zaklików|Kraśnik|Lublin Główny|5|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|5|50|10|15|20|10|10|18|15|40|10|15|15|10|10|20|25|30
+2|18|Lublin Główny|Kraśnik|Zaklików|Stalowa Wola Rozwadów|Stalowa Wola Centrum|Nisko|Rudnik nad Sanem|Nowa Sarzyna|Leżajsk|Łańcut|Rzeszów Główny|Sędziszów Małopolski|Ropczyce|Dębica|Tarnów|Brzesko Okocim|Bochnia|Kraków Główny|5|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|5|30|25|20|10|10|15|15|10|40|15|18|10|10|20|15|10|50
 3|10|Warszawa Centralna|Warszawa Wschodnia|Wołomin|Tłuszcz|Łochów|Małkinia|Czyżew|Szepietowo|Łapy|Białystok|5|2|2|2|2|2|2|2|2|5|6|25|10|15|20|20|15|20|20
+3|10|Białystok|Łapy|Szepietowo|Czyżew|Małkinia|Łochów|Tłuszcz|Wołomin|Warszawa Wschodnia|Warszawa Centralna|5|2|2|2|2|2|2|2|2|5|20|20|15|20|20|15|10|25|6
 3|11|Wrocław Główny|Wrocław Nowy Dwór|Wrocław Leśnica|Środa Śląska|Legnica|Chojnów|Bolesławiec|Węgliniec|Pieńsk|Zgorzelec Miasto|Zgorzelec|5|2|2|2|2|2|2|2|2|2|5|10|5|15|20|12|18|15|15|10|5
+3|11|Zgorzelec|Zgorzelec Miasto|Pieńsk|Węgliniec|Bolesławiec|Chojnów|Legnica|Środa Śląska|Wrocław Leśnica|Wrocław Nowy Dwór|Wrocław Główny|5|2|2|2|2|2|2|2|2|2|5|5|10|15|15|18|12|20|15|5|10
 4|9|Gdańsk Główny|Gdańsk Wrzeszcz|Gdańsk Oliwa|Sopot|Gdynia Główna|Rumia|Wejherowo|Lębork|Słupsk|5|2|2|2|2|2|2|2|5|4|4|5|10|15|15|40|40
+4|9|Słupsk|Lębork|Wejherowo|Rumia|Gdynia Główna|Sopot|Gdańsk Oliwa|Gdańsk Wrzeszcz|Gdańsk Główny|5|2|2|2|2|2|2|2|5|40|40|15|15|10|5|4|4
 3|8|Zielona Góra Główna|Nowa Sól|Bytom Odrzański|Głogów|Ścinawa|Wołów|Brzeg Dolny|Wrocław Główny|5|1|1|1|1|1|1|5|15|8|20|25|20|15|35
+3|8|Wrocław Główny|Brzeg Dolny|Wołów|Ścinawa|Głogów|Bytom Odrzański|Nowa Sól|Zielona Góra Główna|5|1|1|1|1|1|1|5|35|15|20|25|20|8|15

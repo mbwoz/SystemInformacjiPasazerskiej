@@ -107,13 +107,15 @@ def createPostoje(fpostoje, id_kursu, stacje, stacjeCollection, postoje, przejaz
     for i in range(0, len(stacje)):
         id_stacji = stacjeCollection[stacje[i]]
         przyjazd = godzina
+
+        if random.random() < 0.1:
+            nastepny_sklad = chooseSklad(odjazd, typ_pociagu)
+            godzina += random.randint(15, 25)
+
         godzina = (godzina + odchylenieCzasu(postoje[i]))%mod + 1
         odjazd = godzina
 
         print(id_kursu, id_stacji, konwersjaCzasu(przyjazd), konwersjaCzasu(odjazd), nastepny_sklad, sep = '|', file = fpostoje)
-
-        if random.random() < 0.1:
-            nastepny_sklad = chooseSklad(odjazd, typ_pociagu)
 
         if i != len(stacje) - 1:
             godzina = (godzina + odchylenieCzasu(przejazdy[i]))%mod + 1
@@ -139,7 +141,7 @@ def createFooter(files):
 
 
 def main():
-    fin = open("input.in", "r")
+    fin = open("input.out", "r")
     fpostoje = open("postoje.in", "w")
     fstacje = open("stacje.in", "w")
     fodcinki = open("odcinki.in", "w")
