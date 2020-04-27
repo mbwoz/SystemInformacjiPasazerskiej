@@ -1,0 +1,6 @@
+
+COPY trasy FROM STDIN DELIMITER '|';
+1|T
+2|T
+\.
+

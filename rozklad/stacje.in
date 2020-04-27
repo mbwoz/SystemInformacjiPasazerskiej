@@ -1,0 +1,10 @@
+
+COPY stacje FROM STDIN DELIMITER '|';
+0|Kraków Główny|11|4|825.05
+1|Tarnów|9|5|961.91
+2|Rzeszów|4|4|438.01
+3|Przemyśl Główny|8|7|875.61
+4|Bochnia|10|2|701.16
+5|Jarosław|9|7|971.12
+\.
+

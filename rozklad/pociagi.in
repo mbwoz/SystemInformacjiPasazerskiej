@@ -1,0 +1,10 @@
+
+COPY pociagi FROM STDIN DELIMITER '|';
+1|1|hmbgpaxd|ekspres
+2|1|hlxhrphp|ekspres
+3|1|sdxnpafw|pospieszny
+4|1|mhywqjhu|pendolino
+5|2|dutfacap|pospieszny
+6|2|dijojihm|pendolino
+\.
+
