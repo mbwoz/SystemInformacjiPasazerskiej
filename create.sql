@@ -4,6 +4,7 @@ DROP TABLE IF EXISTS sklady_wagony CASCADE;
 DROP TABLE IF EXISTS postoje CASCADE;
 DROP TABLE IF EXISTS rozklady CASCADE;
 DROP TABLE IF EXISTS pociagi CASCADE;
+DROP TABLE IF EXISTS trasy_odcinki CASCADE;
 DROP TABLE IF EXISTS trasy CASCADE;
 DROP TABLE IF EXISTS stacje CASCADE;
 DROP TABLE IF EXISTS odcinki CASCADE;
@@ -50,10 +51,15 @@ CREATE TABLE pociagi (
     id_pociagu numeric(6, 0) NOT NULL,
     id_trasy numeric(6, 0) NOT NULL,
     nazwa_pociagu varchar(100),
-    typ_pociagu varchar(10) CHECK (typ_pociagu = 'pospieszny' OR typ_pociagu = 'zwykly')
+    typ_pociagu varchar(10) CHECK (typ_pociagu = 'pospieszny' OR typ_pociagu = 'ekspres' OR typ_pociagu = 'pendolino')
 );
 
 CREATE TABLE trasy (
+    id_trasy numeric(6, 0) NOT NULL,
+    czy_przyspieszona char(1) CHECK (czy_przyspieszona = 'T' OR czy_przyspieszona = 'N')
+);
+
+CREATE TABLE trasy_odcinki (
     id_trasy numeric(6, 0) NOT NULL,
     id_odcinka numeric(6, 0) NOT NULL
 );
@@ -92,8 +98,11 @@ ALTER TABLE ONLY rozklady
 ALTER TABLE ONLY pociagi
     ADD CONSTRAINT pk_pociagi PRIMARY KEY (id_pociagu);
 
-ALTER TABLE ONLY trasy
+ALTER TABLE ONLY trasy 
     ADD CONSTRAINT pk_trasy PRIMARY KEY (id_trasy);
+
+ALTER TABLE ONLY trasy_odcinki
+    ADD CONSTRAINT pk_trasy_odcinki PRIMARY KEY (id_trasy, id_odcinka);
 
 ALTER TABLE ONLY odcinki
     ADD CONSTRAINT pk_odcinki PRIMARY KEY (id_odcinka);
@@ -121,8 +130,10 @@ ALTER TABLE ONLY rozklady
 ALTER TABLE ONLY pociagi
     ADD CONSTRAINT fk_pociagi_trasy FOREIGN KEY (id_trasy) REFERENCES trasy(id_trasy);
 
-ALTER TABLE ONLY trasy
-    ADD CONSTRAINT fk_trasy_odcinki FOREIGN KEY (id_odcinka) REFERENCES odcinki(id_odcinka);
+ALTER TABLE ONLY trasy_odcinki
+    ADD CONSTRAINT fk_trasy_odcinki_odcinki FOREIGN KEY (id_odcinka) REFERENCES odcinki(id_odcinka);
+ALTER TABLE ONLY trasy_odcinki
+    ADD CONSTRAINT fk_trasy_odcinki_trasy FOREIGN KEY (id_trasy) REFERENCES trasy(id_trasy);
 
 ALTER TABLE ONLY odcinki
     ADD CONSTRAINT fk_odcinki_poczatek FOREIGN KEY (stacja_poczatkowa) REFERENCES stacje(id_stacji);
