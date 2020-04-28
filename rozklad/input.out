@@ -52,3 +52,29 @@
 4|9|Słupsk|Lębork|Wejherowo|Rumia|Gdynia Główna|Sopot|Gdańsk Oliwa|Gdańsk Wrzeszcz|Gdańsk Główny|5|2|2|2|2|2|2|2|5|40|40|15|15|10|5|4|4
 3|8|Zielona Góra Główna|Nowa Sól|Bytom Odrzański|Głogów|Ścinawa|Wołów|Brzeg Dolny|Wrocław Główny|5|1|1|1|1|1|1|5|15|8|20|25|20|15|35
 3|8|Wrocław Główny|Brzeg Dolny|Wołów|Ścinawa|Głogów|Bytom Odrzański|Nowa Sól|Zielona Góra Główna|5|1|1|1|1|1|1|5|35|15|20|25|20|8|15
+4|20|Ostrów Wielkopolski|Biniew|Bronów|Taczanów|Pleszew|Kotlin|Witaszyce|Jarocin|Mieszków|Chocicza|Solec Wielkopolski|Sulęcinek|Środa Wielkopolska|Pierzchno|Kórnik|Gądki|Poznań Krzesiny|Poznań Starołęka|Poznań Dębina|Poznań Główny|5|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|5|6|5|5|5|5|5|5|5|5|5|5|5|5|5|5|5|5|5|5
+4|20|Poznań Główny|Poznań Dębina|Poznań Starołęka|Poznań Krzesiny|Gądki|Kórnik|Pierzchno|Środa Wielkopolska|Sulęcinek|Solec Wielkopolski|Chocicza|Mieszków|Jarocin|Witaszyce|Kotlin|Pleszew|Taczanów|Bronów|Biniew|Ostrów Wielkopolski|5|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|5|5|5|5|5|5|5|5|5|5|5|5|5|5|5|5|5|5|5|6
+3|9|Koszalin|Białogard|Świdwin|Łobez|Runowo Pomorskie|Chociwel|Stargard|Szczecin Dąbie|Szczecin Główny|5|3|2|2|2|2|2|2|5|15|25|15|15|15|17|20|15
+3|9|Szczecin Główny|Szczecin Dąbie|Stargard|Chociwel|Runowo Pomorskie|Łobez|Świdwin|Białogard|Koszalin|5|2|2|2|2|2|2|3|5|15|20|17|15|15|15|25|15
+4|5|Gdynia Główna|Rumia|Wejherowo|Lębork|Słupsk|5|2|2|5|5|10|10|35|40
+4|5|Słupsk|Lębork|Wejherowo|Rumia|Gdynia Główna|5|5|2|2|5|40|35|10|10
+3|9|Poznań Główny|Oborniki Wielkopolskie Miasto|Rogoźno Wielkopolskie|Chodzież|Piła Główna|Jastrowie|Szczecinek|Białogard|Kołobrzeg|5|2|2|5|2|3|2|2|5|30|15|20|26|35|40|60|32
+3|9|Kołobrzeg|Białogard|Szczecinek|Jastrowie|Piła Główna|Chodzież|Rogoźno Wielkopolskie|Oborniki Wielkopolskie Miasto|Poznań Główny|5|2|2|3|2|5|2|2|5|32|60|40|35|26|20|15|30
+3|14|Wałbrzych Miasto|Wałbrzych Szczawienko|Świebodzice|Jaworzyna Śląska|Żarów|Imbramowice|Mietków|Kąty Wrocławskie|Sadowice Wrocławskie|Smolec|Mokronos Górny|Wrocław Zachodni|Wrocław Grabiszyn|Wrocław Główny|5|2|2|2|2|2|2|2|2|2|2|2|2|5|5|10|10|5|5|5|5|5|5|3|3|3|6
+3|14|Wrocław Główny|Wrocław Grabiszyn|Wrocław Zachodni|Mokronos Górny|Smolec|Sadowice Wrocławskie|Kąty Wrocławskie|Mietków|Imbramowice|Żarów|Jaworzyna Śląska|Świebodzice|Wałbrzych Szczawienko|Wałbrzych Miasto|5|2|2|2|2|2|2|2|2|2|2|2|2|5|6|3|3|3|5|5|5|5|5|5|10|10|5
+3|14|Katowice|Zabrze|Gliwice|Lubliniec|Olesno Śląskie|Kluczbork|Byczyna Kluczborska|Kępno|Ostrzeszów|Ostrów Wielkopolski|Pleszew|Jarocin|Środa Wielkopolska|Poznań Główny|5|2|5|2|2|2|2|2|2|5|2|2|2|5|15|7|45|20|15|10|15|15|20|25|25|20|25
+3|14|Poznań Główny|Środa Wielkopolska|Jarocin|Pleszew|Ostrów Wielkopolski|Ostrzeszów|Kępno|Byczyna Kluczborska|Kluczbork|Olesno Śląskie|Lubliniec|Gliwice|Zabrze|Katowice|5|2|2|2|5|2|2|2|2|2|2|5|2|5|25|20|25|25|20|15|15|10|15|20|45|7|15
+4|6|Katowice|Będzin|Dąbrowa Górnicza|Zawiercie|Poraj|Częstochowa|5|2|2|2|2|5|10|5|15|20|15
+4|6|Częstochowa|Poraj|Zawiercie|Dąbrowa Górnicza|Będzin|Katowice|5|2|2|2|2|5|15|20|15|5|10
+2|8|Warszawa Centralna|Warszawa Zachodnia|Sochaczew|Łowicz Główny|Kutno|Włocławek|Aleksandrów Kujawski|Toruń Główny|5|2|4|2|2|2|2|5|5|35|25|70|40|25|13
+2|8|Toruń Główny|Aleksandrów Kujawski|Włocławek|Kutno|Łowicz Główny|Sochaczew|Warszawa Zachodnia|Warszawa Centralna|5|2|2|2|2|4|2|5|13|25|40|70|25|35|5
+4|11|Kraków Główny|Bochnia|Brzesko Okocim|Tarnów|Dębica|Rzeszów Główny|Łańcut|Przeworsk|Jarosław|Przemyśl Zasanie|Przemyśl Główny|5|2|2|2|2|5|2|2|2|2|5|45|10|15|20|25|15|15|10|26|5
+4|11|Przemyśl Główny|Przemyśl Zasanie|Jarosław|Przeworsk|Łańcut|Rzeszów Główny|Dębica|Tarnów|Brzesko Okocim|Bochnia|Kraków Główny|5|2|2|2|2|5|2|2|2|2|5|5|26|10|15|15|25|20|15|10|45
+5|3|Jarocin|Środa Wielkopolska|Poznań Główny|5|2|5|20|25
+5|3|Poznań Główny|Środa Wielkopolska|Jarocin|5|2|5|25|20
+2|11|Warszawa Centralna|Warszawa Zachodnia|Żyrardów|Skierniewice|Koluszki|Piotrków Trybunalski|Radomsko|Częstochowa|Częstochowa Stradom|Lubliniec|Opole Główne|5|2|2|2|2|2|2|2|2|2|5|5|20|15|20|25|30|30|5|25|30
+2|11|Opole Główne|Lubliniec|Częstochowa Stradom|Częstochowa|Radomsko|Piotrków Trybunalski|Koluszki|Skierniewice|Żyrardów|Warszawa Zachodnia|Warszawa Centralna|5|2|2|2|2|2|2|2|2|2|5|30|25|5|30|30|25|20|15|20|5
+4|7|Kielce|Włoszczowa|Zawiercie|Dąbrowa Górnicza|Będzin Miasto|Sosnowiec Główny|Katowice|5|1|1|1|1|1|5|37|40|20|5|5|10
+4|7|Katowice|Sosnowiec Główny|Będzin Miasto|Dąbrowa Górnicza|Zawiercie|Włoszczowa|Kielce|5|1|1|1|1|1|5|10|5|5|20|40|37
+3|4|Elbląg|Malbork|Tczew|Gdańsk Główny|5|2|2|5|20|15|20
+3|4|Gdańsk Główny|Tczew|Malbork|Elbląg|5|2|2|5|20|15|20

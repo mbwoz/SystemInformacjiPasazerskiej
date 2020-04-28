@@ -1,149 +1,203 @@
 
 COPY stacje FROM STDIN DELIMITER '|';
-0|Łódź Fabryczna|8|3|537.05
-1|Łódź Widzew|2|2|569.91
-2|Koluszki|12|8|797.28
-3|Skierniewice|13|9|658.52
-4|Żyrardów|6|4|803.66
-5|Warszawa Zachodnia|5|2|889.24
-6|Warszawa Centralna|13|9|775.74
-7|Kraków Główny|3|1|503.5
-8|Bochnia|12|5|930.08
-9|Brzesko Okocim|5|2|504.73
-10|Tarnów|2|2|624.36
-11|Miechów|2|2|653.18
-12|Włoszczowa Północ|10|7|894.79
-13|Opoczno Południe|14|4|739.59
-14|Sochaczew|10|2|863.23
-15|Łowicz Główny|3|2|848.66
-16|Kutno|8|7|859.31
-17|Krzewie|14|13|805.5
-18|Koło|11|3|956.92
-19|Konin|7|7|423.99
-20|Słupca|8|5|370.97
-21|Września|14|3|440.68
-22|Poznań Główny|3|3|564.4
-23|Zawiercie|12|6|416.19
-24|Dąbrowa Górnicza|5|2|379.49
-25|Będzin Miasto|13|6|856.75
-26|Sosnowiec Główny|3|3|669.62
-27|Katowice|14|11|452.96
-28|Włocławek|11|11|768.58
-29|Aleksandrów Kujawski|9|8|617.13
-30|Toruń Główny|8|7|832.0
-31|Solec Kujawski|3|2|521.89
-32|Bydgoszcz Wschód|9|7|955.68
-33|Bydgoszcz Leśna|6|6|488.67
-34|Bydgoszcz Główna|9|2|597.69
-35|Nakło nad Notecią|10|3|709.19
-36|Wyrzysk Osiek|3|1|823.28
-37|Piła Główna|8|4|540.8
-38|Jastrowie|13|5|878.82
-39|Szczecinek|5|5|669.42
-40|Białogard|9|9|655.74
-41|Kołobrzeg|9|8|874.12
-42|Piotrków Trybunalski|3|1|513.87
-43|Radomsko|4|3|875.38
-44|Częstochowa|12|6|443.87
-45|Częstochowa Stradom|4|3|543.45
-46|Lubliniec|2|1|793.45
-47|Opole Główne|13|9|794.58
-48|Brzeg|7|4|624.43
-49|Oława|12|3|675.07
-50|Wrocław Główny|7|7|889.78
-51|Warszawa Wschodnia|4|2|862.22
-52|Legionowo|9|9|484.5
-53|Nowy Dwór Mazowiecki|2|1|528.61
-54|Ciechanów|7|5|922.48
-55|Mława|12|3|517.86
-56|Działdowo|8|2|685.79
-57|Iława Główna|14|13|818.3
-58|Prabuty|4|3|985.15
-59|Malbork|6|2|521.92
-60|Tczew|7|5|431.91
-61|Gdańsk Główny|14|11|828.87
-62|Pilawa|5|4|750.92
-63|Dęblin|4|3|811.77
-64|Puławy Miasto|11|6|842.15
-65|Nałęczów|2|2|910.86
-66|Lublin Zachodni|12|3|577.28
-67|Lublin Główny|7|4|591.11
-68|Gniezno|8|8|514.21
-69|Szczecin Główny|12|12|700.04
-70|Szczecin Dąbie|10|8|776.07
-71|Goleniów|2|2|445.63
-72|Wysoka Kamieńska|6|5|541.13
-73|Międzyzdroje|9|5|628.75
-74|Świnoujście|7|7|817.42
-75|Legnica|5|5|810.63
-76|Środa Śląska|14|5|675.48
-77|Wrocław Leśnica|12|4|785.72
-78|Wrocław Nowy Dwór|7|7|950.77
-79|Leszno|8|5|637.07
-80|Kościan|3|2|633.06
-81|Opalenica|14|6|533.41
-82|Nowy Tomyśl|10|4|692.16
-83|Zbąszyń|10|2|786.57
-84|Zbąszynek|7|5|493.39
-85|Świebodzin|14|7|463.18
-86|Rzepin|3|2|954.61
-87|Kostrzyn|9|4|642.17
-88|Gryfino|6|3|612.22
-89|Tychy|14|10|971.65
-90|Pszczyna|12|6|472.35
-91|Czechowice-Dziedzice|12|5|595.62
-92|Bielsko-Biała Główna|12|10|378.8
-93|Gdańsk Wrzeszcz|2|1|720.61
-94|Gdańsk Oliwa|13|13|801.87
-95|Sopot|2|1|360.79
-96|Gdynia Główna|3|3|781.96
-97|Kielce|7|6|665.01
-98|Jędrzejów|12|11|645.6
-99|Sędziszów|7|5|679.26
-100|Zabrze|13|6|918.16
-101|Gliwice|3|1|410.3
-102|Strzelce Opolskie|4|3|531.24
-103|Rawicz|4|4|562.16
-104|Żmigród|6|3|379.0
-105|Oborniki Śląskie|8|3|508.12
-106|Wrocław Mikołajów|14|8|496.01
-107|Dębica|9|5|983.98
-108|Ropczyce|7|4|923.29
-109|Sędziszów Małopolski|2|1|622.26
-110|Rzeszów Główny|10|6|409.12
-111|Łańcut|13|3|906.97
-112|Leżajsk|8|6|887.86
-113|Nowa Sarzyna|5|3|445.11
-114|Rudnik nad Sanem|6|3|423.19
-115|Nisko|11|3|584.41
-116|Stalowa Wola Centrum|13|3|544.06
-117|Stalowa Wola Rozwadów|9|5|378.26
-118|Zaklików|3|1|749.35
-119|Kraśnik|14|9|830.75
-120|Wołomin|7|2|525.13
-121|Tłuszcz|6|4|950.52
-122|Łochów|4|4|837.68
-123|Małkinia|2|1|707.12
-124|Czyżew|9|3|892.28
-125|Szepietowo|3|3|455.55
-126|Łapy|4|1|610.39
-127|Białystok|6|6|964.38
-128|Chojnów|9|3|970.59
-129|Bolesławiec|11|6|754.85
-130|Węgliniec|4|2|715.09
-131|Pieńsk|10|9|545.79
-132|Zgorzelec Miasto|13|12|812.12
-133|Zgorzelec|8|7|431.69
-134|Rumia|13|6|919.39
-135|Wejherowo|14|9|901.63
-136|Lębork|7|7|630.19
-137|Słupsk|3|1|676.47
-138|Zielona Góra Główna|10|7|886.93
-139|Nowa Sól|14|13|900.38
-140|Bytom Odrzański|9|7|521.8
-141|Głogów|8|4|974.98
-142|Ścinawa|3|1|455.43
-143|Wołów|12|7|628.25
-144|Brzeg Dolny|4|1|970.97
+0|Łódź Fabryczna|11|8|877.97
+1|Łódź Widzew|9|6|751.62
+2|Koluszki|9|3|731.01
+3|Skierniewice|7|3|358.94
+4|Żyrardów|13|13|621.1
+5|Warszawa Zachodnia|12|9|660.59
+6|Warszawa Centralna|3|3|563.38
+7|Kraków Główny|11|10|559.04
+8|Bochnia|13|6|905.51
+9|Brzesko Okocim|11|9|550.08
+10|Tarnów|9|6|475.68
+11|Miechów|4|4|562.99
+12|Włoszczowa Północ|6|3|523.66
+13|Opoczno Południe|7|7|845.53
+14|Sochaczew|9|7|753.16
+15|Łowicz Główny|9|7|372.49
+16|Kutno|8|4|372.4
+17|Krzewie|10|8|672.73
+18|Koło|13|12|853.14
+19|Konin|5|4|728.29
+20|Słupca|3|1|755.44
+21|Września|4|2|835.34
+22|Poznań Główny|11|10|751.47
+23|Zawiercie|8|4|360.93
+24|Dąbrowa Górnicza|7|7|466.95
+25|Będzin Miasto|7|3|568.13
+26|Sosnowiec Główny|8|5|724.84
+27|Katowice|7|5|375.21
+28|Włocławek|3|3|692.68
+29|Aleksandrów Kujawski|2|2|883.74
+30|Toruń Główny|7|2|430.31
+31|Solec Kujawski|8|3|913.42
+32|Bydgoszcz Wschód|14|5|798.15
+33|Bydgoszcz Leśna|4|2|488.93
+34|Bydgoszcz Główna|7|3|550.0
+35|Nakło nad Notecią|4|1|860.17
+36|Wyrzysk Osiek|12|4|812.5
+37|Piła Główna|11|3|440.79
+38|Jastrowie|8|3|548.97
+39|Szczecinek|10|7|834.29
+40|Białogard|7|3|445.54
+41|Kołobrzeg|3|2|444.73
+42|Piotrków Trybunalski|10|5|415.79
+43|Radomsko|12|11|461.08
+44|Częstochowa|9|7|625.35
+45|Częstochowa Stradom|14|7|459.11
+46|Lubliniec|9|3|369.99
+47|Opole Główne|13|12|818.94
+48|Brzeg|12|11|592.44
+49|Oława|12|10|944.88
+50|Wrocław Główny|8|7|922.88
+51|Warszawa Wschodnia|7|4|980.88
+52|Legionowo|9|5|776.22
+53|Nowy Dwór Mazowiecki|14|4|568.92
+54|Ciechanów|3|3|983.7
+55|Mława|10|8|840.2
+56|Działdowo|13|10|881.99
+57|Iława Główna|13|3|610.48
+58|Prabuty|8|5|783.96
+59|Malbork|14|7|968.25
+60|Tczew|9|2|590.98
+61|Gdańsk Główny|14|7|774.37
+62|Pilawa|8|5|747.48
+63|Dęblin|9|8|873.31
+64|Puławy Miasto|6|5|443.98
+65|Nałęczów|2|1|658.4
+66|Lublin Zachodni|6|4|552.37
+67|Lublin Główny|2|2|504.73
+68|Gniezno|12|7|672.04
+69|Szczecin Główny|6|5|874.73
+70|Szczecin Dąbie|13|4|874.05
+71|Goleniów|6|2|658.96
+72|Wysoka Kamieńska|12|8|742.55
+73|Międzyzdroje|2|2|351.47
+74|Świnoujście|4|3|973.28
+75|Legnica|5|1|563.5
+76|Środa Śląska|8|6|386.43
+77|Wrocław Leśnica|6|4|674.95
+78|Wrocław Nowy Dwór|13|12|500.7
+79|Leszno|3|1|521.68
+80|Kościan|10|2|430.71
+81|Opalenica|3|1|395.63
+82|Nowy Tomyśl|9|2|389.83
+83|Zbąszyń|6|6|600.28
+84|Zbąszynek|14|12|749.53
+85|Świebodzin|13|7|632.77
+86|Rzepin|13|9|443.69
+87|Kostrzyn|12|6|431.16
+88|Gryfino|5|1|987.62
+89|Tychy|4|1|529.19
+90|Pszczyna|8|5|790.2
+91|Czechowice-Dziedzice|9|3|655.77
+92|Bielsko-Biała Główna|11|6|514.11
+93|Gdańsk Wrzeszcz|4|3|936.3
+94|Gdańsk Oliwa|9|2|366.66
+95|Sopot|9|2|658.5
+96|Gdynia Główna|2|2|862.26
+97|Kielce|9|9|576.12
+98|Jędrzejów|13|13|657.59
+99|Sędziszów|12|8|571.76
+100|Zabrze|5|1|809.77
+101|Gliwice|11|7|660.64
+102|Strzelce Opolskie|2|2|492.85
+103|Rawicz|3|1|389.79
+104|Żmigród|5|2|785.35
+105|Oborniki Śląskie|8|4|557.71
+106|Wrocław Mikołajów|8|5|760.59
+107|Dębica|6|3|810.43
+108|Ropczyce|8|7|469.52
+109|Sędziszów Małopolski|3|1|642.44
+110|Rzeszów Główny|2|1|983.42
+111|Łańcut|3|2|567.22
+112|Leżajsk|14|3|674.42
+113|Nowa Sarzyna|4|3|572.99
+114|Rudnik nad Sanem|2|2|931.56
+115|Nisko|9|3|524.3
+116|Stalowa Wola Centrum|2|1|891.97
+117|Stalowa Wola Rozwadów|10|10|511.71
+118|Zaklików|9|2|693.36
+119|Kraśnik|12|4|770.7
+120|Wołomin|8|6|444.08
+121|Tłuszcz|10|7|805.24
+122|Łochów|10|7|569.19
+123|Małkinia|10|6|480.01
+124|Czyżew|14|8|707.51
+125|Szepietowo|12|3|686.86
+126|Łapy|14|9|583.61
+127|Białystok|3|2|627.77
+128|Chojnów|6|2|436.2
+129|Bolesławiec|6|5|805.43
+130|Węgliniec|14|8|584.36
+131|Pieńsk|3|2|699.37
+132|Zgorzelec Miasto|9|9|375.39
+133|Zgorzelec|6|6|505.88
+134|Rumia|10|2|463.22
+135|Wejherowo|11|9|536.14
+136|Lębork|6|4|866.21
+137|Słupsk|2|2|454.83
+138|Zielona Góra Główna|11|3|634.65
+139|Nowa Sól|14|3|654.52
+140|Bytom Odrzański|3|1|733.53
+141|Głogów|5|1|691.35
+142|Ścinawa|2|1|596.37
+143|Wołów|2|1|408.73
+144|Brzeg Dolny|7|4|512.69
+145|Ostrów Wielkopolski|6|5|933.81
+146|Biniew|2|1|629.89
+147|Bronów|2|2|414.69
+148|Taczanów|9|9|900.94
+149|Pleszew|12|11|929.18
+150|Kotlin|6|5|968.12
+151|Witaszyce|6|6|974.01
+152|Jarocin|8|6|502.24
+153|Mieszków|3|1|817.45
+154|Chocicza|8|7|579.09
+155|Solec Wielkopolski|14|3|501.66
+156|Sulęcinek|5|1|692.5
+157|Środa Wielkopolska|4|1|455.34
+158|Pierzchno|4|4|799.07
+159|Kórnik|9|4|681.9
+160|Gądki|9|7|983.6
+161|Poznań Krzesiny|10|8|828.43
+162|Poznań Starołęka|4|1|845.19
+163|Poznań Dębina|14|9|782.34
+164|Koszalin|11|6|743.54
+165|Świdwin|13|5|949.58
+166|Łobez|4|3|571.98
+167|Runowo Pomorskie|3|1|902.27
+168|Chociwel|10|4|650.76
+169|Stargard|14|7|841.21
+170|Oborniki Wielkopolskie Miasto|13|10|814.05
+171|Rogoźno Wielkopolskie|14|9|685.54
+172|Chodzież|2|2|903.83
+173|Wałbrzych Miasto|14|6|748.52
+174|Wałbrzych Szczawienko|4|3|904.19
+175|Świebodzice|9|6|749.89
+176|Jaworzyna Śląska|8|8|417.49
+177|Żarów|13|5|778.26
+178|Imbramowice|9|3|570.35
+179|Mietków|4|4|504.79
+180|Kąty Wrocławskie|3|2|609.08
+181|Sadowice Wrocławskie|9|7|456.36
+182|Smolec|13|12|867.13
+183|Mokronos Górny|10|2|869.43
+184|Wrocław Zachodni|10|3|739.54
+185|Wrocław Grabiszyn|5|2|670.98
+186|Olesno Śląskie|6|4|492.27
+187|Kluczbork|3|1|504.15
+188|Byczyna Kluczborska|9|3|736.01
+189|Kępno|8|2|392.98
+190|Ostrzeszów|6|5|703.11
+191|Będzin|3|3|976.69
+192|Poraj|13|9|926.6
+193|Przeworsk|6|4|793.27
+194|Jarosław|5|2|644.23
+195|Przemyśl Zasanie|9|7|953.55
+196|Przemyśl Główny|6|2|806.6
+197|Włoszczowa|9|8|828.59
+198|Elbląg|4|2|926.87
 \.
 
