@@ -1,36 +1,35 @@
 
 COPY wagony FROM STDIN DELIMITER '|';
-1|110A|kuszetka|0|54|T|N|N|N|24.5
-2|140A|kuszetka|0|54|T|N|T|N|24.5
-3|Bautzen 86|sypialny|0|30|T|N|N|N|24.5
-4|Görlitz 81|sypialny|0|30|T|N|N|N|24.5
-5|305Ad|sypialny|0|28|T|N|T|N|26.4
-6|308A|sypialny|0|26|T|N|T|N|24.5
-7|Bautzen 89|barowy|0|0|N|N|N|N|24.5
-8|155A|barowy|18|0|T|N|N|N|24.5
-9|155A|barowy|0|18|T|N|N|N|24.5
-10|113A|barowy|0|0|N|N|T|N|24.5
-11|407A|barowy|0|0|N|N|T|T|24.5
-12|111A|osobowy|0|80|T|N|N|N|24.5
-13|141A|osobowy|0|80|T|N|N|N|24.5
-14|112A|osobowy|54|00|T|N|N|N|24.5
-15|112A|osobowy|36|50|T|N|N|N|24.5
-16|136A|osobowy|0|66|T|N|T|N|24.5
-17|170A|osobowy|0|66|T|N|T|N|24.5
-18|139A|osobowy|54|0|T|N|T|N|24.5
-19|145A|osobowy|54|0|T|N|T|N|24.5
-20|168A|osobowy|0|72|N|T|T|N|24.5
-21|168A|osobowy|0|72|N|N|T|N|24.5
-22|156A|osobowy|0|54|T|N|T|N|26.4
-23|157A|osobowy|0|54|T|N|T|N|26.4
-24|156A|osobowy|54|0|T|N|T|N|26.4
-25|156A|business|36|0|T|N|T|T|26.4
-26|159A|osobowy|0|72|N|T|T|N|26.4
-27|159A|osobowy|0|72|N|N|T|N|26.4
-28|158A|osobowy|54|0|N|N|T|N|26.4
-29|ED250|barowy|0|0|N|N|T|T|26.8
-30|ED250|osobowy|45|0|N|N|T|T|26.8
-31|ED250|osobowy|0|68|N|N|T|T|26.8
-32|ED250|osobowy|0|60|N|T|T|T|26.8
+1|110A|kuszetka|0|54|0|T|N|N|N|24.5
+2|140A|kuszetka|0|54|0|T|T|N|N|24.5
+3|Bautzen 86|sypialny|0|30|0|T|N|N|N|24.5
+4|Görlitz 81|sypialny|0|30|0|T|N|N|N|24.5
+5|305Ad|sypialny|0|28|0|T|T|N|N|26.4
+6|308A|sypialny|0|26|0|T|T|N|N|24.5
+7|Bautzen 89|barowy|0|0|0|N|N|N|N|24.5
+8|155A|barowy|18|0|0|T|N|N|N|24.5
+9|155A|barowy|0|18|0|T|N|N|N|24.5
+10|113A|barowy|0|0|0|N|T|N|N|24.5
+11|407A|barowy|0|0|0|N|T|T|N|24.5
+12|111A|osobowy|0|80|0|T|N|N|T|24.5
+13|141A|osobowy|0|80|0|T|N|N|N|24.5
+14|112A|osobowy|54|00|0|T|N|N|N|24.5
+15|112A|osobowy|36|50|0|T|N|N|N|24.5
+16|136A|osobowy|0|66|0|T|T|N|T|24.5
+17|170A|osobowy|0|66|0|T|T|N|N|24.5
+18|139A|osobowy|54|0|0|T|T|N|N|24.5
+19|145A|osobowy|54|0|0|T|T|N|N|24.5
+20|168A|osobowy|0|72|12|N|T|N|N|24.5
+21|168A|osobowy|0|72|0|N|T|N|T|24.5
+22|156A|osobowy|0|54|0|T|T|N|T|26.4
+23|157A|osobowy|0|54|0|T|T|N|N|26.4
+24|156A|osobowy|54|0|0|T|T|N|N|26.4
+25|156A|business|36|0|0|T|T|T|N|26.4
+26|159A|osobowy|0|72|12|N|T|N|N|26.4
+27|159A|osobowy|0|72|0|N|T|N|T|26.4
+28|158A|osobowy|54|0|0|N|T|N|N|26.4
+29|ED250|barowy|0|0|0|N|T|T|N|26.8
+30|ED250|osobowy|45|0|0|N|T|T|N|26.8
+31|ED250|osobowy|0|68|0|N|T|T|T|26.8
+32|ED250|osobowy|0|60|18|N|T|T|N|26.8
 \.
-

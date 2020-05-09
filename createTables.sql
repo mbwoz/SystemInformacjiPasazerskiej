@@ -15,10 +15,11 @@ CREATE TABLE wagony (
     typ_wagonu varchar(12) CHECK (typ_wagonu = 'sypialny' OR typ_wagonu = 'kuszetka' OR typ_wagonu = 'barowy' OR typ_wagonu = 'osobowy' OR typ_wagonu = 'business') NOT NULL,
     liczba_miejsc_I numeric(3, 0) CHECK (liczba_miejsc_I >= 0) NOT NULL,
     liczba_miejsc_II numeric(3, 0) CHECK (liczba_miejsc_II >= 0) NOT NULL,
+    liczba_rowerow numeric(3, 0) CHECK (liczba_rowerow >= 0) NOT NULL,
     czy_przedzialowy char(1) CHECK (czy_przedzialowy = 'T' OR czy_przedzialowy = 'N') NOT NULL,
-    czy_rowery char(1) CHECK (czy_rowery = 'T' OR czy_rowery = 'N') NOT NULL, 
     czy_klimatyzacja char(1) CHECK (czy_klimatyzacja = 'T' OR czy_klimatyzacja = 'N') NOT NULL,
     czy_wifi char(1) CHECK (czy_wifi = 'T' OR czy_wifi = 'N') NOT NULL,
+    czy_niepelnosprawni char(1) CHECK (czy_niepelnosprawni = 'T' OR czy_niepelnosprawni = 'N') NOT NULL,
     dlugosc_wagonu numeric(4, 2) CHECK (dlugosc_wagonu > 0) NOT NULL
 );
 
@@ -98,7 +99,7 @@ ALTER TABLE ONLY rozklady
 ALTER TABLE ONLY pociagi
     ADD CONSTRAINT pk_pociagi PRIMARY KEY (id_pociagu);
 
-ALTER TABLE ONLY trasy 
+ALTER TABLE ONLY trasy
     ADD CONSTRAINT pk_trasy PRIMARY KEY (id_trasy);
 
 ALTER TABLE ONLY trasy_odcinki
