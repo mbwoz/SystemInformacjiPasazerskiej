@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<Pane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml" prefHeight="600.0" prefWidth="800.0"
+      fx:controller="systeminformacjipasazerskiej.controller.MainController">
+
+
+
+    <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE">
+        <Tab fx:id="queryTab" text="Query (dla pasażera)">
+            <fx:include source="queryView.fxml"/>
+        </Tab>
+        <Tab fx:id="insertTab" text="Insert (dla admina)">
+            <fx:include source="insertView.fxml"/>
+        </Tab>
+        <Tab fx:id="deleteTab" text="Delete (dla admina)">
+            <fx:include source="deleteView.fxml"/>
+        </Tab>
+    </TabPane>
+
+</Pane>
