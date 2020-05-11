@@ -1,6 +1,9 @@
 #!/bin/bash
 
 cat createTables.sql > create.sql;
+
+cat utils/queryFunctions.sql >> create.sql;
+
 cat rozklad/header.in >> create.sql;
 cat rozklad/trasy.in >> create.sql;
 cat rozklad/stacje.in >> create.sql;
