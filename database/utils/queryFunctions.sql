@@ -51,6 +51,7 @@ DECLARE
     dzienTygodnia rozklady.dzien_tygodnia%TYPE;
     stacja stacje.id_stacji%TYPE;
     lastStop time;
+    nextStop time;
 BEGIN
     idTrasy = 
         (SELECT po.id_trasy
@@ -81,19 +82,18 @@ BEGIN
     lastStop := '00:00:00'::time;
     
     WHILE stacja IS NOT NULL LOOP
-        IF lastStop > 
+        nextStop :=
             (SELECT pos.odjazd 
             FROM postoje pos 
-            WHERE pos.id_kursu = idKursu AND pos.id_stacji = stacja) THEN
+            WHERE pos.id_kursu = idKursu AND pos.id_stacji = stacja);
+    
+        IF lastStop > nextStop THEN
             dzienTygodnia := (dzienTygodnia + 1) % 7;
         END IF;
         
         EXIT WHEN stacja = idStacji;
         
-        lastStop := 
-            (SELECT pos.odjazd 
-            FROM postoje pos 
-            WHERE pos.id_kursu = idKursu AND pos.id_stacji = stacja);            
+        lastStop := nextStop;            
     
         stacja := 
             (SELECT od.stacja_koncowa
