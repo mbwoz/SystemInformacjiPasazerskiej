@@ -3,9 +3,21 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" prefHeight="600.0" prefWidth="800.0"
+<ScrollPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+            prefHeight="600.0" prefWidth="800.0"
             fx:controller="systeminformacjipasazerskiej.controller.QueryController">
 
-    <Button fx:id="queryLekarze" text="zapytaj lekarze"/>
+    <VBox>
+        <Label text="Znajdź połączenie"/>
+        <HBox spacing="10.0">
+            <ComboBox fx:id="fromComboBox" editable="true"/>
+            <ComboBox fx:id="toComboBox" editable="true"/>
+            <ChoiceBox fx:id="dayChoiceBox"/>
+            <ChoiceBox fx:id="timeChoiceBox"/>
+            <Button fx:id="searchConnectionButton" text="Szukaj"/>
+        </HBox>
 
-</AnchorPane>
+        <!--    TODO: show results from search    -->
+    </VBox>
+
+</ScrollPane>

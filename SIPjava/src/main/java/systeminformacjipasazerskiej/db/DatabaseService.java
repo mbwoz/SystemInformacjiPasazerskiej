@@ -1,6 +1,9 @@
 package systeminformacjipasazerskiej.db;
 
+import systeminformacjipasazerskiej.model.Stacja;
+
 import java.sql.*;
+import java.util.ArrayList;
 
 public class DatabaseService {
     Connection connection;
@@ -20,26 +23,39 @@ public class DatabaseService {
         }
     }
 
-    public void getLekarze() {
-        try {
-            Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM lekarze;");
+    public ArrayList<Stacja> getAllStations() {
+        ArrayList<Stacja> stacje = new ArrayList<>();
 
-            while (rs.next()) {
-                int id = rs.getInt(1);
-                String imie = rs.getString(2);
-                String nazwisko = rs.getString(3);
-                System.out.println("ID = " + id);
-                System.out.println("IMIE = " + imie);
-                System.out.println("NAZWISKO = " + nazwisko);
-                System.out.println();
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(
+                "SELECT * FROM stacje ORDER BY nazwa_stacji;"
+            );
+
+            while(resultSet.next()) {
+                Stacja stacja = new Stacja();
+                stacja.setIdStacji(resultSet.getInt("id_stacji"));
+                stacja.setNazwaStacji(resultSet.getString("nazwa_stacji"));
+                stacja.setLiczbaTorow(resultSet.getInt("liczba_torow"));
+                stacja.setLiczbaPeronow(resultSet.getInt("liczba_peronow"));
+                stacja.setDlugoscPeronu(resultSet.getDouble("dlugosc_peronu"));
+
+                stacje.add(stacja);
             }
 
-            rs.close();
-            stmt.close();
+            resultSet.close();
+            statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        return stacje;
     }
 
+    public void getConnections(String fromStation, String toStation, String day, String time) {
+        if(fromStation.equals(toStation))
+            return;
+
+        // TODO: get all suitable connections and return then
+    }
 }
