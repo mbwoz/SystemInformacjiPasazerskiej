@@ -17,7 +17,7 @@
             <Button fx:id="searchConnectionButton" text="Szukaj"/>
         </HBox>
 
-        <!--    TODO: show results from search    -->
+        <ListView fx:id="connectionsListView"/>
     </VBox>
 
 </ScrollPane>

@@ -47,7 +47,7 @@ public class Postoj {
         this.nastepnySklad = nastepnySklad;
     }
 
-    // only for tests
+    // TODO: print actual results
     @Override
     public String toString() {
         return "Postoj{" +

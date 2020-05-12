@@ -6,6 +6,7 @@ public class Kurs {
     private int idKursu;
     private int idPociagu;
     private ArrayList<Postoj> listaPostojow = new ArrayList<>();
+    private int czasPrzejazdu;
 
     public int getIdKursu() {
         return idKursu;
@@ -29,5 +30,22 @@ public class Kurs {
 
     public void setListaPostojow(ArrayList<Postoj> listaPostojow) {
         this.listaPostojow = listaPostojow;
+    }
+
+    public int getCzasPrzejazdu() {
+        return czasPrzejazdu;
+    }
+
+    public void setCzasPrzejazdu(int czasPrzejazdu) {
+        this.czasPrzejazdu = czasPrzejazdu;
+    }
+
+    // TODO: print actual results
+    @Override
+    public String toString() {
+        return "Kurs{" +
+                "idKursu=" + idKursu +
+                ", idPociagu=" + idPociagu +
+                '}';
     }
 }

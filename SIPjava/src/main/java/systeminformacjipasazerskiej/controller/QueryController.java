@@ -1,15 +1,17 @@
 package systeminformacjipasazerskiej.controller;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ComboBox;
+import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import systeminformacjipasazerskiej.converter.DayConverter;
 import systeminformacjipasazerskiej.db.DatabaseService;
 import systeminformacjipasazerskiej.model.Kurs;
+import systeminformacjipasazerskiej.model.Postoj;
 import systeminformacjipasazerskiej.model.Stacja;
 
 import java.net.URL;
@@ -30,6 +32,9 @@ public class QueryController implements Initializable {
     private ChoiceBox<String> timeChoiceBox;
     @FXML
     private Button searchConnectionButton;
+
+    @FXML
+    private ListView<Kurs> connectionsListView;
 
     private DatabaseService db;
     private ObservableList<String> allStationsNames = FXCollections.observableArrayList();
@@ -56,8 +61,7 @@ public class QueryController implements Initializable {
 
         searchConnectionButton.setOnMouseClicked(event -> {
             allMatchingKursy.clear();
-            allMatchingKursy.addAll(
-                db.getConnections(
+            allMatchingKursy.addAll(db.getConnections(
                 fromComboBox.getValue(),
                 toComboBox.getValue(),
                 dayChoiceBox.getValue(),
@@ -66,6 +70,23 @@ public class QueryController implements Initializable {
             System.out.println("db call END\nprint postoje dla kursow");
             allMatchingKursy.forEach(p -> System.out.println(p.getListaPostojow().toString()));
         });
+
+        connectionsListView.setItems(allMatchingKursy);
+        connectionsListView.setOnMouseClicked(event -> {
+            Kurs kurs = connectionsListView.getSelectionModel().getSelectedItem();
+            System.out.println(kurs.getListaPostojow().toString());
+
+            Dialog<Kurs> kursDialog = new Dialog<>();
+            kursDialog.getDialogPane().setMinWidth(700);
+            kursDialog.getDialogPane().setContent(
+                new ListView<>(FXCollections.observableArrayList(kurs.getListaPostojow()))
+            );
+            kursDialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+            kursDialog.showAndWait();
+        });
+        allMatchingKursy.addListener((ListChangeListener<Kurs>) change ->
+            connectionsListView.setMaxHeight(allMatchingKursy.size() * 24 + 2)
+        );
     }
 
     public void setDB(DatabaseService db) {
@@ -78,6 +99,7 @@ public class QueryController implements Initializable {
             .map(Stacja::getNazwaStacji)
             .collect(Collectors.toList()));
     }
+
 
 
 

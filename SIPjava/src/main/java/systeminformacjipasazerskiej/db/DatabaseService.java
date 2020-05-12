@@ -55,6 +55,7 @@ public class DatabaseService {
         return stacje;
     }
 
+    // TODO: deal with nulls (return info: invalid input)
     public ArrayList<Kurs> getConnections(String fromStation, String toStation, String day, String time) {
         ArrayList<Kurs> kursy = new ArrayList<>();
 
@@ -89,7 +90,6 @@ public class DatabaseService {
                 "ORDER BY pos.odjazd;"
             );
 
-            // TODO: add weekday of "from" and "to" to kurs
             while(resultSet.next()) {
                 Kurs kurs = new Kurs();
                 kurs.setIdKursu(resultSet.getInt("id_kursu"));
