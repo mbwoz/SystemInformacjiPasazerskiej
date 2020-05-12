@@ -103,11 +103,11 @@ public class DatabaseService {
             for(Kurs kurs : kursy) {
                 resultSet = statement.executeQuery(
                     "SELECT pos.* " +
-                    "FROM postoje pos " +
-                    "WHERE pos.id_kursu = " + kurs.getIdKursu() + " AND " +
-                        "pos.id_stacji IN " +
-                            "(SELECT idStacji " +
-                            "FROM getStationsBetween(" + kurs.getIdKursu() + ", " + fromStationId + ", " + toStationId + "));"
+                    "FROM " +
+                        "(SELECT idStacji " +
+                        "FROM getStationsBetween(" + kurs.getIdKursu() + ", " + fromStationId + ", " + toStationId + ")) st " +
+                            "INNER JOIN postoje pos ON st.idStacji = pos.id_stacji " +
+                    "WHERE pos.id_kursu = " + kurs.getIdKursu() + ";"
                 );
 
                 ArrayList<Postoj> listaPostojow = new ArrayList<>();
