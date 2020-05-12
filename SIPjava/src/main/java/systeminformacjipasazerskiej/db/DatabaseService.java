@@ -55,6 +55,32 @@ public class DatabaseService {
         return stacje;
     }
 
+    public Stacja getStationById(int idStacji) {
+        Stacja stacja = new Stacja();
+
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(
+                "SELECT * FROM stacje WHERE id_stacji = " + idStacji + ";"
+            );
+
+            if(resultSet.next()) {
+                stacja.setIdStacji(resultSet.getInt("id_stacji"));
+                stacja.setNazwaStacji(resultSet.getString("nazwa_stacji"));
+                stacja.setLiczbaTorow(resultSet.getInt("liczba_torow"));
+                stacja.setLiczbaPeronow(resultSet.getInt("liczba_peronow"));
+                stacja.setDlugoscPeronu(resultSet.getDouble("dlugosc_peronu"));
+            }
+
+            resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return stacja;
+    }
+
     // TODO: deal with nulls (return info: invalid input)
     public ArrayList<Kurs> getConnections(String fromStation, String toStation, String day, String time) {
         ArrayList<Kurs> kursy = new ArrayList<>();
@@ -115,7 +141,7 @@ public class DatabaseService {
                 while(resultSet.next()) {
                     Postoj postoj = new Postoj();
                     postoj.setIdKursu(resultSet.getInt("id_kursu"));
-                    postoj.setIdStacji(resultSet.getInt("id_stacji"));
+                    postoj.setStacja(getStationById(resultSet.getInt("id_stacji")));
                     postoj.setPrzyjazd(resultSet.getString("przyjazd"));
                     postoj.setOdjazd(resultSet.getString("odjazd"));
                     postoj.setNastepnySklad(resultSet.getInt("nastepny_sklad"));

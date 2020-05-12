@@ -40,12 +40,12 @@ public class Kurs {
         this.czasPrzejazdu = czasPrzejazdu;
     }
 
-    // TODO: print actual results
     @Override
     public String toString() {
-        return "Kurs{" +
-                "idKursu=" + idKursu +
-                ", idPociagu=" + idPociagu +
-                '}';
+        return "Z: " + listaPostojow.get(0).getStacja().getNazwaStacji() +
+            "\tDo: " + listaPostojow.get(listaPostojow.size()-1).getStacja().getNazwaStacji() +
+            "\t\tOdj. " + listaPostojow.get(0).getOdjazd() +
+            "\tPrzyj. " + listaPostojow.get(listaPostojow.size()-1).getPrzyjazd() +
+            "\t\tCzas: " + czasPrzejazdu;
     }
 }

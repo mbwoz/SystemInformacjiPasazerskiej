@@ -1,8 +1,10 @@
 package systeminformacjipasazerskiej.model;
 
+import javafx.beans.property.StringProperty;
+
 public class Postoj {
     private int idKursu;
-    private int idStacji;
+    private Stacja stacja;
     private String przyjazd;
     private String odjazd;
     private int nastepnySklad;
@@ -15,12 +17,16 @@ public class Postoj {
         this.idKursu = idKursu;
     }
 
-    public int getIdStacji() {
-        return idStacji;
+    public Stacja getStacja() {
+        return stacja;
     }
 
-    public void setIdStacji(int idStacji) {
-        this.idStacji = idStacji;
+    public void setStacja(Stacja stacja) {
+        this.stacja = stacja;
+    }
+
+    public String getNazwaStacji() {
+        return stacja.getNazwaStacji();
     }
 
     public String getPrzyjazd() {
@@ -47,15 +53,11 @@ public class Postoj {
         this.nastepnySklad = nastepnySklad;
     }
 
-    // TODO: print actual results
     @Override
     public String toString() {
-        return "Postoj{" +
-                "idKursu=" + idKursu +
-                ", idStacji=" + idStacji +
-                ", przyjazd='" + przyjazd + '\'' +
-                ", odjazd='" + odjazd + '\'' +
-                ", nastepnySklad=" + nastepnySklad +
-                "}\n";
+        return "Stacja: " + stacja.getNazwaStacji() +
+            "\t\tPrzyj. " + przyjazd +
+            "\tOdj." + odjazd;
     }
+
 }

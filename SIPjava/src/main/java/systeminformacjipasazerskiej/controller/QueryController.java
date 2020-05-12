@@ -3,11 +3,10 @@ package systeminformacjipasazerskiej.controller;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.control.cell.PropertyValueFactory;
 import systeminformacjipasazerskiej.converter.DayConverter;
 import systeminformacjipasazerskiej.db.DatabaseService;
 import systeminformacjipasazerskiej.model.Kurs;
@@ -76,11 +75,28 @@ public class QueryController implements Initializable {
             Kurs kurs = connectionsListView.getSelectionModel().getSelectedItem();
             System.out.println(kurs.getListaPostojow().toString());
 
+            TableView<Postoj> tableView = new TableView<>();
+            TableColumn<Postoj, String> stacje = new TableColumn<>("Stacja");
+            stacje.setCellValueFactory(new PropertyValueFactory<>("nazwaStacji"));
+
+            TableColumn<Postoj, String> przyjazdy = new TableColumn<>("Przyjazd");
+            przyjazdy.setCellValueFactory(new PropertyValueFactory<>("przyjazd"));
+            przyjazdy.setStyle("-fx-alignment: CENTER;");
+
+            TableColumn<Postoj, String> odjazdy = new TableColumn<>("Odjazd");
+            odjazdy.setCellValueFactory(new PropertyValueFactory<>("odjazd"));
+            odjazdy.setStyle("-fx-alignment: CENTER;");
+
+            tableView.getColumns().addAll(stacje, przyjazdy, odjazdy);
+            tableView.getItems().addAll(kurs.getListaPostojow());
+
+            stacje.setMinWidth(350);
+            przyjazdy.setMinWidth(125);
+            odjazdy.setMinWidth(125);
+
             Dialog<Kurs> kursDialog = new Dialog<>();
-            kursDialog.getDialogPane().setMinWidth(700);
-            kursDialog.getDialogPane().setContent(
-                new ListView<>(FXCollections.observableArrayList(kurs.getListaPostojow()))
-            );
+            kursDialog.getDialogPane().setMinWidth(600);
+            kursDialog.getDialogPane().setContent(tableView);
             kursDialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
             kursDialog.showAndWait();
         });
@@ -99,8 +115,5 @@ public class QueryController implements Initializable {
             .map(Stacja::getNazwaStacji)
             .collect(Collectors.toList()));
     }
-
-
-
 
 }
