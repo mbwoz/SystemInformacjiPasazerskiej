@@ -43,9 +43,9 @@ public class Kurs {
     @Override
     public String toString() {
         return "Z: " + listaPostojow.get(0).getStacja().getNazwaStacji() +
-            "\tDo: " + listaPostojow.get(listaPostojow.size()-1).getStacja().getNazwaStacji() +
-            "\t\tOdj. " + listaPostojow.get(0).getOdjazd() +
-            "\tPrzyj. " + listaPostojow.get(listaPostojow.size()-1).getPrzyjazd() +
-            "\t\tCzas: " + czasPrzejazdu;
+            "   Do: " + listaPostojow.get(listaPostojow.size()-1).getStacja().getNazwaStacji() +
+            "      Odj. " + listaPostojow.get(0).getOdjazd() +
+            "   Przyj. " + listaPostojow.get(listaPostojow.size()-1).getPrzyjazd() +
+            "      Czas: " + czasPrzejazdu;
     }
 }

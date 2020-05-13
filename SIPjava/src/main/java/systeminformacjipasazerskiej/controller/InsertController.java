@@ -1,22 +1,22 @@
 package systeminformacjipasazerskiej.controller;
 
 import javafx.fxml.Initializable;
-import systeminformacjipasazerskiej.db.DatabaseService;
+import systeminformacjipasazerskiej.db.InsertDBService;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class InsertController implements Initializable {
 
-    DatabaseService db;
+    InsertDBService idb;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
     }
 
-    public void setDB(DatabaseService db) {
-        this.db = db;
+    public void setDB(InsertDBService idb) {
+        this.idb = idb;
         System.out.println("insert db ready");
     }
 

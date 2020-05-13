@@ -24,7 +24,7 @@ public class MainController implements Initializable {
     private InsertController insertController;
     private DeleteController deleteController;
 
-    DatabaseService db;
+    DatabaseService dbService;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -53,11 +53,12 @@ public class MainController implements Initializable {
         }
     }
 
-    public void setDB(DatabaseService db) {
-        this.db = db;
-        queryController.setDB(db);
-        insertController.setDB(db);
-        deleteController.setDB(db);
+    public void setDB(DatabaseService dbService) {
+        this.dbService = dbService;
+        queryController.setDB(dbService.getQueryDBService());
+        insertController.setDB(dbService.getInsertDBService());
+        deleteController.setDB(dbService.getDeleteDBService());
+
         System.out.println("main db ready");
     }
 }

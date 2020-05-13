@@ -1,22 +1,22 @@
 package systeminformacjipasazerskiej.controller;
 
 import javafx.fxml.Initializable;
-import systeminformacjipasazerskiej.db.DatabaseService;
+import systeminformacjipasazerskiej.db.DeleteDBService;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class DeleteController implements Initializable {
 
-    DatabaseService db;
+    DeleteDBService ddb;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
     }
 
-    public void setDB(DatabaseService db) {
-        this.db = db;
+    public void setDB(DeleteDBService ddb) {
+        this.ddb = ddb;
         System.out.println("delete db ready");
     }
 }

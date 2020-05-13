@@ -15,7 +15,7 @@
             <Button fx:id="searchConnectionButton" text="Szukaj" />
         </HBox>
 
-        <ListView fx:id="connectionsListView" maxHeight="0" />
+        <ListView fx:id="connectionsListView" />
     </VBox>
 
 </ScrollPane>

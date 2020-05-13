@@ -5,10 +5,11 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import systeminformacjipasazerskiej.converter.DayConverter;
-import systeminformacjipasazerskiej.db.DatabaseService;
+import systeminformacjipasazerskiej.db.QueryDBService;
 import systeminformacjipasazerskiej.model.Kurs;
 import systeminformacjipasazerskiej.model.Postoj;
 import systeminformacjipasazerskiej.model.Stacja;
@@ -35,7 +36,7 @@ public class QueryController implements Initializable {
     @FXML
     private ListView<Kurs> connectionsListView;
 
-    private DatabaseService db;
+    private QueryDBService qdb;
     private ObservableList<String> allStationsNames = FXCollections.observableArrayList();
     private ObservableList<Kurs> allMatchingKursy = FXCollections.observableArrayList();
 
@@ -63,18 +64,25 @@ public class QueryController implements Initializable {
         timeChoiceBox.getSelectionModel().select(0);
 
         searchConnectionButton.setOnMouseClicked(event -> {
+            connectionsListView.setVisible(false);
+
             allMatchingKursy.clear();
-            allMatchingKursy.addAll(db.getConnections(
+            allMatchingKursy.addAll(qdb.getConnections(
                 fromComboBox.getValue(),
                 toComboBox.getValue(),
                 dayChoiceBox.getValue(),
                 timeChoiceBox.getValue()));
+
+            if(allMatchingKursy.size() > 0)
+                connectionsListView.setVisible(true);
 
             System.out.println("db call END\nprint postoje dla kursow");
             allMatchingKursy.forEach(p -> System.out.println(p.getListaPostojow().toString()));
         });
 
         connectionsListView.setItems(allMatchingKursy);
+        connectionsListView.setCursor(Cursor.HAND);
+        connectionsListView.setVisible(false);
         connectionsListView.setOnMouseClicked(event -> {
             Kurs kurs = connectionsListView.getSelectionModel().getSelectedItem();
             System.out.println(kurs.getListaPostojow().toString());
@@ -109,12 +117,12 @@ public class QueryController implements Initializable {
         );
     }
 
-    public void setDB(DatabaseService db) {
-        this.db = db;
+    public void setDB(QueryDBService qdb) {
+        this.qdb = qdb;
         System.out.println("query db ready");
 
         allStationsNames.addAll(
-            db.getAllStations()
+            qdb.getAllStations()
             .stream()
             .map(Stacja::getNazwaStacji)
             .collect(Collectors.toList()));
