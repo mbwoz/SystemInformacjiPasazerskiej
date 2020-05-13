@@ -1,7 +1,5 @@
 package systeminformacjipasazerskiej.model;
 
-import javafx.beans.property.StringProperty;
-
 public class Postoj {
     private int idKursu;
     private Stacja stacja;
@@ -57,7 +55,7 @@ public class Postoj {
     public String toString() {
         return "Stacja: " + stacja.getNazwaStacji() +
             "\t\tPrzyj. " + przyjazd +
-            "\tOdj." + odjazd;
+            "\tOdj. " + odjazd;
     }
 
 }

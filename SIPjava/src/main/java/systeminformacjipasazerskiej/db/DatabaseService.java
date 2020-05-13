@@ -81,7 +81,6 @@ public class DatabaseService {
         return stacja;
     }
 
-    // TODO: deal with nulls (return info: invalid input)
     public ArrayList<Kurs> getConnections(String fromStation, String toStation, String day, String time) {
         ArrayList<Kurs> kursy = new ArrayList<>();
 

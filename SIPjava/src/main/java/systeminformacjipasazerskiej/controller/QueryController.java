@@ -42,7 +42,9 @@ public class QueryController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         fromComboBox.setItems(allStationsNames);
+        fromComboBox.setPromptText("np. Warszawa Centralna");
         toComboBox.setItems(allStationsNames);
+        toComboBox.setPromptText("np. Szczecin Główny");
 
         dayChoiceBox.setItems(FXCollections.observableArrayList(
             Stream.iterate(0, i -> i+1)
@@ -50,6 +52,7 @@ public class QueryController implements Initializable {
                 .map(DayConverter::convertDay)
                 .collect(Collectors.toList())
         ));
+        dayChoiceBox.getSelectionModel().select(0);
 
         ArrayList<String> timeArrayList = new ArrayList<>();
         for(int i = 0; i < 24; i++)
@@ -57,6 +60,7 @@ public class QueryController implements Initializable {
         timeChoiceBox.setItems(FXCollections.observableArrayList(
             timeArrayList
         ));
+        timeChoiceBox.getSelectionModel().select(0);
 
         searchConnectionButton.setOnMouseClicked(event -> {
             allMatchingKursy.clear();
@@ -90,7 +94,7 @@ public class QueryController implements Initializable {
             tableView.getColumns().addAll(stacje, przyjazdy, odjazdy);
             tableView.getItems().addAll(kurs.getListaPostojow());
 
-            stacje.setMinWidth(350);
+            stacje.setMinWidth(300);
             przyjazdy.setMinWidth(125);
             odjazdy.setMinWidth(125);
 
