@@ -144,7 +144,7 @@ public class DeleteController implements Initializable {
                         deleteRideFromBox.getValue(),
                         deleteRideToBox.getValue(),
                         dayRideBox.getValue(),
-                        "00:00", false, false, false)); //TODO: don`t care if pospieszny/ekspres/pend
+                        "00:00", true, true, true)); //TODO: don`t care if pospieszny/ekspres/pend
 
                 if(allMatchingKursy.size() > 0)
                     rideList.setVisible(true);
