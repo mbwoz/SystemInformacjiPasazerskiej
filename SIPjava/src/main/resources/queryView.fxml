@@ -50,7 +50,7 @@
                   </Label>
                      <ChoiceBox fx:id="timeChoiceBox" />
                   <Region HBox.hgrow="ALWAYS" />
-                  <CheckBox mnemonicParsing="false" text="możliwość przewozu rowerów">
+                  <CheckBox fx:id="roweryCheckBox" mnemonicParsing="false" text="możliwość przewozu rowerów">
                      <HBox.margin>
                         <Insets top="5.0" />
                      </HBox.margin></CheckBox>
@@ -61,11 +61,11 @@
             </HBox>
             <HBox spacing="10.0">
                <children>
-                  <CheckBox mnemonicParsing="false" selected="true" text="pospieszny" />
-                  <CheckBox mnemonicParsing="false" selected="true" text="ekspres" />
-                  <CheckBox mnemonicParsing="false" selected="true" text="pendolino" />
+                  <CheckBox fx:id="pospiesznyCheckBox" mnemonicParsing="false" selected="true" text="pospieszny" />
+                  <CheckBox fx:id="ekspresCheckBox" mnemonicParsing="false" selected="true" text="ekspres" />
+                  <CheckBox fx:id="pendolinoCheckBox" mnemonicParsing="false" selected="true" text="pendolino" />
                   <Region HBox.hgrow="ALWAYS" />
-                  <CheckBox mnemonicParsing="false" text="dostosowany dla osób niepełnosprawnych">
+                  <CheckBox fx:id="niepelnosprawniCheckBox" mnemonicParsing="false" text="dostosowany dla osób niepełnosprawnych">
                      <HBox.margin>
                         <Insets />
                      </HBox.margin>

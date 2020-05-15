@@ -73,7 +73,28 @@ public class QueryDBService {
         return stacje;
     }
 
-    public ArrayList<Kurs> getConnections(String fromStation, String toStation, String day, String time) {
+    public String getTrainType(int idPociagu) {
+        String typ = "";
+
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(
+                "SELECT typ_pociagu FROM pociagi WHERE id_pociagu = " + idPociagu + ";"
+            );
+
+            typ = (resultSet.next()) ? resultSet.getString("typ_pociagu") : "";
+
+            resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return typ;
+    }
+
+    public ArrayList<Kurs> getConnections(String fromStation, String toStation, String day, String time,
+                                          boolean isPospieszny, boolean isEkspres, boolean isPendolino) {
         ArrayList<Kurs> kursy = new ArrayList<>();
 
         try {
@@ -112,7 +133,12 @@ public class QueryDBService {
                 kurs.setIdKursu(resultSet.getInt("id_kursu"));
                 kurs.setIdPociagu(resultSet.getInt("id_pociagu"));
 
-                kursy.add(kurs);
+                String typ = getTrainType(kurs.getIdPociagu());
+                if ((typ.equals("pospieszny") && isPospieszny) ||
+                    (typ.equals("ekspres") && isEkspres) ||
+                    (typ.equals("pendolino") && isPendolino)) {
+                    kursy.add(kurs);
+                }
             }
 
             System.out.println("kursy ready, size " + kursy.size());

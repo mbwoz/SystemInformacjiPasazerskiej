@@ -31,6 +31,16 @@ public class QueryController implements Initializable {
     @FXML
     private ChoiceBox<String> timeChoiceBox;
     @FXML
+    private CheckBox pospiesznyCheckBox;
+    @FXML
+    private CheckBox ekspresCheckBox;
+    @FXML
+    private CheckBox pendolinoCheckBox;
+    @FXML
+    private CheckBox roweryCheckBox;
+    @FXML
+    private CheckBox niepelnosprawniCheckBox;
+    @FXML
     private Button searchConnectionButton;
 
     @FXML
@@ -71,7 +81,10 @@ public class QueryController implements Initializable {
                 fromComboBox.getValue(),
                 toComboBox.getValue(),
                 dayChoiceBox.getValue(),
-                timeChoiceBox.getValue()));
+                timeChoiceBox.getValue(),
+                pospiesznyCheckBox.isSelected(),
+                ekspresCheckBox.isSelected(),
+                pendolinoCheckBox.isSelected()));
 
             if(allMatchingKursy.size() > 0)
                 connectionsListView.setVisible(true);
