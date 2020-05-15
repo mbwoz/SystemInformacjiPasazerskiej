@@ -16,7 +16,7 @@ public class SIPApplication extends Application {
 
         Pane pane = loader.load();
         stage.setTitle("System Informacji Pasażerskiej");
-        stage.setScene(new Scene(pane, 800, 600));
+        stage.setScene(new Scene(pane, 1024, 768));
         stage.setResizable(false);
         stage.show();
 

@@ -3,20 +3,17 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<Pane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml" prefHeight="600.0" prefWidth="800.0"
-      fx:controller="systeminformacjipasazerskiej.controller.MainController">
+<Pane xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="systeminformacjipasazerskiej.controller.MainController">
 
-
-
-    <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE">
+    <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE" prefWidth="1024" prefHeight="768">
         <Tab fx:id="queryTab" text="Query (dla pasażera)">
-            <fx:include source="queryView.fxml"/>
+            <fx:include source="queryView.fxml" />
         </Tab>
         <Tab fx:id="insertTab" text="Insert (dla admina)">
-            <fx:include source="insertView.fxml"/>
+            <fx:include source="insertView.fxml" />
         </Tab>
         <Tab fx:id="deleteTab" text="Delete (dla admina)">
-            <fx:include source="deleteView.fxml"/>
+            <fx:include source="deleteView.fxml" />
         </Tab>
     </TabPane>
 

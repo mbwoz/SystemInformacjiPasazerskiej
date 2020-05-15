@@ -1,21 +1,96 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<ScrollPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="systeminformacjipasazerskiej.controller.QueryController">
+<ScrollPane pannable="true" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="systeminformacjipasazerskiej.controller.QueryController">
 
     <VBox>
-        <Label text="Znajdź połączenie"/>
-        <HBox spacing="10.0">
-            <ComboBox fx:id="fromComboBox" editable="true" />
-            <ComboBox fx:id="toComboBox" editable="true" />
-            <ChoiceBox fx:id="dayChoiceBox" />
-            <ChoiceBox fx:id="timeChoiceBox" />
-            <Button fx:id="searchConnectionButton" text="Szukaj" />
-        </HBox>
+      <VBox>
+         <children>
+              <Label text="Znajdź bezpośrednie połączenie">
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </VBox.margin>
+               <font>
+                  <Font name="System Bold" size="15.0" />
+               </font>
+            </Label>
+              <HBox spacing="10.0">
+               <Label text="Stacja początkowa:">
+                  <HBox.margin>
+                     <Insets top="5.0" />
+                  </HBox.margin>
+               </Label>
+                  <ComboBox fx:id="fromComboBox" editable="true" />
+               <Label text="Stacja końcowa:">
+                  <HBox.margin>
+                     <Insets left="30.0" top="5.0" />
+                  </HBox.margin>
+               </Label>
+                  <ComboBox fx:id="toComboBox" editable="true" />
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </VBox.margin>
+              </HBox>
+            <HBox spacing="10.0">
+               <children>
+                  <Label text="Dzień tygodnia:">
+                     <HBox.margin>
+                        <Insets top="5.0" />
+                     </HBox.margin>
+                  </Label>
+                     <ChoiceBox fx:id="dayChoiceBox" />
+                  <Label text="Odjazd po godzinie:">
+                     <HBox.margin>
+                        <Insets top="5.0" />
+                     </HBox.margin>
+                  </Label>
+                     <ChoiceBox fx:id="timeChoiceBox" />
+                  <Region HBox.hgrow="ALWAYS" />
+                  <CheckBox mnemonicParsing="false" text="możliwość przewozu rowerów">
+                     <HBox.margin>
+                        <Insets top="5.0" />
+                     </HBox.margin></CheckBox>
+               </children>
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox spacing="10.0">
+               <children>
+                  <CheckBox mnemonicParsing="false" selected="true" text="pospieszny" />
+                  <CheckBox mnemonicParsing="false" selected="true" text="ekspres" />
+                  <CheckBox mnemonicParsing="false" selected="true" text="pendolino" />
+                  <Region HBox.hgrow="ALWAYS" />
+                  <CheckBox mnemonicParsing="false" text="dostosowany dla osób niepełnosprawnych">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </CheckBox>
+               </children>
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox spacing="10.0">
+               <children>
+                  <Region HBox.hgrow="ALWAYS" />
+                     <Button fx:id="searchConnectionButton" text="Wyszukaj" />
+               </children>
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </VBox.margin>
+            </HBox>
+         </children>
+      </VBox>
 
-        <ListView fx:id="connectionsListView" />
+        <ListView fx:id="connectionsListView" maxHeight="0" />
+      <padding>
+         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+      </padding>
     </VBox>
 
 </ScrollPane>
