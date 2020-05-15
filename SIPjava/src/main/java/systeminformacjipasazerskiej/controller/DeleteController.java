@@ -9,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import systeminformacjipasazerskiej.db.DeleteDBService;
+import systeminformacjipasazerskiej.db.QueryDBService;
 import systeminformacjipasazerskiej.model.Stacja;
 
 import java.net.URL;
@@ -19,34 +20,34 @@ import java.util.stream.Collectors;
 public class DeleteController implements Initializable {
 
     DeleteDBService ddb;
+    QueryDBService qdb;
 
     @FXML
     private Button deleteStationButton;
     @FXML
-    ComboBox<String> deleteStationBox;
+    private ComboBox<String> deleteStationBox;
 
     @FXML
     private Button deleteTruckButton;
     @FXML
-    ComboBox<String> deleteTruckBox;
+    private ComboBox<String> deleteTruckBox;
 
     @FXML
     private Button deleteTrainButton;
     @FXML
-    ComboBox<String> deleteTrainBox;
+    private ComboBox<String> deleteTrainBox;
 
     @FXML
     private Button deleteRideButton;
     @FXML
-    ComboBox<String> deleteRideFromBox;
+    private ComboBox<String> deleteRideFromBox;
     @FXML
-    ComboBox<String> deleteRideToBox;
+    private ComboBox<String> deleteRideToBox;
 
     private ObservableList<String> allStationsNames = FXCollections.observableArrayList();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
 
         //Delete Station
         deleteStationBox.setItems(allStationsNames);
@@ -62,10 +63,10 @@ public class DeleteController implements Initializable {
                 ddb.deleteStation(deleteStationBox.getValue());
                 allStationsNames.clear();
                 allStationsNames.addAll(
-                        ddb.getAllStations()
-                                .stream()
-                                .map(Stacja::getNazwaStacji)
-                                .collect(Collectors.toList()));
+                    qdb.getAllStations()
+                        .stream()
+                        .map(Stacja::getNazwaStacji)
+                        .collect(Collectors.toList()));
             }
         });
 
@@ -74,12 +75,17 @@ public class DeleteController implements Initializable {
 
     public void setDB(DeleteDBService ddb) {
         this.ddb = ddb;
-        System.out.println("delete db ready");
+    }
+
+    public void setDB(QueryDBService qdb) {
+        this.qdb = qdb;
 
         allStationsNames.addAll(
-                ddb.getAllStations()
-                        .stream()
-                        .map(Stacja::getNazwaStacji)
-                        .collect(Collectors.toList()));
+            qdb.getAllStations()
+                .stream()
+                .map(Stacja::getNazwaStacji)
+                .collect(Collectors.toList()));
+
+        System.out.println("delete db ready");
     }
 }
