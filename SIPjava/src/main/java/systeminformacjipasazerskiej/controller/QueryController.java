@@ -89,13 +89,13 @@ public class QueryController implements Initializable {
 
             try {
                 allMatchingKursy.addAll(qdb.getConnections(
-                        fromComboBox.getValue(),
-                        toComboBox.getValue(),
-                        dayChoiceBox.getValue(),
-                        timeChoiceBox.getValue(),
-                        pospiesznyCheckBox.isSelected(),
-                        ekspresCheckBox.isSelected(),
-                        pendolinoCheckBox.isSelected()));
+                    fromComboBox.getValue(),
+                    toComboBox.getValue(),
+                    dayChoiceBox.getValue(),
+                    timeChoiceBox.getValue(),
+                    pospiesznyCheckBox.isSelected(),
+                    ekspresCheckBox.isSelected(),
+                    pendolinoCheckBox.isSelected()));
 
                 connectionsListView.setVisible(true);
             } catch (QueryDBService.NoSuchStationException nss) {

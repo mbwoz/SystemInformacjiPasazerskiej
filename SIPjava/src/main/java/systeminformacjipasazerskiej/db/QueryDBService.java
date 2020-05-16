@@ -227,6 +227,7 @@ public class QueryDBService {
                 }
 
                 kurs.setListaPostojow(listaPostojow);
+                kurs.calculateCzasPrzejazdu();
 
                 System.out.println("added postoje for kurs " + kurs.getIdKursu());
             }
