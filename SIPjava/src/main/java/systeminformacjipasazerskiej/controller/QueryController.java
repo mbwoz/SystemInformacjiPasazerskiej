@@ -26,6 +26,8 @@ public class QueryController implements Initializable {
     @FXML
     private ComboBox<String> fromComboBox;
     @FXML
+    private Button swapButton;
+    @FXML
     private ComboBox<String> toComboBox;
     @FXML
     private ChoiceBox<String> dayChoiceBox;
@@ -57,6 +59,13 @@ public class QueryController implements Initializable {
         fromComboBox.setPromptText("np. Warszawa Centralna");
         toComboBox.setItems(allStationsNames);
         toComboBox.setPromptText("np. Szczecin Główny");
+
+        swapButton.setOnMouseClicked(event -> {
+            String fromCB = fromComboBox.getValue();
+            String toCB = toComboBox.getValue();
+            fromComboBox.setValue(toCB);
+            toComboBox.setValue(fromCB);
+        });
 
         dayChoiceBox.setItems(FXCollections.observableArrayList(
             Stream.iterate(0, i -> i+1)
