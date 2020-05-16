@@ -1,6 +1,8 @@
 #!/bin/bash
 
-cat createTables.sql > create.sql;
+cat clear.sql > create.sql;
+
+cat createTables.sql >> create.sql;
 
 cat utils/queryFunctions.sql >> create.sql;
 

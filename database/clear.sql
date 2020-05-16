@@ -1,3 +1,12 @@
+
+/*Clear*/
+
+DROP FUNCTION getFirstStation;
+DROP FUNCTION getLastStation;
+DROP FUNCTION getIdTrasyFromTo;
+DROP FUNCTION getDay;
+DROP FUNCTION getStationsBetween;
+
 DROP TABLE IF EXISTS wagony CASCADE;
 DROP TABLE IF EXISTS sklady CASCADE;
 DROP TABLE IF EXISTS sklady_wagony CASCADE;
@@ -8,3 +17,11 @@ DROP TABLE IF EXISTS trasy_odcinki CASCADE;
 DROP TABLE IF EXISTS trasy CASCADE;
 DROP TABLE IF EXISTS stacje CASCADE;
 DROP TABLE IF EXISTS odcinki CASCADE;
+
+DROP SEQUENCE wagony_seq;
+DROP SEQUENCE sklady_seq;
+DROP SEQUENCE rozklady_seq;
+DROP SEQUENCE pociagi_seq;
+DROP SEQUENCE trasy_seq;
+DROP SEQUENCE odcinki_seq;
+DROP SEQUENCE stacje_seq;

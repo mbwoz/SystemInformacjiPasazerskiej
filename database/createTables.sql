@@ -1,16 +1,8 @@
-DROP TABLE IF EXISTS wagony CASCADE;
-DROP TABLE IF EXISTS sklady CASCADE;
-DROP TABLE IF EXISTS sklady_wagony CASCADE;
-DROP TABLE IF EXISTS postoje CASCADE;
-DROP TABLE IF EXISTS rozklady CASCADE;
-DROP TABLE IF EXISTS pociagi CASCADE;
-DROP TABLE IF EXISTS trasy_odcinki CASCADE;
-DROP TABLE IF EXISTS trasy CASCADE;
-DROP TABLE IF EXISTS stacje CASCADE;
-DROP TABLE IF EXISTS odcinki CASCADE;
+
+/*Create tables*/
 
 CREATE TABLE wagony (
-    id_wagonu numeric(6, 0) NOT NULL,
+    id_wagonu integer NOT NULL,
     model_wagonu varchar(15) NOT NULL,
     typ_wagonu varchar(12) CHECK (typ_wagonu = 'sypialny' OR typ_wagonu = 'kuszetka' OR typ_wagonu = 'barowy' OR typ_wagonu = 'osobowy' OR typ_wagonu = 'business') NOT NULL,
     liczba_miejsc_I numeric(3, 0) CHECK (liczba_miejsc_I >= 0) NOT NULL,
@@ -24,49 +16,49 @@ CREATE TABLE wagony (
 );
 
 CREATE TABLE sklady_wagony (
-    id_skladu numeric(6, 0) NOT NULL,
-    id_wagonu numeric(6, 0) NOT NULL,
+    id_skladu integer NOT NULL,
+    id_wagonu integer NOT NULL,
     liczba_wagonow numeric(2, 0) CHECK (liczba_wagonow > 0) NOT NULL
 );
 
 CREATE TABLE sklady (
-    id_skladu numeric(6, 0) NOT NULL,
+    id_skladu integer NOT NULL,
     czy_przesylki char(1) CHECK (czy_przesylki= 'T' OR czy_przesylki = 'N') NOT NULL
 );
 
 CREATE TABLE postoje (
-    id_kursu numeric(6, 0) NOT NULL,
-    id_stacji numeric(6, 0) NOT NULL,
+    id_kursu integer NOT NULL,
+    id_stacji integer NOT NULL,
     przyjazd time NOT NULL,
     odjazd time NOT NULL,
-    nastepny_sklad numeric(6, 0)
+    nastepny_sklad integer NOT NULL
 );
 
 CREATE TABLE rozklady (
-    id_kursu numeric(6, 0) NOT NULL,
-    id_pociagu numeric(6, 0) NOT NULL,
+    id_kursu integer NOT NULL,
+    id_pociagu integer NOT NULL,
     dzien_tygodnia numeric(1, 0) CHECK (dzien_tygodnia >= 0 AND dzien_tygodnia < 7) NOT NULL
 );
 
 CREATE TABLE pociagi (
-    id_pociagu numeric(6, 0) NOT NULL,
-    id_trasy numeric(6, 0) NOT NULL,
-    nazwa_pociagu varchar(100),
-    typ_pociagu varchar(10) CHECK (typ_pociagu = 'pospieszny' OR typ_pociagu = 'ekspres' OR typ_pociagu = 'pendolino')
+    id_pociagu integer NOT NULL,
+    id_trasy integer NOT NULL,
+    nazwa_pociagu varchar(100) NOT NULL,
+    typ_pociagu varchar(10) CHECK (typ_pociagu = 'pospieszny' OR typ_pociagu = 'ekspres' OR typ_pociagu = 'pendolino') NOT NULL
 );
 
 CREATE TABLE trasy (
-    id_trasy numeric(6, 0) NOT NULL,
-    czy_przyspieszona char(1) CHECK (czy_przyspieszona = 'T' OR czy_przyspieszona = 'N')
+    id_trasy integer NOT NULL,
+    czy_przyspieszona char(1) CHECK (czy_przyspieszona = 'T' OR czy_przyspieszona = 'N') NOT NULL
 );
 
 CREATE TABLE trasy_odcinki (
-    id_trasy numeric(6, 0) NOT NULL,
-    id_odcinka numeric(6, 0) NOT NULL
+    id_trasy integer NOT NULL,
+    id_odcinka integer NOT NULL
 );
 
 CREATE TABLE stacje (
-    id_stacji numeric(6, 0) NOT NULL,
+    id_stacji integer NOT NULL,
     nazwa_stacji varchar(100) NOT NULL,
     liczba_torow numeric(2, 0) CHECK (liczba_torow > 0) NOT NULL,
     liczba_peronow numeric(2, 0) CHECK (liczba_peronow > 0) NOT NULL,
@@ -74,10 +66,24 @@ CREATE TABLE stacje (
 );
 
 CREATE TABLE odcinki (
-    id_odcinka numeric(6, 0) NOT NULL,
-    stacja_poczatkowa numeric(6, 0) NOT NULL,
-    stacja_koncowa numeric(6, 0) NOT NULL
+    id_odcinka integer NOT NULL,
+    stacja_poczatkowa integer NOT NULL,
+    stacja_koncowa integer NOT NULL
 );
+
+/*Create sequences for id*/
+
+CREATE SEQUENCE wagony_seq;
+CREATE SEQUENCE sklady_seq;
+CREATE SEQUENCE rozklady_seq;
+CREATE SEQUENCE pociagi_seq;
+CREATE SEQUENCE trasy_seq;
+CREATE SEQUENCE odcinki_seq;
+CREATE SEQUENCE stacje_seq;
+
+
+
+
 
 /*Set primary keys*/
 

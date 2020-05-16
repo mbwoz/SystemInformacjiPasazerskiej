@@ -15,14 +15,14 @@ def createHeader(fpostoje, fstacje, fodcinki, ftrasyodcinki, ftrasy, fpociagi, f
 def addStacje(stacje, stacjeCollection):
     for s in stacje:
         if not s in stacjeCollection:
-            stacjeCollection[s] = len(stacjeCollection)
+            stacjeCollection[s] = len(stacjeCollection) + 1
 
 
 def addOdcinki(stacje, odcinkiCollection, stacjeCollection):
     for i in range(0, len(stacje)-1):
         odcinek = (stacjeCollection[stacje[i]], stacjeCollection[stacje[i+1]])
         if not odcinek in odcinkiCollection:
-            odcinkiCollection[odcinek] = len(odcinkiCollection)
+            odcinkiCollection[odcinek] = len(odcinkiCollection) + 1
 
 
 def createTrasy(ftrasy, id_trasy):
