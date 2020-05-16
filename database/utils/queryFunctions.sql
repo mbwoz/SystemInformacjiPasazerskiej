@@ -123,11 +123,36 @@ BEGIN
     stacja = 
         (SELECT getFirstStation(idTrasy));
         
-    lastStop := '00:00:00'::time;
+    IF stacja = idStacji THEN
+        RETURN dzienTygodnia;
+    END IF;
+        
+    lastStop = 
+        (SELECT pos.odjazd 
+        FROM postoje pos 
+        WHERE pos.id_kursu = idKursu AND pos.id_stacji = stacja);
+        
+    stacja := 
+        (SELECT od.stacja_koncowa
+        FROM trasy_odcinki trod
+            INNER JOIN odcinki od ON trod.id_odcinka = od.id_odcinka
+        WHERE trod.id_trasy = idTrasy AND
+            stacja = od.stacja_poczatkowa);
     
     WHILE stacja IS NOT NULL LOOP
         nextStop :=
-            (SELECT pos.odjazd 
+            (SELECT pos.przyjazd 
+            FROM postoje pos 
+            WHERE pos.id_kursu = idKursu AND pos.id_stacji = stacja);
+    
+        IF lastStop >= nextStop THEN
+            dzienTygodnia := (dzienTygodnia + 1) % 7;
+        END IF;
+        
+        lastStop := nextStop;
+        
+        nextStop :=
+            (SELECT pos.odjazd
             FROM postoje pos 
             WHERE pos.id_kursu = idKursu AND pos.id_stacji = stacja);
     
@@ -135,9 +160,9 @@ BEGIN
             dzienTygodnia := (dzienTygodnia + 1) % 7;
         END IF;
         
-        EXIT WHEN stacja = idStacji;
+        lastStop := nextStop;
         
-        lastStop := nextStop;            
+        EXIT WHEN stacja = idStacji;
     
         stacja := 
             (SELECT od.stacja_koncowa
