@@ -10,14 +10,16 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
-import javafx.scene.text.Font;
 import systeminformacjipasazerskiej.converter.DayConverter;
 import systeminformacjipasazerskiej.db.DeleteDBService;
 import systeminformacjipasazerskiej.db.QueryDBService;
 import systeminformacjipasazerskiej.model.Kurs;
+import systeminformacjipasazerskiej.model.Pociag;
+import systeminformacjipasazerskiej.model.Postoj;
 import systeminformacjipasazerskiej.model.Stacja;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
@@ -80,8 +82,31 @@ public class DeleteController implements Initializable {
             setGraphic(null);
 
             if (item != null && !empty) {
-                label.setText("ID kursu: " + item.getIdKursu() + "  ID pociągu: " + item.getIdPociagu());
-                label.setFont(new Font(16));
+
+                ArrayList<Postoj> list = item.getListaPostojow();
+
+                String through = "";
+
+                Pociag pociag = qdb.getPociagById(item.getIdPociagu());
+                int id_trasy = pociag.getIdTrasy();
+                Stacja first = qdb.getStationById(qdb.getFirstStationFromTrasa(id_trasy));
+                Postoj firstPostoj = qdb.getPostojByIds(item.getIdKursu(), first.getIdStacji());
+                Stacja last = qdb.getStationById(qdb.getLastStationFromTrasa(id_trasy));
+                Postoj lastPostoj = qdb.getPostojByIds(item.getIdKursu(), last.getIdStacji());
+
+                if(!list.get(0).getNazwaStacji().equals(firstPostoj.getNazwaStacji())) {
+                    through += " Przez: ";
+                    through += list.get(0).getNazwaStacji();
+                }
+                if(!list.get(list.size() - 1).getNazwaStacji().equals(lastPostoj.getNazwaStacji())) {
+                    if (through.equals("")) through += " Przez: ";
+                    else through += ", ";
+                    through += list.get(list.size() - 1).getNazwaStacji();
+                }
+                label.setText("Z: " + first.getNazwaStacji() + "(" +
+                        firstPostoj.getOdjazd()+")   " + through + "    Do: " +  last.getNazwaStacji() +
+                        "(" + lastPostoj.getPrzyjazd() + ")" +
+                        "  Pociąg: " + pociag.getNazwaPociagu());
                 setGraphic(hbox);
             }
         }
@@ -136,7 +161,6 @@ public class DeleteController implements Initializable {
         dayRideBox.getSelectionModel().select(0);
 
         deleteRideButton.setOnMouseClicked(event -> {
-            System.out.println("lol");
             rideList.setVisible(false);
             allMatchingKursy.clear();
 

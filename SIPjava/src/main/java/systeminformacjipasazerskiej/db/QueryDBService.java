@@ -1,8 +1,8 @@
 package systeminformacjipasazerskiej.db;
 
-import jdk.jshell.spi.ExecutionControlProvider;
 import systeminformacjipasazerskiej.converter.DayConverter;
 import systeminformacjipasazerskiej.model.Kurs;
+import systeminformacjipasazerskiej.model.Pociag;
 import systeminformacjipasazerskiej.model.Postoj;
 import systeminformacjipasazerskiej.model.Stacja;
 
@@ -44,6 +44,58 @@ public class QueryDBService {
 
         return stacja;
     }
+
+    public Pociag getPociagById(int idPociagu) {
+        Pociag pociag = new Pociag();
+
+        try {
+            System.out.println("Searching for trains");
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(
+                    "SELECT * FROM pociagi WHERE id_pociagu = " + idPociagu + ";"
+            );
+
+            if(resultSet.next()) {
+                pociag.setIdPociagu(resultSet.getInt("id_pociagu"));
+                pociag.setIdTrasy(resultSet.getInt("id_trasy"));
+                pociag.setNazwaPociagu(resultSet.getString("nazwa_pociagu"));
+                pociag.setTypPociagu(resultSet.getString("typ_pociagu"));
+            }
+
+            resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return pociag;
+    }
+
+    public Postoj getPostojByIds(int idKursu, int idStacji) {
+        Postoj postoj = new Postoj();
+
+        try {
+            System.out.println("Searching for postoje");
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(
+                    "SELECT * FROM postoje WHERE id_kursu = " + idKursu + "AND id_stacji = " + idStacji + ";"
+            );
+
+            if(resultSet.next()) {
+                postoj.setIdKursu(resultSet.getInt("id_kursu"));
+                postoj.setStacja(getStationById(resultSet.getInt("id_stacji")));
+                postoj.setNastepnySklad(resultSet.getInt("nastepny_sklad"));
+                postoj.setOdjazd(resultSet.getString("odjazd"));
+                postoj.setPrzyjazd(resultSet.getString("przyjazd"));
+            }
+
+            resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return postoj;
+    }
+
 
     public ArrayList<Stacja> getAllStations() {
         ArrayList<Stacja> stacje = new ArrayList<>();
@@ -186,6 +238,38 @@ public class QueryDBService {
         }
 
         return kursy;
+    }
+
+
+
+    public int getFirstStationFromTrasa(int id_trasy) {
+        int id_stacji = 0;
+        try{
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM getFirstStation("+id_trasy+");");
+            if(resultSet.next()) {
+                id_stacji = resultSet.getInt(1);
+            }
+            resultSet.close();
+            statement.close();
+        }
+        catch (SQLException e) { e.printStackTrace(); }
+        return id_stacji;
+    }
+
+    public int getLastStationFromTrasa(int id_trasy) {
+        int id_stacji = 0;
+        try{
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM getLastStation("+id_trasy+");");
+            if(resultSet.next()) {
+                id_stacji = resultSet.getInt(1);
+            }
+            resultSet.close();
+            statement.close();
+        }
+        catch (SQLException e) { e.printStackTrace(); }
+        return id_stacji;
     }
 
     public class NoSuchStationException extends Exception {}
