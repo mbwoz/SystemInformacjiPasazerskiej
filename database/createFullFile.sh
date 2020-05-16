@@ -4,6 +4,7 @@ cat clear.sql > create.sql;
 
 cat createTables.sql >> create.sql;
 
+cat utils/sequenceTriggers.sql >> create.sql;
 cat utils/queryFunctions.sql >> create.sql;
 
 cat rozklad/header.in >> create.sql;

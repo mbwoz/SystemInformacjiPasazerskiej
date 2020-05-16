@@ -71,20 +71,6 @@ CREATE TABLE odcinki (
     stacja_koncowa integer NOT NULL
 );
 
-/*Create sequences for id*/
-
-CREATE SEQUENCE wagony_seq;
-CREATE SEQUENCE sklady_seq;
-CREATE SEQUENCE rozklady_seq;
-CREATE SEQUENCE pociagi_seq;
-CREATE SEQUENCE trasy_seq;
-CREATE SEQUENCE odcinki_seq;
-CREATE SEQUENCE stacje_seq;
-
-
-
-
-
 /*Set primary keys*/
 
 ALTER TABLE ONLY wagony

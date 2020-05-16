@@ -1,12 +1,47 @@
 
 /*Clear*/
 
+--id
+DROP TRIGGER independentIdWagonu ON wagony;
+DROP FUNCTION setIndependentIdWagonu;
+DROP TRIGGER independentIdSkladu ON sklady;
+DROP FUNCTION setIndependentIdSkladu;
+DROP TRIGGER independentIdKursu ON rozklady;
+DROP FUNCTION setIndependentIdKursu;
+DROP TRIGGER independentIdPociagu ON pociagi;
+DROP FUNCTION setIndependentIdPociagu;
+DROP TRIGGER independentIdTrasy ON trasy;
+DROP FUNCTION setIndependentIdTrasy;
+DROP TRIGGER independentIdOdcinka ON odcinki;
+DROP FUNCTION setIndependentIdOdcinka;
+DROP TRIGGER independentIdStacji ON stacje;
+DROP FUNCTION setIndependentIdStacji;
+
+DROP TRIGGER noIdWagonuUpdate ON wagony;
+DROP FUNCTION disableIdWagonuUpdate;
+DROP TRIGGER noIdSkladuUpdate ON sklady;
+DROP FUNCTION disableIdSkladuUpdate;
+DROP TRIGGER noIdKursuUpdate ON rozklady;
+DROP FUNCTION disableIdKursuUpdate;
+DROP TRIGGER noIdPociaguUpdate ON pociagi;
+DROP FUNCTION disableIdPociaguUpdate;
+DROP TRIGGER noIdTrasyUpdate ON trasy;
+DROP FUNCTION disableIdTrasyUpdate;
+DROP TRIGGER noIdOdcinkaUpdate ON odcinki;
+DROP FUNCTION disableIdOdcinkaUpdate;
+DROP TRIGGER noIdStacjiUpdate ON stacje;
+DROP FUNCTION disableIdStacjiUpdate;
+
+
+--utils
 DROP FUNCTION getFirstStation;
 DROP FUNCTION getLastStation;
 DROP FUNCTION getIdTrasyFromTo;
 DROP FUNCTION getDay;
 DROP FUNCTION getStationsBetween;
 
+
+--tables
 DROP TABLE IF EXISTS wagony CASCADE;
 DROP TABLE IF EXISTS sklady CASCADE;
 DROP TABLE IF EXISTS sklady_wagony CASCADE;
