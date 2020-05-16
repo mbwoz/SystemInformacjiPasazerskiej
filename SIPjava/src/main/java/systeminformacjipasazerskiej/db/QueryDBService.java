@@ -52,7 +52,7 @@ public class QueryDBService {
             System.out.println("Searching for trains");
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(
-                    "SELECT * FROM pociagi WHERE id_pociagu = " + idPociagu + ";"
+                "SELECT * FROM pociagi WHERE id_pociagu = " + idPociagu + ";"
             );
 
             if(resultSet.next()) {
@@ -67,6 +67,7 @@ public class QueryDBService {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return pociag;
     }
 
@@ -77,7 +78,7 @@ public class QueryDBService {
             System.out.println("Searching for postoje");
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(
-                    "SELECT * FROM postoje WHERE id_kursu = " + idKursu + "AND id_stacji = " + idStacji + ";"
+                "SELECT * FROM postoje WHERE id_kursu = " + idKursu + "AND id_stacji = " + idStacji + ";"
             );
 
             if(resultSet.next()) {
@@ -93,6 +94,7 @@ public class QueryDBService {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return postoj;
     }
 
@@ -124,26 +126,6 @@ public class QueryDBService {
         }
 
         return stacje;
-    }
-
-    public String getTrainType(int idPociagu) {
-        String typ = "";
-
-        try {
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(
-                "SELECT typ_pociagu FROM pociagi WHERE id_pociagu = " + idPociagu + ";"
-            );
-
-            typ = (resultSet.next()) ? resultSet.getString("typ_pociagu") : "";
-
-            resultSet.close();
-            statement.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return typ;
     }
 
     public ArrayList<Kurs> getConnections(String fromStation, String toStation, String day, String time,
@@ -190,7 +172,7 @@ public class QueryDBService {
                 kurs.setIdKursu(resultSet.getInt("id_kursu"));
                 kurs.setIdPociagu(resultSet.getInt("id_pociagu"));
 
-                String typ = getTrainType(kurs.getIdPociagu());
+                String typ = getPociagById(kurs.getIdPociagu()).getTypPociagu();
                 if ((typ.equals("pospieszny") && isPospieszny) ||
                     (typ.equals("ekspres") && isEkspres) ||
                     (typ.equals("pendolino") && isPendolino)) {
@@ -242,34 +224,45 @@ public class QueryDBService {
     }
 
 
-
     public int getFirstStationFromTrasa(int id_trasy) {
         int id_stacji = 0;
-        try{
+
+        try {
             Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM getFirstStation("+id_trasy+");");
-            if(resultSet.next()) {
+            ResultSet resultSet = statement.executeQuery(
+                "SELECT * FROM getFirstStation("+id_trasy+");"
+            );
+            if(resultSet.next())
                 id_stacji = resultSet.getInt(1);
-            }
+
             resultSet.close();
             statement.close();
         }
-        catch (SQLException e) { e.printStackTrace(); }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         return id_stacji;
     }
 
     public int getLastStationFromTrasa(int id_trasy) {
         int id_stacji = 0;
+
         try{
             Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM getLastStation("+id_trasy+");");
-            if(resultSet.next()) {
+            ResultSet resultSet = statement.executeQuery(
+                "SELECT * FROM getLastStation("+id_trasy+");"
+            );
+            if(resultSet.next())
                 id_stacji = resultSet.getInt(1);
-            }
+
             resultSet.close();
             statement.close();
         }
-        catch (SQLException e) { e.printStackTrace(); }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         return id_stacji;
     }
 

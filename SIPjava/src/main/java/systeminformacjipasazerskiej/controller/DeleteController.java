@@ -153,10 +153,10 @@ public class DeleteController implements Initializable {
         deleteRideToBox.setPromptText("np. Wrocław Główny");
 
         dayRideBox.setItems(FXCollections.observableArrayList(
-                Stream.iterate(0, i -> i+1)
-                        .limit(7)
-                        .map(DayConverter::convertDay)
-                        .collect(Collectors.toList())
+            Stream.iterate(0, i -> i+1)
+                .limit(7)
+                .map(DayConverter::convertDay)
+                .collect(Collectors.toList())
         ));
         dayRideBox.getSelectionModel().select(0);
 
@@ -166,10 +166,10 @@ public class DeleteController implements Initializable {
 
             try {
                 allMatchingKursy.addAll(qdb.getConnections(
-                        deleteRideFromBox.getValue(),
-                        deleteRideToBox.getValue(),
-                        dayRideBox.getValue(),
-                        "00:00", true, true, true)); //TODO: don`t care if pospieszny/ekspres/pend
+                    deleteRideFromBox.getValue(),
+                    deleteRideToBox.getValue(),
+                    dayRideBox.getValue(),
+                    "00:00", true, true, true));
 
                 rideList.setVisible(true);
             } catch (QueryDBService.NoSuchStationException nss) {
@@ -187,10 +187,8 @@ public class DeleteController implements Initializable {
         rideList.setVisible(false);
         rideList.setCellFactory(param -> new RideCell());
         allMatchingKursy.addListener((ListChangeListener<Kurs>) change ->
-                rideList.setMaxHeight(allMatchingKursy.size() * 35 + 2)
+            rideList.setMaxHeight(allMatchingKursy.size() * 34 + 2)
         );
-
-
 
     }
 
