@@ -3,6 +3,60 @@
 functions for queries on db
 */
 
+
+CREATE OR REPLACE FUNCTION getFirstStation(
+    idTrasy trasy.id_trasy%TYPE
+) RETURNS stacje.id_stacji%TYPE AS
+$$
+DECLARE
+    idStacji stacje.id_stacji%TYPE;
+BEGIN
+    idStacji :=
+        (WITH trasy_stacje AS (
+            SELECT od.stacja_poczatkowa, od.stacja_koncowa
+            FROM trasy_odcinki trod
+                INNER JOIN odcinki od ON trod.id_odcinka = od.id_odcinka
+            WHERE trod.id_trasy = idTrasy
+        )
+        SELECT ts.stacja_poczatkowa
+        FROM trasy_stacje ts
+        WHERE ts.stacja_poczatkowa NOT IN 
+            (SELECT t.stacja_koncowa FROM trasy_stacje t));
+            
+    RETURN idStacji;
+END;
+$$
+LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION getLastStation(
+    idTrasy trasy.id_trasy%TYPE
+) RETURNS stacje.id_stacji%TYPE AS
+$$
+DECLARE
+    idStacji stacje.id_stacji%TYPE;
+BEGIN
+    idStacji :=
+        (WITH trasy_stacje AS (
+            SELECT od.stacja_poczatkowa, od.stacja_koncowa
+            FROM trasy_odcinki trod
+                INNER JOIN odcinki od ON trod.id_odcinka = od.id_odcinka
+            WHERE trod.id_trasy = idTrasy
+        )
+        SELECT ts.stacja_koncowa
+        FROM trasy_stacje ts
+        WHERE ts.stacja_koncowa NOT IN 
+            (SELECT t.stacja_poczatkowa FROM trasy_stacje t));
+            
+    RETURN idStacji;
+END;
+$$
+LANGUAGE plpgsql;
+
+
+----
+
+
 CREATE OR REPLACE FUNCTION getIdTrasyFromTo(
     fromStationId odcinki.stacja_poczatkowa%TYPE,
     toStationId odcinki.stacja_koncowa%TYPE
@@ -67,17 +121,7 @@ BEGIN
         WHERE ro.id_kursu = idKursu);
     
     stacja = 
-        (SELECT ts.stacja_poczatkowa
-        FROM
-            (SELECT od.stacja_poczatkowa, od.stacja_koncowa
-            FROM trasy_odcinki trod
-                INNER JOIN odcinki od ON trod.id_odcinka = od.id_odcinka
-            WHERE trod.id_trasy = idTrasy) AS ts
-        WHERE ts.stacja_poczatkowa NOT IN 
-            (SELECT od.stacja_koncowa
-            FROM trasy_odcinki trod
-                INNER JOIN odcinki od ON trod.id_odcinka = od.id_odcinka
-            WHERE trod.id_trasy = idTrasy));
+        (SELECT getFirstStation(idTrasy));
         
     lastStop := '00:00:00'::time;
     
