@@ -1,5 +1,6 @@
 package systeminformacjipasazerskiej.db;
 
+import jdk.jshell.spi.ExecutionControlProvider;
 import systeminformacjipasazerskiej.converter.DayConverter;
 import systeminformacjipasazerskiej.model.Kurs;
 import systeminformacjipasazerskiej.model.Postoj;
@@ -94,7 +95,8 @@ public class QueryDBService {
     }
 
     public ArrayList<Kurs> getConnections(String fromStation, String toStation, String day, String time,
-                                          boolean isPospieszny, boolean isEkspres, boolean isPendolino) {
+                                          boolean isPospieszny, boolean isEkspres, boolean isPendolino)
+            throws NoSuchStationException, NoMatchingKursyException {
         ArrayList<Kurs> kursy = new ArrayList<>();
 
         try {
@@ -108,6 +110,9 @@ public class QueryDBService {
                 "SELECT id_stacji FROM stacje WHERE nazwa_stacji = '" + toStation + "';"
             );
             int toStationId = resultSet.next() ? resultSet.getInt("id_stacji") : -1;
+
+            if(fromStationId == -1 || toStationId == -1)
+                throw new NoSuchStationException();
 
             System.out.println("id_stacji ready " + fromStationId + " " + toStationId);
             System.out.println(day + " " + DayConverter.convertDay(day));
@@ -142,6 +147,9 @@ public class QueryDBService {
             }
 
             System.out.println("kursy ready, size " + kursy.size());
+
+            if(kursy.isEmpty())
+                throw new NoMatchingKursyException();
 
             for(Kurs kurs : kursy) {
                 resultSet = statement.executeQuery(
@@ -180,4 +188,8 @@ public class QueryDBService {
         return kursy;
     }
 
+    public class NoSuchStationException extends Exception {}
+
+    public class NoMatchingKursyException extends Exception {}
 }
+

@@ -136,18 +136,27 @@ public class DeleteController implements Initializable {
         dayRideBox.getSelectionModel().select(0);
 
         deleteRideButton.setOnMouseClicked(event -> {
-                System.out.println("lol");
-                rideList.setVisible(false);
-                allMatchingKursy.clear();
+            System.out.println("lol");
+            rideList.setVisible(false);
+            allMatchingKursy.clear();
 
+            try {
                 allMatchingKursy.addAll(qdb.getConnections(
                         deleteRideFromBox.getValue(),
                         deleteRideToBox.getValue(),
                         dayRideBox.getValue(),
                         "00:00", true, true, true)); //TODO: don`t care if pospieszny/ekspres/pend
 
-                if(allMatchingKursy.size() > 0)
-                    rideList.setVisible(true);
+                rideList.setVisible(true);
+            } catch (QueryDBService.NoSuchStationException nss) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Nie znaleziono podanej stacji.");
+                alert.showAndWait();
+            } catch (QueryDBService.NoMatchingKursyException nmk) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Nie znaleziono pasujących połączeń.");
+                alert.showAndWait();
+            }
         });
         rideList.setItems(allMatchingKursy);
         rideList.setCursor(Cursor.HAND);

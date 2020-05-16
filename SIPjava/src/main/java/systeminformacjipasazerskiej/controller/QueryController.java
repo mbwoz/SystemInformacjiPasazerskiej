@@ -9,6 +9,7 @@ import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import systeminformacjipasazerskiej.converter.DayConverter;
+
 import systeminformacjipasazerskiej.db.QueryDBService;
 import systeminformacjipasazerskiej.model.Kurs;
 import systeminformacjipasazerskiej.model.Postoj;
@@ -75,19 +76,28 @@ public class QueryController implements Initializable {
 
         searchConnectionButton.setOnMouseClicked(event -> {
             connectionsListView.setVisible(false);
-
             allMatchingKursy.clear();
-            allMatchingKursy.addAll(qdb.getConnections(
-                fromComboBox.getValue(),
-                toComboBox.getValue(),
-                dayChoiceBox.getValue(),
-                timeChoiceBox.getValue(),
-                pospiesznyCheckBox.isSelected(),
-                ekspresCheckBox.isSelected(),
-                pendolinoCheckBox.isSelected()));
 
-            if(allMatchingKursy.size() > 0)
+            try {
+                allMatchingKursy.addAll(qdb.getConnections(
+                        fromComboBox.getValue(),
+                        toComboBox.getValue(),
+                        dayChoiceBox.getValue(),
+                        timeChoiceBox.getValue(),
+                        pospiesznyCheckBox.isSelected(),
+                        ekspresCheckBox.isSelected(),
+                        pendolinoCheckBox.isSelected()));
+
                 connectionsListView.setVisible(true);
+            } catch (QueryDBService.NoSuchStationException nss) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Nie znaleziono podanej stacji.");
+                alert.showAndWait();
+            } catch (QueryDBService.NoMatchingKursyException nmk) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Nie znaleziono pasujących połączeń.");
+                alert.showAndWait();
+            }
 
             System.out.println("db call END\nprint postoje dla kursow");
             allMatchingKursy.forEach(p -> System.out.println(p.getListaPostojow().toString()));
