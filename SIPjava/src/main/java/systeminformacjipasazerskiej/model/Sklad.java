@@ -49,4 +49,12 @@ public class Sklad {
         this.liczbaWagonow = liczbaWagonow;
     }
 
+    public int getLiczbaMiejscDlaRowerow() {
+        int liczbaRowerow = 0;
+        for(int i = 0; i < listaWagonow.size(); i++)
+            liczbaRowerow += listaWagonow.get(i).getRowery() * liczbaWagonow.get(i);
+
+        return liczbaRowerow;
+    }
+
 }

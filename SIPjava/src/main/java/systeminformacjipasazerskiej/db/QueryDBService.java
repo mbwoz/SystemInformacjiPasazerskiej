@@ -246,7 +246,8 @@ public class QueryDBService {
     }
 
     public ArrayList<Kurs> getConnections(String fromStation, String toStation, String day, String time,
-                                          boolean isPospieszny, boolean isEkspres, boolean isPendolino)
+                                          boolean isPospieszny, boolean isEkspres, boolean isPendolino,
+                                          boolean isRower)
             throws NoSuchStationException, NoMatchingKursyException {
         ArrayList<Kurs> kursy = new ArrayList<>();
 
@@ -332,8 +333,13 @@ public class QueryDBService {
             resultSet.close();
             statement.close();
 
+            if(isRower)
+                kursy.removeIf(k -> k.getSkladKursu().getLiczbaMiejscDlaRowerow() == 0);
+
             if(kursy.isEmpty())
                 throw new NoMatchingKursyException();
+
+            System.out.println("final kursy size " + kursy.size());
         } catch (SQLException e) {
             e.printStackTrace();
         }
