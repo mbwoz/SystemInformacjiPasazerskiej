@@ -1,10 +1,8 @@
 package systeminformacjipasazerskiej.db;
 
+import systeminformacjipasazerskiej.converter.BoolConverter;
 import systeminformacjipasazerskiej.converter.DayConverter;
-import systeminformacjipasazerskiej.model.Kurs;
-import systeminformacjipasazerskiej.model.Pociag;
-import systeminformacjipasazerskiej.model.Postoj;
-import systeminformacjipasazerskiej.model.Stacja;
+import systeminformacjipasazerskiej.model.*;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -19,7 +17,76 @@ public class QueryDBService {
         this.connection = connection;
     }
 
-    public Stacja getStationById(int idStacji) {
+    public Wagon getWagonById(int idWagonu) {
+        Wagon wagon = new Wagon();
+
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(
+                "SELECT * FROM wagony WHERE id_wagonu = " + idWagonu + ";"
+            );
+
+            if(resultSet.next()) {
+                wagon.setIdWagonu(resultSet.getInt("id_wagonu"));
+                wagon.setModel(resultSet.getString("model_wagonu"));
+                wagon.setTyp(resultSet.getString("typ_wagonu"));
+                wagon.setMiejscaI(resultSet.getInt("liczba_miejsc_I"));
+                wagon.setMiejscaII(resultSet.getInt("liczba_miejsc_II"));
+                wagon.setRowery(resultSet.getInt("liczba_rowerow"));
+                wagon.setCzyPrzedzialowy(BoolConverter.convertBool(resultSet.getString("czy_przedzialowy")));
+                wagon.setCzyKlimatyzacja(BoolConverter.convertBool(resultSet.getString("czy_klimatyzacja")));
+                wagon.setCzyWifi(BoolConverter.convertBool(resultSet.getString("czy_wifi")));
+                wagon.setCzyNiepelnosprawni(BoolConverter.convertBool(resultSet.getString("czy_niepelnosprawni")));
+                wagon.setDlugosc(resultSet.getDouble("dlugosc_wagonu"));
+            }
+
+            resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return wagon;
+    }
+
+    public Sklad getSkladById(int idSkladu) {
+        Sklad sklad = new Sklad();
+
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(
+                "SELECT * FROM sklady WHERE id_skladu = " + idSkladu + ";"
+            );
+
+            if(resultSet.next()) {
+                sklad.setIdSkladu(resultSet.getInt("id_skladu"));
+                sklad.setCzyPrzesylki(BoolConverter.convertBool(resultSet.getString("czy_przesylki")));
+            }
+
+            resultSet = statement.executeQuery(
+                "SELECT * FROM sklady_wagony WHERE id_skladu = " + idSkladu + ";"
+            );
+
+            ArrayList<Wagon> listaWagonow = new ArrayList<>();
+            ArrayList<Integer> liczbaWagonow = new ArrayList<>();
+            while(resultSet.next()) {
+                listaWagonow.add(getWagonById(resultSet.getInt("id_wagonu")));
+                liczbaWagonow.add(resultSet.getInt("liczba_wagonow"));
+            }
+
+            sklad.setListaWagonow(listaWagonow);
+            sklad.setLiczbaWagonow(liczbaWagonow);
+
+            resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return sklad;
+    }
+
+    public Stacja getStacjaById(int idStacji) {
         Stacja stacja = new Stacja();
 
         try {
@@ -83,7 +150,7 @@ public class QueryDBService {
 
             if(resultSet.next()) {
                 postoj.setIdKursu(resultSet.getInt("id_kursu"));
-                postoj.setStacja(getStationById(resultSet.getInt("id_stacji")));
+                postoj.setStacja(getStacjaById(resultSet.getInt("id_stacji")));
                 postoj.setNastepnySklad(resultSet.getInt("nastepny_sklad"));
                 postoj.setOdjazd(resultSet.getString("odjazd"));
                 postoj.setPrzyjazd(resultSet.getString("przyjazd"));
@@ -200,7 +267,7 @@ public class QueryDBService {
                 while(resultSet.next()) {
                     Postoj postoj = new Postoj();
                     postoj.setIdKursu(resultSet.getInt("id_kursu"));
-                    postoj.setStacja(getStationById(resultSet.getInt("id_stacji")));
+                    postoj.setStacja(getStacjaById(resultSet.getInt("id_stacji")));
                     postoj.setPrzyjazd(resultSet.getString("przyjazd"));
                     postoj.setOdjazd(resultSet.getString("odjazd"));
                     postoj.setNastepnySklad(resultSet.getInt("nastepny_sklad"));

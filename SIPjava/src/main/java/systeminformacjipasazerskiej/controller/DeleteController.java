@@ -89,9 +89,9 @@ public class DeleteController implements Initializable {
 
                 Pociag pociag = qdb.getPociagById(item.getIdPociagu());
                 int id_trasy = pociag.getIdTrasy();
-                Stacja first = qdb.getStationById(qdb.getFirstStationFromTrasa(id_trasy));
+                Stacja first = qdb.getStacjaById(qdb.getFirstStationFromTrasa(id_trasy));
                 Postoj firstPostoj = qdb.getPostojByIds(item.getIdKursu(), first.getIdStacji());
-                Stacja last = qdb.getStationById(qdb.getLastStationFromTrasa(id_trasy));
+                Stacja last = qdb.getStacjaById(qdb.getLastStationFromTrasa(id_trasy));
                 Postoj lastPostoj = qdb.getPostojByIds(item.getIdKursu(), last.getIdStacji());
 
                 if(!list.get(0).getNazwaStacji().equals(firstPostoj.getNazwaStacji())) {
