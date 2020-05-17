@@ -4,10 +4,7 @@ import systeminformacjipasazerskiej.converter.BoolConverter;
 import systeminformacjipasazerskiej.converter.DayConverter;
 import systeminformacjipasazerskiej.model.*;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class QueryDBService {
@@ -68,13 +65,17 @@ public class QueryDBService {
             );
 
             ArrayList<Wagon> listaWagonow = new ArrayList<>();
+            ArrayList<Integer> idWagonow = new ArrayList<>();
             ArrayList<Integer> liczbaWagonow = new ArrayList<>();
             while(resultSet.next()) {
-                listaWagonow.add(getWagonById(resultSet.getInt("id_wagonu")));
+                int idWagonu = resultSet.getInt("id_wagonu");
+                idWagonow.add(idWagonu);
+                listaWagonow.add(getWagonById(idWagonu));
                 liczbaWagonow.add(resultSet.getInt("liczba_wagonow"));
             }
 
             sklad.setListaWagonow(listaWagonow);
+            sklad.setIdWagonow(idWagonow);
             sklad.setLiczbaWagonow(liczbaWagonow);
 
             resultSet.close();
@@ -195,6 +196,55 @@ public class QueryDBService {
         return stacje;
     }
 
+    public Sklad calculateSkladKursu(Kurs kurs) {
+        ArrayList<Integer> idWagonow =
+                getSkladById(kurs.getListaPostojow().get(0).getNastepnySklad()).getIdWagonow();
+
+        for(int i = 1; i < kurs.getListaPostojow().size() - 1; i++) {
+            ArrayList<Integer> nextSklad =
+                    getSkladById(kurs.getListaPostojow().get(i).getNastepnySklad()).getIdWagonow();
+            idWagonow.removeIf(w -> !nextSklad.contains(w));
+        }
+
+        ArrayList<Integer> liczbaWagonow = new ArrayList<>();
+        for(int i = 0; i < idWagonow.size(); i++)
+            liczbaWagonow.add(1000000000);
+
+        boolean czyPrzesylki = true;
+        for(int i = 0; i < kurs.getListaPostojow().size() - 1; i++) {
+            Sklad nextSklad = getSkladById(kurs.getListaPostojow().get(i).getNastepnySklad());
+
+            ArrayList<Integer> nextIdWagonow = nextSklad.getIdWagonow();
+            ArrayList<Integer> nextLiczbaWagonow = nextSklad.getLiczbaWagonow();
+
+            if(!nextSklad.isCzyPrzesylki())
+                czyPrzesylki = false;
+
+            for(int j = 0; j < nextIdWagonow.size(); j++) {
+                int ind = idWagonow.indexOf(nextIdWagonow.get(j));
+                if(ind == -1)
+                    continue;
+
+                if(liczbaWagonow.get(ind) > nextLiczbaWagonow.get(j))
+                    liczbaWagonow.set(ind, nextLiczbaWagonow.get(j));
+            }
+        }
+
+        ArrayList<Wagon> listaWagonow = new ArrayList<>();
+        for(Integer i : idWagonow)
+            listaWagonow.add(getWagonById(i));
+
+        Sklad sklad = new Sklad();
+        sklad.setIdSkladu(-1);
+        sklad.setCzyPrzesylki(czyPrzesylki);
+        sklad.setListaWagonow(listaWagonow);
+        sklad.setIdWagonow(idWagonow);
+        sklad.setLiczbaWagonow(liczbaWagonow);
+
+        System.out.println(idWagonow + "\n" + liczbaWagonow);
+        return sklad;
+    }
+
     public ArrayList<Kurs> getConnections(String fromStation, String toStation, String day, String time,
                                           boolean isPospieszny, boolean isEkspres, boolean isPendolino)
             throws NoSuchStationException, NoMatchingKursyException {
@@ -249,9 +299,6 @@ public class QueryDBService {
 
             System.out.println("kursy ready, size " + kursy.size());
 
-            if(kursy.isEmpty())
-                throw new NoMatchingKursyException();
-
             for(Kurs kurs : kursy) {
                 resultSet = statement.executeQuery(
                     "SELECT pos.* " +
@@ -277,12 +324,16 @@ public class QueryDBService {
 
                 kurs.setListaPostojow(listaPostojow);
                 kurs.calculateCzasPrzejazdu();
+                kurs.setSkladKursu(calculateSkladKursu(kurs));
 
                 System.out.println("added postoje for kurs " + kurs.getIdKursu());
             }
 
             resultSet.close();
             statement.close();
+
+            if(kursy.isEmpty())
+                throw new NoMatchingKursyException();
         } catch (SQLException e) {
             e.printStackTrace();
         }

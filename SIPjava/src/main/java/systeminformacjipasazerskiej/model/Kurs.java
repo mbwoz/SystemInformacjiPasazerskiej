@@ -9,6 +9,7 @@ public class Kurs {
     private int idPociagu;
     private ArrayList<Postoj> listaPostojow = new ArrayList<>();
     private String czasPrzejazdu;
+    private Sklad skladKursu;
 
     public int getIdKursu() {
         return idKursu;
@@ -73,6 +74,14 @@ public class Kurs {
         czasPrzejazdu = "" + h + "h" + ((m < 10) ? "0" : "") + m + "m";
     }
 
+    public Sklad getSkladKursu() {
+        return skladKursu;
+    }
+
+    public void setSkladKursu(Sklad skladKursu) {
+        this.skladKursu = skladKursu;
+    }
+
     @Override
     public String toString() {
         return "Z: " + listaPostojow.get(0).getStacja().getNazwaStacji() +
@@ -81,4 +90,5 @@ public class Kurs {
             "   Przyj. " + listaPostojow.get(listaPostojow.size()-1).getPrzyjazd() +
             "      Czas: " + czasPrzejazdu;
     }
+
 }

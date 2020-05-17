@@ -6,6 +6,7 @@ public class Sklad {
     private int idSkladu;
     private boolean czyPrzesylki;
     private ArrayList<Wagon> listaWagonow;
+    private ArrayList<Integer> idWagonow;
     private ArrayList<Integer> liczbaWagonow;
 
     public int getIdSkladu() {
@@ -32,6 +33,14 @@ public class Sklad {
         this.listaWagonow = listaWagonow;
     }
 
+    public ArrayList<Integer> getIdWagonow() {
+        return idWagonow;
+    }
+
+    public void setIdWagonow(ArrayList<Integer> idWagonow) {
+        this.idWagonow = idWagonow;
+    }
+
     public ArrayList<Integer> getLiczbaWagonow() {
         return liczbaWagonow;
     }
@@ -39,4 +48,5 @@ public class Sklad {
     public void setLiczbaWagonow(ArrayList<Integer> liczbaWagonow) {
         this.liczbaWagonow = liczbaWagonow;
     }
+
 }
