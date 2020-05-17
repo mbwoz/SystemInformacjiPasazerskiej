@@ -288,9 +288,9 @@ public class QueryDBService {
             while(resultSet.next()) {
                 Kurs kurs = new Kurs();
                 kurs.setIdKursu(resultSet.getInt("id_kursu"));
-                kurs.setIdPociagu(resultSet.getInt("id_pociagu"));
+                kurs.setPociag(getPociagById(resultSet.getInt("id_pociagu")));
 
-                String typ = getPociagById(kurs.getIdPociagu()).getTypPociagu();
+                String typ = kurs.getPociag().getTypPociagu();
                 if ((typ.equals("pospieszny") && isPospieszny) ||
                     (typ.equals("ekspres") && isEkspres) ||
                     (typ.equals("pendolino") && isPendolino)) {

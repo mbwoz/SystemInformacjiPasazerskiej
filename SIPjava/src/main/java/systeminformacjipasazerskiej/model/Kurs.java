@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class Kurs {
     private int idKursu;
-    private int idPociagu;
+    private Pociag pociag;
     private ArrayList<Postoj> listaPostojow = new ArrayList<>();
     private String czasPrzejazdu;
     private Sklad skladKursu;
@@ -19,12 +19,12 @@ public class Kurs {
         this.idKursu = idKursu;
     }
 
-    public int getIdPociagu() {
-        return idPociagu;
+    public Pociag getPociag() {
+        return pociag;
     }
 
-    public void setIdPociagu(int idPociagu) {
-        this.idPociagu = idPociagu;
+    public void setPociag(Pociag pociag) {
+        this.pociag = pociag;
     }
 
     public ArrayList<Postoj> getListaPostojow() {

@@ -97,7 +97,6 @@ public class DeleteDBService {
     }
 
     public void deleteRide(Kurs kurs) {
-        int id_pociagu = kurs.getIdPociagu();
         int id_kursu = kurs.getIdKursu();
 
         try {
