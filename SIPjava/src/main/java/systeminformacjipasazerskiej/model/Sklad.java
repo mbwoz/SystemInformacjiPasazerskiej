@@ -57,4 +57,11 @@ public class Sklad {
         return liczbaRowerow;
     }
 
+    public boolean checkIfNiepelnosprawni() {
+        for (Wagon wagon : listaWagonow)
+            if (wagon.isCzyNiepelnosprawni())
+                return true;
+
+        return false;
+    }
 }

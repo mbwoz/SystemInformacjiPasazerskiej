@@ -96,7 +96,8 @@ public class QueryController implements Initializable {
                     pospiesznyCheckBox.isSelected(),
                     ekspresCheckBox.isSelected(),
                     pendolinoCheckBox.isSelected(),
-                    roweryCheckBox.isSelected()));
+                    roweryCheckBox.isSelected(),
+                    niepelnosprawniCheckBox.isSelected()));
 
                 connectionsListView.setVisible(true);
             } catch (QueryDBService.NoSuchStationException nss) {

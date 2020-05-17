@@ -170,7 +170,8 @@ public class DeleteController implements Initializable {
                     deleteRideToBox.getValue(),
                     dayRideBox.getValue(),
                     "00:00",
-                    true, true, true, false));
+                    true, true, true,
+                    false, false));
 
                 rideList.setVisible(true);
             } catch (QueryDBService.NoSuchStationException nss) {
