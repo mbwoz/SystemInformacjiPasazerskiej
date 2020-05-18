@@ -392,8 +392,8 @@ public class QueryDBService {
         return id_stacji;
     }
 
-    public class NoSuchStationException extends Exception {}
+    public static class NoSuchStationException extends Exception {}
 
-    public class NoMatchingKursyException extends Exception {}
+    public static class NoMatchingKursyException extends Exception {}
 }
 

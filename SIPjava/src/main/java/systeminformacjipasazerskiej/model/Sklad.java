@@ -49,12 +49,44 @@ public class Sklad {
         this.liczbaWagonow = liczbaWagonow;
     }
 
+    public int getLiczbaMiejscI() {
+        int liczbaMiejscI = 0;
+        for(int i = 0; i < listaWagonow.size(); i++)
+            liczbaMiejscI += listaWagonow.get(i).getMiejscaI() * liczbaWagonow.get(i);
+
+        return liczbaMiejscI;
+    }
+
+    public int getLiczbaMiejscII() {
+        int liczbaMiejscII = 0;
+        for(int i = 0; i < listaWagonow.size(); i++)
+            liczbaMiejscII += listaWagonow.get(i).getMiejscaII() * liczbaWagonow.get(i);
+
+        return liczbaMiejscII;
+    }
+
     public int getLiczbaMiejscDlaRowerow() {
         int liczbaRowerow = 0;
         for(int i = 0; i < listaWagonow.size(); i++)
             liczbaRowerow += listaWagonow.get(i).getRowery() * liczbaWagonow.get(i);
 
         return liczbaRowerow;
+    }
+
+    public boolean checkIfKlimatyzacja() {
+        for (Wagon wagon : listaWagonow)
+            if (wagon.isCzyKlimatyzacja())
+                return true;
+
+        return false;
+    }
+
+    public boolean checkIfWifi() {
+        for (Wagon wagon : listaWagonow)
+            if (wagon.isCzyWifi())
+                return true;
+
+        return false;
     }
 
     public boolean checkIfNiepelnosprawni() {
@@ -64,4 +96,13 @@ public class Sklad {
 
         return false;
     }
+
+    public boolean checkIfBarowy() {
+        for (Wagon wagon : listaWagonow)
+            if (wagon.getTyp().equals("barowy"))
+                return true;
+
+        return false;
+    }
+
 }

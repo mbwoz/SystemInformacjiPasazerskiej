@@ -8,6 +8,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.VBox;
 import systeminformacjipasazerskiej.converter.DayConverter;
 
 import systeminformacjipasazerskiej.db.QueryDBService;
@@ -99,6 +100,10 @@ public class QueryController implements Initializable {
                     roweryCheckBox.isSelected(),
                     niepelnosprawniCheckBox.isSelected()));
 
+                allMatchingKursy.removeIf(k -> k.getSkladKursu().getListaWagonow().size() == 0);
+                if(allMatchingKursy.isEmpty())
+                    throw new QueryDBService.NoMatchingKursyException();
+
                 connectionsListView.setVisible(true);
             } catch (QueryDBService.NoSuchStationException nss) {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -121,7 +126,45 @@ public class QueryController implements Initializable {
             Kurs kurs = connectionsListView.getSelectionModel().getSelectedItem();
             System.out.println(kurs.getListaPostojow().toString());
 
-            TableView<Postoj> tableView = new TableView<>();
+            // bonus info
+            boolean hasAdditionalInfo = false;
+            String bonusInfo = "\n\nDodatkowe informacje:";
+
+            if(kurs.getSkladKursu().checkIfKlimatyzacja()) {
+                bonusInfo += "\n - wagony klimatyzowane;";
+                hasAdditionalInfo = true;
+            }
+            if(kurs.getSkladKursu().checkIfNiepelnosprawni()) {
+                bonusInfo += "\n - wagony z miejscami dla osób niepełnosprawnych;";
+                hasAdditionalInfo = true;
+            }
+            if(kurs.getSkladKursu().checkIfWifi()) {
+                bonusInfo += "\n - wagony z dostępem do wifi;";
+                hasAdditionalInfo = true;
+            }
+            if(kurs.getSkladKursu().isCzyPrzesylki()) {
+                bonusInfo += "\n - przesyłki konduktorskie;";
+                hasAdditionalInfo = true;
+            }
+            if(kurs.getSkladKursu().checkIfBarowy()) {
+                bonusInfo += "\n - wagon barowy;";
+                hasAdditionalInfo = true;
+            }
+
+            // train info
+            Label trainInfo =
+                new Label("Nazwa pociągu: " + kurs.getPociag().getNazwaPociagu() +
+                    "   Typ pociągu: " + kurs.getPociag().getTypPociagu() +
+                    "\nRelacja: " + qdb.getStacjaById(qdb.getFirstStationFromTrasa(kurs.getPociag().getIdTrasy())).getNazwaStacji() +
+                    " - " + qdb.getStacjaById(qdb.getLastStationFromTrasa(kurs.getPociag().getIdTrasy())).getNazwaStacji() +
+                    "\nLiczba miejsc w wagonach 1 klasy: " + kurs.getSkladKursu().getLiczbaMiejscI() +
+                    "\nLiczba miejsc w wagonach 2 klasy: " + kurs.getSkladKursu().getLiczbaMiejscII() +
+                    "\nLiczba miejsc dla rowerów: " + kurs.getSkladKursu().getLiczbaMiejscDlaRowerow() +
+                    (hasAdditionalInfo ? bonusInfo : "")
+                );
+
+            // timetable
+            TableView<Postoj> timetableView = new TableView<>();
             TableColumn<Postoj, String> stacje = new TableColumn<>("Stacja");
             stacje.setCellValueFactory(new PropertyValueFactory<>("nazwaStacji"));
 
@@ -133,16 +176,20 @@ public class QueryController implements Initializable {
             odjazdy.setCellValueFactory(new PropertyValueFactory<>("odjazd"));
             odjazdy.setStyle("-fx-alignment: CENTER;");
 
-            tableView.getColumns().addAll(stacje, przyjazdy, odjazdy);
-            tableView.getItems().addAll(kurs.getListaPostojow());
+            timetableView.getColumns().addAll(stacje, przyjazdy, odjazdy);
+            timetableView.getItems().addAll(kurs.getListaPostojow());
 
             stacje.setMinWidth(300);
             przyjazdy.setMinWidth(125);
             odjazdy.setMinWidth(125);
 
+            VBox popupContent = new VBox();
+            popupContent.getChildren().addAll(trainInfo, timetableView);
+            popupContent.setSpacing(20);
+
             Dialog<Kurs> kursDialog = new Dialog<>();
             kursDialog.getDialogPane().setMinWidth(600);
-            kursDialog.getDialogPane().setContent(tableView);
+            kursDialog.getDialogPane().setContent(popupContent);
             kursDialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
             kursDialog.showAndWait();
         });
