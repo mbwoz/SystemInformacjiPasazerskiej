@@ -6,6 +6,9 @@ import systeminformacjipasazerskiej.model.*;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 
 public class QueryDBService {
     private Connection connection;
@@ -365,6 +368,74 @@ public class QueryDBService {
         }
 
         return kursy;
+    }
+
+    public ArrayList<Destination> getDestinations(String fromStation) throws NoSuchStationException {
+        ArrayList<Destination> destinations = new ArrayList<>();
+
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(
+                "SELECT id_stacji FROM stacje WHERE nazwa_stacji = '" + fromStation + "';"
+            );
+            int fromStationId = resultSet.next() ? resultSet.getInt("id_stacji") : -1;
+
+            if(fromStationId == -1)
+                throw new NoSuchStationException();
+
+            resultSet = statement.executeQuery(
+                "SELECT id_trasy " +
+                "FROM trasy_odcinki trod " +
+                    "INNER JOIN odcinki od ON trod.id_odcinka = od.id_odcinka " +
+                "WHERE od.stacja_poczatkowa = " + fromStationId + ";"
+            );
+
+            ArrayList<Integer> trasy = new ArrayList<>();
+            while(resultSet.next())
+                trasy.add(resultSet.getInt("id_trasy"));
+
+            for(Integer idTrasy : trasy) {
+                System.out.println("found id trasy " + idTrasy);
+
+                int lastStation = getLastStationFromTrasa(idTrasy);
+                String dest = getStacjaById(lastStation).getNazwaStacji();
+
+                Destination destination = null;
+                for(Destination d : destinations) {
+                    if(d.getMainDestination().equals(dest)) {
+                        destination = d;
+                        break;
+                    }
+                }
+
+                if(destination == null) {
+                    destination = new Destination();
+                    destinations.add(destination);
+                }
+
+                destination.setSource(fromStation);
+                destination.setMainDestination(dest);
+
+                ArrayList<String> stacjePosrednie = destination.getStacjePosrednie();
+
+                resultSet = statement.executeQuery(
+                    "SELECT * FROM getStationsBetweenOnTrasa(" + idTrasy + ", " + fromStationId + ", " + lastStation + ");"
+                );
+                while(resultSet.next())
+                    stacjePosrednie.add(getStacjaById(resultSet.getInt(1)).getNazwaStacji());
+            }
+
+            for(Destination d : destinations) {
+                ArrayList<String> stacjePosrednie = new ArrayList<>(new HashSet<>(d.getStacjePosrednie()));
+                Collections.sort(stacjePosrednie);
+                d.setStacjePosrednie(stacjePosrednie);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return destinations;
     }
 
 

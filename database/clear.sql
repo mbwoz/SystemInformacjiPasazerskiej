@@ -39,6 +39,7 @@ DROP FUNCTION getLastStation;
 DROP FUNCTION getIdTrasyFromTo;
 DROP FUNCTION getDay;
 DROP FUNCTION getStationsBetween;
+DROP FUNCTION getStationsBetweenOnTrasa;
 
 
 --tables

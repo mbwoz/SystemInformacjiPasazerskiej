@@ -1,7 +1,5 @@
 package systeminformacjipasazerskiej.controller;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -14,6 +12,7 @@ import javafx.scene.layout.VBox;
 import systeminformacjipasazerskiej.converter.DayConverter;
 
 import systeminformacjipasazerskiej.db.QueryDBService;
+import systeminformacjipasazerskiej.model.Destination;
 import systeminformacjipasazerskiej.model.Kurs;
 import systeminformacjipasazerskiej.model.Postoj;
 import systeminformacjipasazerskiej.model.Stacja;
@@ -26,6 +25,7 @@ import java.util.stream.Stream;
 
 public class QueryController implements Initializable {
 
+    // main search
     @FXML
     private ComboBox<String> fromComboBox;
     @FXML
@@ -60,8 +60,19 @@ public class QueryController implements Initializable {
     private ObservableList<String> odjazdTime = FXCollections.observableArrayList();
     private ObservableList<String> przyjazdTime = FXCollections.observableArrayList();
 
+    // destination search
+    @FXML
+    private ComboBox<String> departureComboBox;
+    @FXML
+    private Button searchDestinationButton;
+    @FXML
+    private ListView<Destination> destinationsListView;
+
+    private ObservableList<Destination> allDestinations = FXCollections.observableArrayList();
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        // main
         fromComboBox.setItems(allStationsNames);
         fromComboBox.setPromptText("np. Warszawa Centralna");
         toComboBox.setItems(allStationsNames);
@@ -224,6 +235,59 @@ public class QueryController implements Initializable {
         });
         allMatchingKursy.addListener((ListChangeListener<Kurs>) change ->
             connectionsListView.setMaxHeight(allMatchingKursy.size() * 24 + 2)
+        );
+
+
+        // destination
+        departureComboBox.setItems(allStationsNames);
+        departureComboBox.setPromptText("np. Kraków Główny");
+
+        searchDestinationButton.setOnMouseClicked(event -> {
+            destinationsListView.setVisible(false);
+            allDestinations.clear();
+
+            try {
+                allDestinations.addAll(qdb.getDestinations(
+                    departureComboBox.getValue()));
+
+                destinationsListView.setVisible(true);
+            } catch (QueryDBService.NoSuchStationException nss) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Nie znaleziono podanej stacji.");
+                alert.showAndWait();
+            }
+        });
+
+        destinationsListView.setItems(allDestinations);
+        destinationsListView.setCursor(Cursor.HAND);
+        destinationsListView.setVisible(false);
+        destinationsListView.setOnMouseClicked(event -> {
+            Destination destination = destinationsListView.getSelectionModel().getSelectedItem();
+
+            // destination info
+            Label destinationInfo = new Label(
+                "Stacje pośrednie na trasie " + destination.getSource() +
+                " - " + destination.getMainDestination()
+            );
+
+            // stacje posrednie
+            ListView<String> stacjePosrednie = new ListView<>();
+            stacjePosrednie.setItems(FXCollections.observableArrayList(
+                destination.getStacjePosrednie()
+            ));
+
+            VBox popupContent = new VBox();
+            popupContent.getChildren().addAll(destinationInfo, stacjePosrednie);
+            popupContent.setSpacing(20);
+
+            Dialog<Kurs> kursDialog = new Dialog<>();
+            kursDialog.getDialogPane().setMinWidth(600);
+            kursDialog.getDialogPane().setContent(popupContent);
+            kursDialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+            kursDialog.showAndWait();
+        });
+        allDestinations.addListener((ListChangeListener<Destination>) change ->
+            destinationsListView.setMaxHeight(allDestinations.size() * 24 + 2)
         );
     }
 

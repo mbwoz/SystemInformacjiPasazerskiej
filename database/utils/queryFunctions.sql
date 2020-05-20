@@ -188,6 +188,7 @@ LANGUAGE plpgsql;
 ----
 
 
+-- gets all stations
 CREATE OR REPLACE FUNCTION getStationsBetween(
     idKursu rozklady.id_kursu%TYPE,
     fromStationId odcinki.stacja_poczatkowa%TYPE,
@@ -232,3 +233,42 @@ END;
 $$
 LANGUAGE plpgsql;
 
+
+----
+
+
+-- gets all stations except first
+CREATE OR REPLACE FUNCTION getStationsBetweenOnTrasa(
+    idTrasy trasy.id_trasy%TYPE,
+    fromStationId odcinki.stacja_poczatkowa%TYPE,
+    toStationId odcinki.stacja_koncowa%TYPE
+) RETURNS TABLE (idStacji postoje.id_stacji%TYPE) AS
+$$
+BEGIN
+    RETURN QUERY
+    WITH RECURSIVE betweenTrasa AS (
+        SELECT 
+            od.stacja_poczatkowa AS stacjaPoczatkowa,
+            od.stacja_poczatkowa AS stacjaKoncowa
+        FROM trasy_odcinki trod
+            INNER JOIN odcinki od ON trod.id_odcinka = od.id_odcinka
+        WHERE
+            od.stacja_poczatkowa = fromStationId AND
+            trod.id_trasy = idTrasy
+        UNION
+        SELECT
+            bt.stacjaPoczatkowa AS stacjaPoczatkowa,
+            od.stacja_koncowa AS stacjaKoncowa
+        FROM trasy_odcinki trod
+            INNER JOIN odcinki od ON trod.id_odcinka = od.id_odcinka
+            INNER JOIN betweenTrasa bt ON od.stacja_poczatkowa = bt.stacjaKoncowa
+        WHERE
+            od.stacja_poczatkowa <> toStationId AND
+            trod.id_trasy = idTrasy
+    )
+    SELECT bt.stacjaKoncowa
+    FROM betweenTrasa bt
+    WHERE bt.stacjaKoncowa <> fromStationId;
+END;
+$$
+LANGUAGE plpgsql;
