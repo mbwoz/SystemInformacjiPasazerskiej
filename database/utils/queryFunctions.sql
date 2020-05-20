@@ -97,7 +97,8 @@ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION getDay(
     idKursu postoje.id_kursu%TYPE,
-    idStacji postoje.id_stacji%TYPE
+    idStacji postoje.id_stacji%TYPE,
+    postojType text
 ) RETURNS rozklady.dzien_tygodnia%TYPE AS
 $$
 DECLARE
@@ -150,6 +151,8 @@ BEGIN
         END IF;
         
         lastStop := nextStop;
+        
+        EXIT WHEN stacja = idStacji AND postojType = 'Przyjazd';
         
         nextStop :=
             (SELECT pos.odjazd

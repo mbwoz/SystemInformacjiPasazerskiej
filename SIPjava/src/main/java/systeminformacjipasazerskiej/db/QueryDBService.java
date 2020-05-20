@@ -245,7 +245,8 @@ public class QueryDBService {
         return sklad;
     }
 
-    public ArrayList<Kurs> getConnections(String fromStation, String toStation, String day, String time,
+    public ArrayList<Kurs> getConnections(String fromStation, String toStation,
+                                          String day, String postojType, String time,
                                           boolean isPospieszny, boolean isEkspres, boolean isPendolino,
                                           boolean isRower, boolean isNiepelnosprawni)
             throws NoSuchStationException, NoMatchingKursyException {
@@ -269,22 +270,39 @@ public class QueryDBService {
             System.out.println("id_stacji ready " + fromStationId + " " + toStationId);
             System.out.println(day + " " + DayConverter.convertDay(day));
 
-            resultSet = statement.executeQuery(
-                "SELECT ro.* " +
-                "FROM rozklady ro " +
-                    "INNER JOIN postoje pos ON ro.id_kursu = pos.id_kursu " +
-                "WHERE getDay(ro.id_kursu, " + fromStationId + ") IS NOT DISTINCT FROM " +
-                    DayConverter.convertDay(day) + " AND " +
-                    "pos.id_stacji = " + fromStationId + " AND pos.odjazd >= '" + time + "'::time AND " +
-                    "ro.id_pociagu IN " +
-                        "(SELECT po.id_pociagu " +
-                        "FROM pociagi po " +
-                        "WHERE po.id_trasy IN " +
-                            "(SELECT idTrasy " +
-                            "FROM getIdTrasyFromTo(" + fromStationId + ", " + toStationId + "))) " +
-                "ORDER BY pos.odjazd;"
-            );
-
+            if(postojType.equals("Przyjazd")) {
+                resultSet = statement.executeQuery(
+                    "SELECT ro.* " +
+                    "FROM rozklady ro " +
+                        "INNER JOIN postoje pos ON ro.id_kursu = pos.id_kursu " +
+                    "WHERE getDay(ro.id_kursu, " + toStationId + ", '" + postojType + "') IS NOT DISTINCT FROM " +
+                        DayConverter.convertDay(day) + " AND " +
+                        "pos.id_stacji = " + toStationId + " AND pos.przyjazd <= '" + time + "'::time AND " +
+                        "ro.id_pociagu IN " +
+                            "(SELECT po.id_pociagu " +
+                            "FROM pociagi po " +
+                            "WHERE po.id_trasy IN " +
+                                "(SELECT idTrasy " +
+                                "FROM getIdTrasyFromTo(" + fromStationId + ", " + toStationId + "))) " +
+                    "ORDER BY pos.przyjazd;"
+                );
+            } else {
+                resultSet = statement.executeQuery(
+                    "SELECT ro.* " +
+                    "FROM rozklady ro " +
+                        "INNER JOIN postoje pos ON ro.id_kursu = pos.id_kursu " +
+                    "WHERE getDay(ro.id_kursu, " + fromStationId + ", '" + postojType + "') IS NOT DISTINCT FROM " +
+                        DayConverter.convertDay(day) + " AND " +
+                        "pos.id_stacji = " + fromStationId + " AND pos.odjazd >= '" + time + "'::time AND " +
+                        "ro.id_pociagu IN " +
+                            "(SELECT po.id_pociagu " +
+                            "FROM pociagi po " +
+                            "WHERE po.id_trasy IN " +
+                                "(SELECT idTrasy " +
+                                "FROM getIdTrasyFromTo(" + fromStationId + ", " + toStationId + "))) " +
+                    "ORDER BY pos.odjazd;"
+                );
+            }
             while(resultSet.next()) {
                 Kurs kurs = new Kurs();
                 kurs.setIdKursu(resultSet.getInt("id_kursu"));

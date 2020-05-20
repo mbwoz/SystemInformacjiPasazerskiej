@@ -1,5 +1,7 @@
 package systeminformacjipasazerskiej.controller;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -33,6 +35,8 @@ public class QueryController implements Initializable {
     @FXML
     private ChoiceBox<String> dayChoiceBox;
     @FXML
+    private ChoiceBox<String> postojTypeChoiceBox;
+    @FXML
     private ChoiceBox<String> timeChoiceBox;
     @FXML
     private CheckBox pospiesznyCheckBox;
@@ -53,6 +57,8 @@ public class QueryController implements Initializable {
     private QueryDBService qdb;
     private ObservableList<String> allStationsNames = FXCollections.observableArrayList();
     private ObservableList<Kurs> allMatchingKursy = FXCollections.observableArrayList();
+    private ObservableList<String> odjazdTime = FXCollections.observableArrayList();
+    private ObservableList<String> przyjazdTime = FXCollections.observableArrayList();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -76,12 +82,34 @@ public class QueryController implements Initializable {
         ));
         dayChoiceBox.getSelectionModel().select(0);
 
+        postojTypeChoiceBox.setItems(FXCollections.observableArrayList(
+            "Odjazd po godzinie:", "Przyjazd przed godziną:"
+        ));
+        postojTypeChoiceBox.getSelectionModel().select(0);
+        postojTypeChoiceBox.getSelectionModel().selectedItemProperty().addListener(
+            (observableValue, prev, next) -> {
+                if(prev.equals(next))
+                    return;
+
+                next = next.split(" ")[0];
+
+                if(next.equals("Odjazd")) timeChoiceBox.setItems(odjazdTime);
+                else timeChoiceBox.setItems(przyjazdTime);
+
+                timeChoiceBox.getSelectionModel().select(0);
+        });
+
         ArrayList<String> timeArrayList = new ArrayList<>();
         for(int i = 0; i < 24; i++)
             timeArrayList.add(((i < 10) ? "0" + i : i) + ":00");
-        timeChoiceBox.setItems(FXCollections.observableArrayList(
-            timeArrayList
-        ));
+        odjazdTime.addAll(timeArrayList);
+
+        timeArrayList.clear();
+        for(int i = 1; i <= 24; i++)
+            timeArrayList.add(((i < 10) ? "0" + i : i) + ":00");
+        przyjazdTime.addAll(timeArrayList);
+
+        timeChoiceBox.setItems(odjazdTime);
         timeChoiceBox.getSelectionModel().select(0);
 
         searchConnectionButton.setOnMouseClicked(event -> {
@@ -93,6 +121,7 @@ public class QueryController implements Initializable {
                     fromComboBox.getValue(),
                     toComboBox.getValue(),
                     dayChoiceBox.getValue(),
+                    postojTypeChoiceBox.getValue().split(" ")[0],
                     timeChoiceBox.getValue(),
                     pospiesznyCheckBox.isSelected(),
                     ekspresCheckBox.isSelected(),

@@ -169,7 +169,7 @@ public class DeleteController implements Initializable {
                     deleteRideFromBox.getValue(),
                     deleteRideToBox.getValue(),
                     dayRideBox.getValue(),
-                    "00:00",
+                    "Odjazd", "00:00",
                     true, true, true,
                     false, false));
 
