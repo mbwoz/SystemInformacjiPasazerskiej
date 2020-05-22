@@ -4,9 +4,11 @@ import systeminformacjipasazerskiej.converter.BoolConverter;
 import systeminformacjipasazerskiej.converter.DayConverter;
 import systeminformacjipasazerskiej.model.*;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 
@@ -197,6 +199,31 @@ public class QueryDBService {
         }
 
         return stacje;
+    }
+
+    public ArrayList<Pociag> getAllPociagi() {
+        ArrayList<Pociag> pociagi = new ArrayList<>();
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(
+                    "SELECT * FROM pociagi ORDER BY nazwa_pociagu;"
+            );
+
+            while(resultSet.next()) {
+                Pociag pociag = new Pociag();
+                pociag.setIdPociagu(resultSet.getInt("id_pociagu"));
+                pociag.setIdTrasy(resultSet.getInt("id_trasy"));
+                pociag.setNazwaPociagu(resultSet.getString("nazwa_pociagu"));
+                pociag.setTypPociagu(resultSet.getString("typ_pociagu"));
+                pociagi.add(pociag);
+            }
+
+            resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return pociagi;
     }
 
     public Sklad calculateSkladKursu(Kurs kurs) {
@@ -484,5 +511,6 @@ public class QueryDBService {
     public static class NoSuchStationException extends Exception {}
 
     public static class NoMatchingKursyException extends Exception {}
+
 }
 

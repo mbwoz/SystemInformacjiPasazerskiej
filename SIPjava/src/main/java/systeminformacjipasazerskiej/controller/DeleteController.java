@@ -38,15 +38,15 @@ public class DeleteController implements Initializable {
     @FXML
     private Button deleteRideButton;
     @FXML
-    private Button deleteRideButtonId;
-    @FXML
-    private ComboBox<Integer> deleteRideId;
-    @FXML
     private ComboBox<String> deleteRideFromBox;
     @FXML
     private ComboBox<String> deleteRideToBox;
     @FXML
-    private ComboBox<String> dayRideBox;
+    private ComboBox<String> deletePociagBox;
+    @FXML
+    private Button deletePociagButton;
+    @FXML
+    private ChoiceBox<String> dayRideBox;
     @FXML
     private ListView<Kurs> rideList;
 
@@ -58,7 +58,6 @@ public class DeleteController implements Initializable {
 
         public RideCell() {
             super();
-
             hbox.getChildren().addAll(label, pane, button);
             HBox.setHgrow(pane, Priority.ALWAYS);
             button.setOnAction(event -> {
@@ -82,7 +81,7 @@ public class DeleteController implements Initializable {
             setGraphic(null);
 
             if (item != null && !empty) {
-
+                System.out.println("updatingItems");
                 ArrayList<Postoj> list = item.getListaPostojow();
 
                 String through = "";
@@ -116,6 +115,7 @@ public class DeleteController implements Initializable {
 
     private ObservableList<String> allStationsNames = FXCollections.observableArrayList();
     private ObservableList<Kurs> allMatchingKursy = FXCollections.observableArrayList();
+    private ObservableList<String> allPociagNames = FXCollections.observableArrayList();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -125,28 +125,35 @@ public class DeleteController implements Initializable {
         deleteStationBox.setPromptText("np. Kraków Główny");
         deleteStationButton.setOnMouseClicked(event -> {
             if(deleteStationBox.getValue() == null) return;
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Potwierdź wybór");
-            alert.setHeaderText("Czy na pewno chcesz usunąć tę stację?");
-            alert.setContentText("Usunięcie stacji spowoduje usunięcie wszystkich postójów, odcinków, tras i pociągów z nią związanych.");
 
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.OK){
-                ddb.deleteStation(deleteStationBox.getValue());
-                allStationsNames.clear();
-                allStationsNames.addAll(
+            ddb.deleteStation(deleteStationBox.getValue());
+            allStationsNames.clear();
+            allStationsNames.addAll(
                     qdb.getAllStations()
                         .stream()
                         .map(Stacja::getNazwaStacji)
                         .collect(Collectors.toList()));
-            }
+
         });
-        //*************
+        //*****************
+        //Delete pociag
 
+        deletePociagBox.setItems(allPociagNames);
+        deletePociagBox.setPromptText("np. beuiddxb");
+        deletePociagButton.setOnMouseClicked(e -> {
+            if(deletePociagBox.getValue() == null) return;
+            ddb.deletePociag(deletePociagBox.getValue());
+            allPociagNames.clear();
+            allPociagNames.addAll(
+                    qdb.getAllPociagi()
+                            .stream()
+                            .map(Pociag::getNazwaPociagu)
+                            .collect(Collectors.toList()));
+        });
+
+
+        //******************
         //Delete ride
-
-        deleteRideId.setPromptText("TO DO"); // TODO
-
         deleteRideFromBox.setItems(allStationsNames);
         deleteRideFromBox.setPromptText("np. Poznań Główny");
         deleteRideToBox.setItems(allStationsNames);
@@ -206,6 +213,11 @@ public class DeleteController implements Initializable {
                 .stream()
                 .map(Stacja::getNazwaStacji)
                 .collect(Collectors.toList()));
+        allPociagNames.addAll(
+                qdb.getAllPociagi()
+                    .stream()
+                    .map(Pociag::getNazwaPociagu)
+                    .collect(Collectors.toList()));
 
         System.out.println("delete db ready");
     }
