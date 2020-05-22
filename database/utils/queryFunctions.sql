@@ -124,14 +124,20 @@ BEGIN
     stacja = 
         (SELECT getFirstStation(idTrasy));
         
-    IF stacja = idStacji THEN
-        RETURN dzienTygodnia;
-    END IF;
-        
     lastStop = 
         (SELECT pos.odjazd 
         FROM postoje pos 
         WHERE pos.id_kursu = idKursu AND pos.id_stacji = stacja);
+        
+    IF stacja = idStacji AND postojType = 'Przyjazd' AND 
+        lastStop < 
+            (SELECT pos.przyjazd 
+            FROM postoje pos 
+            WHERE pos.id_kursu = idKursu AND pos.id_stacji = stacja) THEN
+        RETURN (dzienTygodnia + 6) % 7;
+    ELSIF stacja = idStacji THEN
+        RETURN dzienTygodnia;
+    END IF;
         
     stacja := 
         (SELECT od.stacja_koncowa
