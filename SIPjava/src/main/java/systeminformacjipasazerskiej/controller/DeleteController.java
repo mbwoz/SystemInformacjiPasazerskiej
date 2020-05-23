@@ -126,14 +126,27 @@ public class DeleteController implements Initializable {
         deleteStationButton.setOnMouseClicked(event -> {
             if(deleteStationBox.getValue() == null) return;
 
-            ddb.deleteStation(deleteStationBox.getValue());
-            allStationsNames.clear();
-            allStationsNames.addAll(
-                    qdb.getAllStations()
-                        .stream()
-                        .map(Stacja::getNazwaStacji)
-                        .collect(Collectors.toList()));
+            try {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Potwierdź wybór");
+                alert.setHeaderText("Czy na pewno chcesz usunąć tę stację?");
+                alert.setContentText("Usunięcie stacji spowoduje usunięcie wszystkich postójów, odcinków, tras i pociągów z nią związanych.");
 
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK) {
+                    ddb.deleteStation(deleteStationBox.getValue());
+                    allStationsNames.clear();
+                    allStationsNames.addAll(
+                            qdb.getAllStations()
+                                    .stream()
+                                    .map(Stacja::getNazwaStacji)
+                                    .collect(Collectors.toList()));
+                }
+            } catch (QueryDBService.NoSuchStationException e) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Nie znaleziono podanej stacji.");
+                alert.showAndWait();
+            }
         });
         //*****************
         //Delete pociag
@@ -142,13 +155,28 @@ public class DeleteController implements Initializable {
         deletePociagBox.setPromptText("np. beuiddxb");
         deletePociagButton.setOnMouseClicked(e -> {
             if(deletePociagBox.getValue() == null) return;
-            ddb.deletePociag(deletePociagBox.getValue());
-            allPociagNames.clear();
-            allPociagNames.addAll(
-                    qdb.getAllPociagi()
-                            .stream()
-                            .map(Pociag::getNazwaPociagu)
-                            .collect(Collectors.toList()));
+            try {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Potwierdź wybór");
+                alert.setHeaderText("Czy na pewno chcesz usunąć ten pociąg?");
+                alert.setContentText("Usunięcie pociągu spowoduje usunięcie tras i postojów z nim związanych.");
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK) {
+                    ddb.deletePociag(deletePociagBox.getValue());
+                    allPociagNames.clear();
+                    allPociagNames.addAll(
+                            qdb.getAllPociagi()
+                                    .stream()
+                                    .map(Pociag::getNazwaPociagu)
+                                    .collect(Collectors.toList()));
+                }
+
+            } catch (QueryDBService.NoSuchTrainException ex) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Nie znaleziono podanego pociągu.");
+                alert.showAndWait();
+            }
+
         });
 
 

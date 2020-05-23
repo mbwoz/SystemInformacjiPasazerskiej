@@ -510,6 +510,8 @@ public class QueryDBService {
 
     public static class NoSuchStationException extends Exception {}
 
+    public static class NoSuchTrainException extends Exception {}
+
     public static class NoMatchingKursyException extends Exception {}
 
 }

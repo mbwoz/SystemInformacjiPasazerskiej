@@ -18,7 +18,7 @@ public class DeleteDBService {
         this.connection = connection;
     }
 
-    public void deleteStation(String s) {
+    public void deleteStation(String s) throws QueryDBService.NoSuchStationException {
         try {
             Statement statement = connection.createStatement();
 
@@ -27,22 +27,8 @@ public class DeleteDBService {
             ResultSet resultSet = statement.executeQuery("SELECT id_stacji FROM stacje WHERE nazwa_stacji = '" + s + "';");
             if(resultSet.next()) id_stacji = resultSet.getInt("id_stacji");
             else {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setHeaderText("Nie znaleziono podanej stacji.");
-                alert.showAndWait();
-                return;
+                throw new QueryDBService.NoSuchStationException();
             }
-
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Potwierdź wybór");
-            alert.setHeaderText("Czy na pewno chcesz usunąć tę stację?");
-            alert.setContentText("Usunięcie stacji spowoduje usunięcie wszystkich postójów, odcinków, tras i pociągów z nią związanych.");
-
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() != ButtonType.OK) {
-                return;
-            }
-
 
             //get id_odcinka
             resultSet = statement.executeQuery("SELECT id_odcinka FROM odcinki WHERE stacja_poczatkowa = " + id_stacji + " OR stacja_koncowa = " + id_stacji + "; ");
@@ -113,7 +99,7 @@ public class DeleteDBService {
         }
     }
 
-    public void deletePociag(String nazwa_pociagu) {
+    public void deletePociag(String nazwa_pociagu) throws QueryDBService.NoSuchTrainException {
         try {
             Statement statement = connection.createStatement();
 
@@ -122,20 +108,11 @@ public class DeleteDBService {
             int id_pociagu;
             if(resultSet.next()) id_pociagu = resultSet.getInt("id_pociagu");
             else {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setHeaderText("Nie znaleziono podanego pociągu.");
-                alert.showAndWait();
-                return;
+                throw new QueryDBService.NoSuchTrainException();
+
             }
 
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Potwierdź wybór");
-            alert.setHeaderText("Czy na pewno chcesz usunąć ten pociąg?");
-            alert.setContentText("Usunięcie pociągu spowoduje usunięcie tras i postojów z nim związanych.");
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() != ButtonType.OK) {
-                return;
-            }
+
 
             //get id_kursu
             HashSet<Integer> id_kursu = new HashSet<>();
@@ -176,7 +153,6 @@ public class DeleteDBService {
         }
 
     }
-
 
 
 }
