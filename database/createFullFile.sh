@@ -18,3 +18,6 @@ cat rozklad/sklady.in >> create.sql;
 cat rozklad/postoje.in >> create.sql;
 cat rozklad/wagony.in >> create.sql;
 cat rozklad/sklady_wagony.in >> create.sql;
+
+cat utils/insertFunctions.sql >> create.sql;
+cat utils/insertTriggers.sql >> create.sql;

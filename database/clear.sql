@@ -33,6 +33,13 @@ DROP TRIGGER noIdStacjiUpdate ON stacje;
 DROP FUNCTION disableIdStacjiUpdate;
 
 
+--triggers
+DROP TRIGGER stacjeOverflowUpdateTrigger ON stacje;
+DROP FUNCTION stacjeOverflowUpdate;
+DROP TRIGGER stacjeLengthUpdateTrigger ON stacje;
+DROP FUNCTION stacjeLengthUpdate;
+
+
 --utils
 DROP FUNCTION getFirstStation;
 DROP FUNCTION getLastStation;
@@ -40,6 +47,10 @@ DROP FUNCTION getIdTrasyFromTo;
 DROP FUNCTION getDay;
 DROP FUNCTION getStationsBetween;
 DROP FUNCTION getStationsBetweenOnTrasa;
+DROP FUNCTION checkStationOverflow;
+DROP FUNCTION checkStationLength;
+DROP FUNCTION getSkladLength;
+DROP FUNCTION getPreviousSklad;
 
 
 --tables
