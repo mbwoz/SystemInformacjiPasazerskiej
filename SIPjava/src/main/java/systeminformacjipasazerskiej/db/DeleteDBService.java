@@ -1,7 +1,5 @@
 package systeminformacjipasazerskiej.db;
 
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import systeminformacjipasazerskiej.model.Kurs;
 
 import java.sql.Connection;
@@ -9,7 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashSet;
-import java.util.Optional;
 
 public class DeleteDBService {
     private Connection connection;
@@ -153,6 +150,34 @@ public class DeleteDBService {
         }
 
     }
+
+    public void deleteTrasa(int id_trasy) {
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT nazwa_pociagu FROM pociagi WHERE id_trasy = " + id_trasy + ";");
+
+            //get id_pociagu
+            HashSet<String> id_pociagu = new HashSet<>();
+            while(resultSet.next()) id_pociagu.add(resultSet.getString("nazwa_pociagu"));
+
+            System.out.println("Pociagi: " + id_pociagu.toString());
+
+            //delete pociagi
+            if(!id_pociagu.isEmpty()) {
+                for(String s: id_pociagu) deletePociag(s);
+            }
+
+            //delete trasy_odcinki
+            statement.execute("DELETE FROM trasy_odcinki WHERE id_trasy = " + id_trasy + ";");
+            //delete trasy
+            statement.execute("DELETE FROM trasy WHERE id_trasy = " + id_trasy + ";");
+
+            statement.close();
+            resultSet.close();
+        }
+        catch (SQLException | QueryDBService.NoSuchTrainException e) { e.printStackTrace(); }
+    }
+
 
 
 }

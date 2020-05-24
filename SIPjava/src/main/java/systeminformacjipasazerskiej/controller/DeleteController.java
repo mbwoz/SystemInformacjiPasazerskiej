@@ -7,9 +7,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import systeminformacjipasazerskiej.converter.DayConverter;
 import systeminformacjipasazerskiej.db.DeleteDBService;
 import systeminformacjipasazerskiej.db.QueryDBService;
@@ -42,6 +44,12 @@ public class DeleteController implements Initializable {
     @FXML
     private ComboBox<String> deleteRideToBox;
     @FXML
+    private Button deleteTrasaButton;
+    @FXML
+    private ComboBox<String> deleteTrasaFromBox;
+    @FXML
+    private ComboBox<String> deleteTrasaToBox;
+    @FXML
     private ComboBox<String> deletePociagBox;
     @FXML
     private Button deletePociagButton;
@@ -49,6 +57,8 @@ public class DeleteController implements Initializable {
     private ChoiceBox<String> dayRideBox;
     @FXML
     private ListView<Kurs> rideList;
+    @FXML
+    private ListView<Integer> trasyListView;
 
     class RideCell extends ListCell<Kurs> {
         HBox hbox = new HBox();
@@ -66,7 +76,7 @@ public class DeleteController implements Initializable {
                 alert.setHeaderText("Czy na pewno chcesz usunąć ten kurs?");
 
                 Optional<ButtonType> result = alert.showAndWait();
-                if (result.get() == ButtonType.OK){
+                if (result.get() == ButtonType.OK) {
                     Kurs toDel = getItem();
                     getListView().getItems().remove(getItem());
                     ddb.deleteRide(toDel);
@@ -74,7 +84,6 @@ public class DeleteController implements Initializable {
 
             });
         }
-
         protected void updateItem(Kurs item, boolean empty) {
             super.updateItem(item, empty);
             setText(null);
@@ -84,7 +93,7 @@ public class DeleteController implements Initializable {
                 System.out.println("updatingItems");
                 ArrayList<Postoj> list = item.getListaPostojow();
 
-                String through = "";
+
 
                 Pociag pociag = qdb.getPociagById(item.getPociag().getIdPociagu());
                 int id_trasy = pociag.getIdTrasy();
@@ -93,17 +102,9 @@ public class DeleteController implements Initializable {
                 Stacja last = qdb.getStacjaById(qdb.getLastStationFromTrasa(id_trasy));
                 Postoj lastPostoj = qdb.getPostojByIds(item.getIdKursu(), last.getIdStacji());
 
-                if(!list.get(0).getNazwaStacji().equals(firstPostoj.getNazwaStacji())) {
-                    through += " Przez: ";
-                    through += list.get(0).getNazwaStacji();
-                }
-                if(!list.get(list.size() - 1).getNazwaStacji().equals(lastPostoj.getNazwaStacji())) {
-                    if (through.equals("")) through += " Przez: ";
-                    else through += ", ";
-                    through += list.get(list.size() - 1).getNazwaStacji();
-                }
+
                 label.setText("Z: " + first.getNazwaStacji() + "(" +
-                        firstPostoj.getOdjazd()+")   " + through + "    Do: " +  last.getNazwaStacji() +
+                        firstPostoj.getOdjazd()+")  " + "   Do: " +  last.getNazwaStacji() +
                         "(" + lastPostoj.getPrzyjazd() + ")" +
                         "  Pociąg: " + pociag.getNazwaPociagu());
                 setGraphic(hbox);
@@ -111,11 +112,57 @@ public class DeleteController implements Initializable {
         }
     }
 
+    class TrasaCell extends ListCell<Integer> {
+        HBox hbox = new HBox();
+        Label label = new Label("");
+        Pane pane = new Pane();
+        Button button = new Button("Usuń");
+
+        public TrasaCell() {
+            super();
+            hbox.getChildren().addAll(label, pane, button);
+            HBox.setHgrow(pane, Priority.ALWAYS);
+            button.setOnAction(event -> {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Potwierdź wybór");
+                alert.setHeaderText("Czy na pewno chcesz usunąć tę trasę?");
+
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK) {
+                    Integer toDel = getItem();
+                    getListView().getItems().remove(getItem());
+                    ddb.deleteTrasa(toDel);
+                }
+
+            });}
+
+
+            protected void updateItem (Integer item,boolean empty){
+                super.updateItem(item, empty);
+                setText(null);
+                setGraphic(null);
+
+                if (item != null && !empty) {
+                    System.out.println("updatingItems");
+                    int id_trasy = item;
+                    int fromStationId = qdb.getFirstStationFromTrasa(id_trasy);
+                    int lastStationId = qdb.getLastStationFromTrasa(id_trasy);
+                    Stacja firstStation = qdb.getStacjaById(fromStationId);
+                    Stacja lastStation = qdb.getStacjaById(lastStationId);
+                    label.setText("Z: " + firstStation.getNazwaStacji() + "    Do: " + lastStation.getNazwaStacji());
+                    setGraphic(hbox);
+                }
+            }
+        }
+
+
+
 
 
     private ObservableList<String> allStationsNames = FXCollections.observableArrayList();
     private ObservableList<Kurs> allMatchingKursy = FXCollections.observableArrayList();
     private ObservableList<String> allPociagNames = FXCollections.observableArrayList();
+    private ObservableList<Integer> allTrasy = FXCollections.observableArrayList();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -208,6 +255,36 @@ public class DeleteController implements Initializable {
                     true, true, true,
                     false, false));
 
+                rideList.setOnMouseClicked(e -> { //TODO: Get all stations from first to last
+                    Kurs kurs = rideList.getSelectionModel().getSelectedItem();
+
+                    // timetable
+                    TableView<Postoj> timetableView = new TableView<>();
+                    TableColumn<Postoj, String> stacje = new TableColumn<>("Stacja");
+                    stacje.setCellValueFactory(new PropertyValueFactory<>("nazwaStacji"));
+
+                    TableColumn<Postoj, String> przyjazdy = new TableColumn<>("Przyjazd");
+                    przyjazdy.setCellValueFactory(new PropertyValueFactory<>("przyjazd"));
+                    przyjazdy.setStyle("-fx-alignment: CENTER;");
+
+                    TableColumn<Postoj, String> odjazdy = new TableColumn<>("Odjazd");
+                    odjazdy.setCellValueFactory(new PropertyValueFactory<>("odjazd"));
+                    odjazdy.setStyle("-fx-alignment: CENTER;");
+
+                    timetableView.getColumns().addAll(stacje, przyjazdy, odjazdy);
+                    timetableView.getItems().addAll(kurs.getListaPostojow());
+                    stacje.setMinWidth(300);
+                    przyjazdy.setMinWidth(125);
+                    odjazdy.setMinWidth(125);
+                    VBox popupContent = new VBox();
+                    popupContent.getChildren().add(timetableView);
+                    popupContent.setSpacing(20);
+                    Dialog<Kurs> kursDialog = new Dialog<>();
+                    kursDialog.getDialogPane().setMinWidth(600);
+                    kursDialog.getDialogPane().setContent(popupContent);
+                    kursDialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+                    kursDialog.showAndWait();
+                });
                 rideList.setVisible(true);
             } catch (QueryDBService.NoSuchStationException nss) {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -226,6 +303,66 @@ public class DeleteController implements Initializable {
         allMatchingKursy.addListener((ListChangeListener<Kurs>) change ->
             rideList.setMaxHeight(allMatchingKursy.size() * 34 + 2)
         );
+
+        //********************************
+        //delete trasa
+        deleteTrasaFromBox.setItems(allStationsNames);
+        deleteTrasaFromBox.setPromptText("np. Warszawa Centralna");
+        deleteTrasaToBox.setItems(allStationsNames);
+        deleteTrasaToBox.setPromptText("np. Kraków Główny");
+
+        deleteTrasaButton.setOnMouseClicked(e -> {
+            try {
+                ArrayList<Integer> trasa_id = qdb.getTrasaIdFromTo(deleteTrasaFromBox.getValue(), deleteTrasaToBox.getValue());
+                System.out.println("Znalezione trasy:" + trasa_id.stream().collect(Collectors.toList()));
+
+                trasyListView.setVisible(false);
+                allTrasy.clear();
+                allTrasy.addAll(trasa_id);
+                trasyListView.setItems(allTrasy);
+                trasyListView.setCursor(Cursor.HAND);
+
+                trasyListView.setOnMouseClicked(event -> {
+                    Integer id_trasy = trasyListView.getSelectionModel().getSelectedItem();
+
+
+                    ArrayList<Stacja> stacje = qdb.getAllStacjeOnTrasa(id_trasy,
+                            qdb.getFirstStationFromTrasa(id_trasy), qdb.getLastStationFromTrasa(id_trasy));
+                    ListView<String> stacjeList = new ListView<>();
+                    stacjeList.setItems(FXCollections.observableArrayList(
+                            stacje.stream().map(Stacja::getNazwaStacji).collect(Collectors.toList())));
+
+                    VBox popupContent = new VBox();
+                    popupContent.getChildren().addAll(stacjeList);
+                    popupContent.setSpacing(20);
+
+                    Dialog<String> kursDialog = new Dialog<>();
+                    kursDialog.getDialogPane().setMinWidth(600);
+                    kursDialog.getDialogPane().setContent(popupContent);
+                    kursDialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+                    kursDialog.showAndWait();
+                });
+
+                 trasyListView.setVisible(true);
+
+            } catch (QueryDBService.NoSuchStationException nss) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Nie znaleziono podanej stacji.");
+                alert.showAndWait();
+            } catch (QueryDBService.NoMatchingTrasyException mnt) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Nie ma takiej trasy.");
+                alert.showAndWait();
+            }
+        });
+
+        trasyListView.setItems(allTrasy);
+        trasyListView.setCursor(Cursor.HAND);
+        trasyListView.setVisible(false);
+        trasyListView.setCellFactory(param -> new TrasaCell());
+        allTrasy.addListener((ListChangeListener<Integer>) change ->
+                trasyListView.setMaxHeight(allTrasy.size() * 34 + 2));
+
 
     }
 
