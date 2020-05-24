@@ -508,11 +508,73 @@ public class QueryDBService {
         return id_stacji;
     }
 
+    public ArrayList<Integer> getTrasaIdFromTo (String fromStation, String toStation) throws NoSuchStationException, NoMatchingTrasyException  {
+        ArrayList<Integer> id_trasy = new ArrayList<>();
+        try {
+            int fromStationId, toStationId;
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT id_stacji FROM stacje WHERE nazwa_stacji = '" + fromStation + "';");
+            if(resultSet.next()) fromStationId = resultSet.getInt("id_stacji");
+            else {
+                statement.close();
+                resultSet.close();
+                throw new NoSuchStationException();
+            }
+
+            resultSet = statement.executeQuery("SELECT id_stacji FROM stacje WHERE nazwa_stacji = '" + toStation + "';");
+            if(resultSet.next()) toStationId = resultSet.getInt("id_stacji");
+            else {
+                statement.close();
+                resultSet.close();
+                throw new NoSuchStationException();
+            }
+
+            resultSet = statement.executeQuery("SELECT idTrasy " +
+                    "FROM getIdTrasyFromTo(" + fromStationId + ", " + toStationId + ") " +
+                    "ORDER BY idTrasy;");
+            while (resultSet.next()) {
+                id_trasy.add(resultSet.getInt("idTrasy"));
+            }
+            statement.close();
+            resultSet.close();
+        }
+        catch (SQLException e) { e.printStackTrace(); }
+        if(id_trasy.isEmpty()) throw new NoMatchingTrasyException();
+        return id_trasy;
+    }
+
+    public ArrayList<Stacja> getAllStacjeOnTrasa(int id_trasy, int fromStationId, int toStationId) {
+        ArrayList<Stacja> stacje = new ArrayList<>();
+        try {
+
+            Statement statement = connection.createStatement();
+
+            stacje.add(getStacjaById(fromStationId));
+
+            System.out.println("id trasy: " + id_trasy);
+            System.out.println("from: " + fromStationId);
+            System.out.println("to: " + toStationId);
+
+            ResultSet resultSet = statement.executeQuery("SELECT idStacji FROM getStationsBetweenOnTrasa(" + id_trasy + ", "
+            + fromStationId + ", " + toStationId + ");");
+
+            while (resultSet.next()) stacje.add(getStacjaById(resultSet.getInt("idStacji")));
+
+            statement.close();
+            resultSet.close();
+        }
+        catch (SQLException e) { e.printStackTrace(); }
+
+        return stacje;
+    }
+
     public static class NoSuchStationException extends Exception {}
 
     public static class NoSuchTrainException extends Exception {}
 
     public static class NoMatchingKursyException extends Exception {}
+
+    public static class NoMatchingTrasyException extends Exception {}
 
 }
 
