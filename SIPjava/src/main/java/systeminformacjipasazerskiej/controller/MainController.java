@@ -57,6 +57,7 @@ public class MainController implements Initializable {
         this.dbService = dbService;
         queryController.setDB(dbService.getQueryDBService());
 
+        insertController.setDB(dbService.getQueryDBService());
         insertController.setDB(dbService.getInsertDBService());
 
         deleteController.setDB(dbService.getDeleteDBService());
