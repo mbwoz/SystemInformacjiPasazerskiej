@@ -206,7 +206,7 @@ public class QueryDBService {
         try {
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(
-                    "SELECT * FROM pociagi ORDER BY nazwa_pociagu;"
+                "SELECT * FROM pociagi ORDER BY nazwa_pociagu;"
             );
 
             while(resultSet.next()) {
@@ -333,6 +333,7 @@ public class QueryDBService {
                     "ORDER BY pos.odjazd;"
                 );
             }
+
             while(resultSet.next()) {
                 Kurs kurs = new Kurs();
                 kurs.setIdKursu(resultSet.getInt("id_kursu"));
@@ -458,6 +459,8 @@ public class QueryDBService {
                 d.setStacjePosrednie(stacjePosrednie);
             }
 
+            resultSet.close();
+            statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -479,8 +482,7 @@ public class QueryDBService {
 
             resultSet.close();
             statement.close();
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
@@ -490,7 +492,7 @@ public class QueryDBService {
     public int getLastStationFromTrasa(int id_trasy) {
         int id_stacji = 0;
 
-        try{
+        try {
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(
                 "SELECT * FROM getLastStation("+id_trasy+");"
@@ -500,53 +502,67 @@ public class QueryDBService {
 
             resultSet.close();
             statement.close();
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
         return id_stacji;
     }
 
-    public ArrayList<Integer> getTrasaIdFromTo (String fromStation, String toStation) throws NoSuchStationException, NoMatchingTrasyException  {
+    public ArrayList<Integer> getTrasaIdFromTo (String fromStation, String toStation)
+            throws NoSuchStationException, NoMatchingTrasyException {
         ArrayList<Integer> id_trasy = new ArrayList<>();
+
         try {
             int fromStationId, toStationId;
             Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT id_stacji FROM stacje WHERE nazwa_stacji = '" + fromStation + "';");
-            if(resultSet.next()) fromStationId = resultSet.getInt("id_stacji");
+            ResultSet resultSet = statement.executeQuery(
+                "SELECT id_stacji FROM stacje WHERE nazwa_stacji = '" + fromStation + "';"
+            );
+            if(resultSet.next())
+                fromStationId = resultSet.getInt("id_stacji");
             else {
                 statement.close();
                 resultSet.close();
                 throw new NoSuchStationException();
             }
 
-            resultSet = statement.executeQuery("SELECT id_stacji FROM stacje WHERE nazwa_stacji = '" + toStation + "';");
-            if(resultSet.next()) toStationId = resultSet.getInt("id_stacji");
+            resultSet = statement.executeQuery(
+                "SELECT id_stacji FROM stacje WHERE nazwa_stacji = '" + toStation + "';"
+            );
+            if(resultSet.next())
+                toStationId = resultSet.getInt("id_stacji");
             else {
                 statement.close();
                 resultSet.close();
                 throw new NoSuchStationException();
             }
 
-            resultSet = statement.executeQuery("SELECT idTrasy " +
-                    "FROM getIdTrasyFromTo(" + fromStationId + ", " + toStationId + ") " +
-                    "ORDER BY idTrasy;");
-            while (resultSet.next()) {
+            resultSet = statement.executeQuery(
+                "SELECT idTrasy " +
+                "FROM getIdTrasyFromTo(" + fromStationId + ", " + toStationId + ") " +
+                "ORDER BY idTrasy;"
+            );
+            while (resultSet.next())
                 id_trasy.add(resultSet.getInt("idTrasy"));
-            }
-            statement.close();
+
             resultSet.close();
+            statement.close();
         }
-        catch (SQLException e) { e.printStackTrace(); }
-        if(id_trasy.isEmpty()) throw new NoMatchingTrasyException();
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        if(id_trasy.isEmpty())
+            throw new NoMatchingTrasyException();
+
         return id_trasy;
     }
 
     public ArrayList<Stacja> getAllStacjeOnTrasa(int id_trasy, int fromStationId, int toStationId) {
         ArrayList<Stacja> stacje = new ArrayList<>();
-        try {
 
+        try {
             Statement statement = connection.createStatement();
 
             stacje.add(getStacjaById(fromStationId));
@@ -555,36 +571,40 @@ public class QueryDBService {
             System.out.println("from: " + fromStationId);
             System.out.println("to: " + toStationId);
 
-            ResultSet resultSet = statement.executeQuery("SELECT idStacji FROM getStationsBetweenOnTrasa(" + id_trasy + ", "
-            + fromStationId + ", " + toStationId + ");");
+            ResultSet resultSet = statement.executeQuery(
+                "SELECT idStacji FROM getStationsBetweenOnTrasa(" + id_trasy + ", " + fromStationId + ", " + toStationId + ");"
+            );
 
-            while (resultSet.next()) stacje.add(getStacjaById(resultSet.getInt("idStacji")));
+            while (resultSet.next())
+                stacje.add(getStacjaById(resultSet.getInt("idStacji")));
 
-            statement.close();
             resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        catch (SQLException e) { e.printStackTrace(); }
 
         return stacje;
     }
 
-    public Kurs getWholeKursFromPart (Kurs kursPart) {
+    public Kurs getWholeKursFromPart(Kurs kursPart) {
         Kurs wholeKurs = new Kurs();
         wholeKurs.setIdKursu(kursPart.getIdKursu());
         wholeKurs.setPociag(kursPart.getPociag());
         Pociag pociag = wholeKurs.getPociag();
-        int id_trasy = pociag.getIdTrasy();
-        int fromStationId = getFirstStationFromTrasa(id_trasy);
-        int toStationId = getLastStationFromTrasa(id_trasy);
+        int idTrasy = pociag.getIdTrasy();
+        int fromStationId = getFirstStationFromTrasa(idTrasy);
+        int toStationId = getLastStationFromTrasa(idTrasy);
+
         try {
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(
-                    "SELECT pos.* " +
-                            "FROM " +
-                            "(SELECT idStacji " +
-                            "FROM getStationsBetween(" + wholeKurs.getIdKursu() + ", " + fromStationId + ", " + toStationId + ")) st " +
-                            "INNER JOIN postoje pos ON st.idStacji = pos.id_stacji " +
-                            "WHERE pos.id_kursu = " + wholeKurs.getIdKursu() + ";"
+                "SELECT pos.* " +
+                "FROM " +
+                    "(SELECT idStacji " +
+                    "FROM getStationsBetween(" + wholeKurs.getIdKursu() + ", " + fromStationId + ", " + toStationId + ")) st " +
+                    "INNER JOIN postoje pos ON st.idStacji = pos.id_stacji " +
+                "WHERE pos.id_kursu = " + wholeKurs.getIdKursu() + ";"
             );
 
             ArrayList<Postoj> listaPostojow = new ArrayList<>();
@@ -603,10 +623,13 @@ public class QueryDBService {
             wholeKurs.setListaPostojow(listaPostojow);
             wholeKurs.calculateCzasPrzejazdu();
             wholeKurs.setSkladKursu(calculateSkladKursu(wholeKurs));
-            connection.close();
+
             resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        catch (SQLException e) {e.printStackTrace();}
+
         return wholeKurs;
     }
 

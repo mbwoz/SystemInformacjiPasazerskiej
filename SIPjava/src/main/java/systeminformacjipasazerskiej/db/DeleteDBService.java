@@ -103,33 +103,31 @@ public class DeleteDBService {
             //get id_pociagu
             ResultSet resultSet = statement.executeQuery("SELECT id_pociagu FROM pociagi WHERE nazwa_pociagu = '" + nazwa_pociagu + "';");
             int id_pociagu;
-            if(resultSet.next()) id_pociagu = resultSet.getInt("id_pociagu");
-            else {
+            if(resultSet.next())
+                id_pociagu = resultSet.getInt("id_pociagu");
+            else
                 throw new QueryDBService.NoSuchTrainException();
-
-            }
-
-
 
             //get id_kursu
             HashSet<Integer> id_kursu = new HashSet<>();
             resultSet = statement.executeQuery("SELECT id_kursu FROM rozklady WHERE id_pociagu = " + id_pociagu + ";");
-            while (resultSet.next()) id_kursu.add(resultSet.getInt("id_kursu"));
+            while (resultSet.next())
+                id_kursu.add(resultSet.getInt("id_kursu"));
 
             System.out.println("Pociag: " + id_pociagu);
             System.out.println("Kursy: " + id_kursu.toString());
 
             //delete postoje
-            for(Integer i: id_kursu) statement.execute("DELETE FROM postoje WHERE id_kursu = " + i + ";");
+            for(Integer i: id_kursu)
+                statement.execute("DELETE FROM postoje WHERE id_kursu = " + i + ";");
             //delete rozklady
             statement.execute("DELETE FROM rozklady WHERE id_pociagu = " + id_pociagu + ";");
             //delete pociag
             statement.execute("DELETE FROM pociagi WHERE id_pociagu = " + id_pociagu + ";");
 
-            statement.close();
             resultSet.close();
-        }
-        catch (SQLException e) {
+            statement.close();
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -144,11 +142,9 @@ public class DeleteDBService {
             statement.execute("DELETE FROM rozklady WHERE id_kursu = " + id_kursu + ";");
 
             statement.close();
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
-
     }
 
     public void deleteTrasa(int id_trasy) {
@@ -174,8 +170,9 @@ public class DeleteDBService {
 
             statement.close();
             resultSet.close();
+        } catch (SQLException | QueryDBService.NoSuchTrainException e) {
+            e.printStackTrace();
         }
-        catch (SQLException | QueryDBService.NoSuchTrainException e) { e.printStackTrace(); }
     }
 
     public void deleteOdcinek(String stationFrom, String stationTo) throws QueryDBService.NoSuchStationException, NoSuchOdcinekException {
@@ -204,19 +201,19 @@ public class DeleteDBService {
             HashSet<Integer> id_trasy = new HashSet<>();
 
             resultSet = statement.executeQuery( "SELECT  id_trasy FROM trasy_odcinki WHERE id_odcinka = " + id_odcinka + ";");
-            while (resultSet.next()) id_trasy.add(resultSet.getInt("id_trasy"));
-
+            while (resultSet.next())
+                id_trasy.add(resultSet.getInt("id_trasy"));
 
             //get id_pociagu
             HashSet<Integer> id_pociagu = new HashSet<>();
-            for(Integer i: id_trasy) {
+            for(Integer i : id_trasy) {
                 resultSet = statement.executeQuery("SELECT id_pociagu FROM pociagi WHERE id_trasy = " + i + ";");
                 while (resultSet.next()) id_pociagu.add(resultSet.getInt("id_pociagu"));
             }
 
             //get id_kursu
             HashSet<Integer> id_kursu = new HashSet<>();
-            for(Integer i: id_pociagu) {
+            for(Integer i : id_pociagu) {
                 resultSet = statement.executeQuery("SELECT id_kursu FROM rozklady WHERE id_pociagu = " + i + ";");
                 while (resultSet.next()) id_kursu.add(resultSet.getInt("id_kursu"));
             }
@@ -251,10 +248,11 @@ public class DeleteDBService {
 
             System.out.println("Successfully deleted");
 
-            statement.close();
             resultSet.close();
-
-        } catch (SQLException e) {e.printStackTrace();}
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public static class NoSuchOdcinekException extends Exception {}
