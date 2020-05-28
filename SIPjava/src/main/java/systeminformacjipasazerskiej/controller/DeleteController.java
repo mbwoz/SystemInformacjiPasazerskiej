@@ -8,10 +8,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import systeminformacjipasazerskiej.converter.DayConverter;
 import systeminformacjipasazerskiej.db.DeleteDBService;
 import systeminformacjipasazerskiej.db.QueryDBService;
@@ -178,6 +175,7 @@ public class DeleteController implements Initializable {
                 alert.setTitle("Potwierdź wybór");
                 alert.setHeaderText("Czy na pewno chcesz usunąć tę stację?");
                 alert.setContentText("Usunięcie stacji spowoduje usunięcie wszystkich postójów, odcinków, tras i pociągów z nią związanych.");
+                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
 
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.get() == ButtonType.OK) {
@@ -207,6 +205,7 @@ public class DeleteController implements Initializable {
                 alert.setTitle("Potwierdź wybór");
                 alert.setHeaderText("Czy na pewno chcesz usunąć ten pociąg?");
                 alert.setContentText("Usunięcie pociągu spowoduje usunięcie tras i postojów z nim związanych.");
+                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.get() == ButtonType.OK) {
                     ddb.deletePociag(deletePociagBox.getValue());
@@ -255,8 +254,9 @@ public class DeleteController implements Initializable {
                     true, true, true,
                     false, false));
 
-                rideList.setOnMouseClicked(e -> { //TODO: Get all stations from first to last
-                    Kurs kurs = rideList.getSelectionModel().getSelectedItem();
+                rideList.setOnMouseClicked(e -> {
+                    Kurs kursPart = rideList.getSelectionModel().getSelectedItem();
+                    Kurs kurs = qdb.getWholeKursFromPart(kursPart);
 
                     // timetable
                     TableView<Postoj> timetableView = new TableView<>();

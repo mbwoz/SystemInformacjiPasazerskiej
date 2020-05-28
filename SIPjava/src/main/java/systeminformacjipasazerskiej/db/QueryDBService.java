@@ -568,6 +568,46 @@ public class QueryDBService {
         return stacje;
     }
 
+    public Kurs getWholeKursFromPart (Kurs kursPart) {
+        Kurs wholeKurs = new Kurs();
+        wholeKurs.setIdKursu(kursPart.getIdKursu());
+        wholeKurs.setPociag(kursPart.getPociag());
+        Pociag pociag = wholeKurs.getPociag();
+        int id_trasy = pociag.getIdTrasy();
+        int fromStationId = getFirstStationFromTrasa(id_trasy);
+        int toStationId = getLastStationFromTrasa(id_trasy);
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(
+                    "SELECT pos.* " +
+                            "FROM " +
+                            "(SELECT idStacji " +
+                            "FROM getStationsBetween(" + wholeKurs.getIdKursu() + ", " + fromStationId + ", " + toStationId + ")) st " +
+                            "INNER JOIN postoje pos ON st.idStacji = pos.id_stacji " +
+                            "WHERE pos.id_kursu = " + wholeKurs.getIdKursu() + ";"
+            );
+
+            ArrayList<Postoj> listaPostojow = new ArrayList<>();
+
+            while(resultSet.next()) {
+                Postoj postoj = new Postoj();
+                postoj.setIdKursu(resultSet.getInt("id_kursu"));
+                postoj.setStacja(getStacjaById(resultSet.getInt("id_stacji")));
+                postoj.setPrzyjazd(resultSet.getString("przyjazd"));
+                postoj.setOdjazd(resultSet.getString("odjazd"));
+                postoj.setNastepnySklad(resultSet.getInt("nastepny_sklad"));
+
+                listaPostojow.add(postoj);
+            }
+
+            wholeKurs.setListaPostojow(listaPostojow);
+            wholeKurs.calculateCzasPrzejazdu();
+            wholeKurs.setSkladKursu(calculateSkladKursu(wholeKurs));
+        }
+        catch (SQLException e) {e.printStackTrace();}
+        return wholeKurs;
+    }
+
     public static class NoSuchStationException extends Exception {}
 
     public static class NoSuchTrainException extends Exception {}
