@@ -252,7 +252,7 @@ public class DeleteDBService {
             System.out.println("Successfully deleted");
 
             statement.close();
-            resultSet.close();git statu
+            resultSet.close();
 
         } catch (SQLException e) {e.printStackTrace();}
     }
