@@ -603,6 +603,8 @@ public class QueryDBService {
             wholeKurs.setListaPostojow(listaPostojow);
             wholeKurs.calculateCzasPrzejazdu();
             wholeKurs.setSkladKursu(calculateSkladKursu(wholeKurs));
+            connection.close();
+            resultSet.close();
         }
         catch (SQLException e) {e.printStackTrace();}
         return wholeKurs;

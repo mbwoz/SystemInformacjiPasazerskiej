@@ -178,6 +178,87 @@ public class DeleteDBService {
         catch (SQLException | QueryDBService.NoSuchTrainException e) { e.printStackTrace(); }
     }
 
+    public void deleteOdcinek(String stationFrom, String stationTo) throws QueryDBService.NoSuchStationException, NoSuchOdcinekException {
+        try {
+            int idStationFrom;
+            int idStationTo;
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT id_stacji FROM stacje WHERE nazwa_stacji = '" + stationFrom + "';");
+            if(resultSet.next()) idStationFrom = resultSet.getInt("id_stacji");
+            else {
+                throw new QueryDBService.NoSuchStationException();
+            }
+            resultSet = statement.executeQuery("SELECT id_stacji FROM stacje WHERE nazwa_stacji = '" + stationTo + "';");
+            if(resultSet.next()) idStationTo = resultSet.getInt("id_stacji");
+            else {
+                throw new QueryDBService.NoSuchStationException();
+            }
+            int id_odcinka;
+            resultSet = statement.executeQuery("SELECT id_odcinka FROM odcinki WHERE stacja_poczatkowa = " + idStationFrom + " AND stacja_koncowa = " + idStationTo + ";");
+            if(resultSet.next()) id_odcinka = resultSet.getInt("id_odcinka");
+            else {
+                throw new NoSuchOdcinekException();
+            }
+
+            //get id_trasy
+            HashSet<Integer> id_trasy = new HashSet<>();
+
+            resultSet = statement.executeQuery( "SELECT  id_trasy FROM trasy_odcinki WHERE id_odcinka = " + id_odcinka + ";");
+            while (resultSet.next()) id_trasy.add(resultSet.getInt("id_trasy"));
+
+
+            //get id_pociagu
+            HashSet<Integer> id_pociagu = new HashSet<>();
+            for(Integer i: id_trasy) {
+                resultSet = statement.executeQuery("SELECT id_pociagu FROM pociagi WHERE id_trasy = " + i + ";");
+                while (resultSet.next()) id_pociagu.add(resultSet.getInt("id_pociagu"));
+            }
+
+            //get id_kursu
+            HashSet<Integer> id_kursu = new HashSet<>();
+            for(Integer i: id_pociagu) {
+                resultSet = statement.executeQuery("SELECT id_kursu FROM rozklady WHERE id_pociagu = " + i + ";");
+                while (resultSet.next()) id_kursu.add(resultSet.getInt("id_kursu"));
+            }
+
+            System.out.println("Odcinek " + id_odcinka);
+            System.out.println("Trasy: " + id_trasy.toString());
+            System.out.println("Pociagi: " + id_pociagu.toString());
+            System.out.println("Kursy: " + id_kursu.toString());
+
+            //DELETE postoje
+            for(Integer i: id_kursu)
+                statement.execute("DELETE FROM postoje WHERE id_kursu = " + i + ";");
+
+            //DELETE rozklady
+            for(Integer i: id_kursu)
+                statement.execute("DELETE FROM rozklady WHERE id_kursu = " + i + ";");
+
+            //DELETE pociagi
+            for(Integer i: id_pociagu)
+                statement.execute("DELETE FROM pociagi WHERE id_pociagu = " + i + ";");
+
+            //DELETE trasy_odcinki
+            for(Integer i: id_trasy)
+                statement.execute("DELETE FROM trasy_odcinki WHERE id_trasy = " + i +";");
+
+            //DELETE trasy
+            for(Integer i: id_trasy)
+                statement.execute("DELETE FROM trasy WHERE id_trasy = " + i +";");
+
+            //DELETE odcinki
+            statement.execute("DELETE FROM odcinki WHERE id_odcinka = " + id_odcinka + ";");
+
+            System.out.println("Successfully deleted");
+
+            statement.close();
+            resultSet.close();git statu
+
+        } catch (SQLException e) {e.printStackTrace();}
+    }
+
+    public static class NoSuchOdcinekException extends Exception {}
+
 
 
 }

@@ -56,6 +56,12 @@ public class DeleteController implements Initializable {
     private ListView<Kurs> rideList;
     @FXML
     private ListView<Integer> trasyListView;
+    @FXML
+    private ComboBox<String> deleteOdcinekFromBox;
+    @FXML
+    private ComboBox<String> deleteOdcinekToBox;
+    @FXML
+    private Button deleteOdcinekButton;
 
     class RideCell extends ListCell<Kurs> {
         HBox hbox = new HBox();
@@ -363,6 +369,42 @@ public class DeleteController implements Initializable {
         allTrasy.addListener((ListChangeListener<Integer>) change ->
                 trasyListView.setMaxHeight(allTrasy.size() * 34 + 2));
 
+        //***************************************
+        //delete odcinek
+        deleteOdcinekFromBox.setItems(allStationsNames);
+        deleteOdcinekFromBox.setPromptText("np. Bochnia");
+        deleteOdcinekToBox.setItems(allStationsNames);
+        deleteOdcinekToBox.setPromptText("np. Brzesko Okocim");
+
+        deleteOdcinekButton.setOnMouseClicked(e -> {
+            try {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Potwierdź wybór");
+                alert.setHeaderText("Czy na pewno chcesz usunąć ten odcinek?");
+                alert.setContentText("Usunięcie odcinka spowoduje usunięcie wszystkich postójów, tras i pociągów z nią związanych.");
+                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK) {
+                    ddb.deleteOdcinek(deleteOdcinekFromBox.getValue(), deleteOdcinekToBox.getValue());
+                    Alert alertInfo = new Alert(Alert.AlertType.INFORMATION);
+                    alertInfo.setHeaderText("Poprawnie usunięto");
+                    alertInfo.showAndWait();
+                }
+            }
+            catch (DeleteDBService.NoSuchOdcinekException nso) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Nie ma takiego odcinka.");
+                alert.showAndWait();
+            }
+            catch (QueryDBService.NoSuchStationException nss) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Nie znaleziono podanej stacji.");
+                alert.showAndWait();
+            }
+
+        });
+
 
     }
 
@@ -387,3 +429,6 @@ public class DeleteController implements Initializable {
         System.out.println("delete db ready");
     }
 }
+
+
+//TODO: Update station list in Query and Insert after deleting station
