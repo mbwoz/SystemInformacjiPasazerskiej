@@ -38,6 +38,26 @@ public class InsertDBService {
         return false;
     }
 
+    public boolean checkOdcinekExistence(int idStart, int idEnd) {
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(
+                    "SELECT * FROM odcinki WHERE stacja_poczatkowa = " + idStart + " AND stacja_koncowa = " + idEnd + ";"
+            );
+
+            if(resultSet.next())
+                return true;
+
+            resultSet.close();
+            statement.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
     public void insertStation(Stacja stacja) throws InsertStationException {
         try {
             Statement statement = connection.createStatement();
@@ -70,9 +90,47 @@ public class InsertDBService {
         }
     }
 
+    public void insertOdcinek(int idStart, int idEnd) throws InsertOdcinekException {
+        try {
+            Statement statement = connection.createStatement();
+            statement.execute("INSERT INTO odcinki(stacja_poczatkowa, stacja_koncowa)"
+                    + "VALUES(" + idStart + ", " + idEnd + ");");
+        } catch(SQLException e) {
+            System.out.println("Error with odcinek insert.");
+            throw new InsertOdcinekException();
+        }
+    }
+
+    public int getStationId(String stacja) throws NoStationException {
+        int ans = 0;
+
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(
+                    "SELECT * FROM stacje WHERE nazwa_stacji = '" + stacja + "';"
+            );
+
+            if(!resultSet.next())
+                throw new NoStationException();
+
+            ans = resultSet.getInt("id_stacji");
+
+            resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return ans;
+    }
+
+
+
 
     public static class UpdateStationOverflowException extends Exception {}
     public static class UpdateStationLengthException extends Exception {}
     public static class UpdateStationException extends Exception {}
     public static class InsertStationException extends Exception {}
+    public static class NoStationException extends Exception {}
+    public static class InsertOdcinekException extends Exception {}
 }
