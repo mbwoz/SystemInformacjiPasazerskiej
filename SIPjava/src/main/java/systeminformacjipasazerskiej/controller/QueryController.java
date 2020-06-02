@@ -33,11 +33,11 @@ public class QueryController implements Initializable {
     @FXML
     private ComboBox<String> toComboBox;
     @FXML
-    private ChoiceBox<String> dayChoiceBox;
+    private ComboBox<String> dayComboBox;
     @FXML
     private ChoiceBox<String> postojTypeChoiceBox;
     @FXML
-    private ChoiceBox<String> timeChoiceBox;
+    private ComboBox<String> timeComboBox;
     @FXML
     private CheckBox pospiesznyCheckBox;
     @FXML
@@ -85,13 +85,13 @@ public class QueryController implements Initializable {
             toComboBox.setValue(fromCB);
         });
 
-        dayChoiceBox.setItems(FXCollections.observableArrayList(
+        dayComboBox.setItems(FXCollections.observableArrayList(
             Stream.iterate(0, i -> i+1)
                 .limit(7)
                 .map(DayConverter::convertDay)
                 .collect(Collectors.toList())
         ));
-        dayChoiceBox.getSelectionModel().select(0);
+        dayComboBox.getSelectionModel().select(0);
 
         postojTypeChoiceBox.setItems(FXCollections.observableArrayList(
             "Odjazd po godzinie:", "Przyjazd przed godziną:"
@@ -104,10 +104,10 @@ public class QueryController implements Initializable {
 
                 next = next.split(" ")[0];
 
-                if(next.equals("Odjazd")) timeChoiceBox.setItems(odjazdTime);
-                else timeChoiceBox.setItems(przyjazdTime);
+                if(next.equals("Odjazd")) timeComboBox.setItems(odjazdTime);
+                else timeComboBox.setItems(przyjazdTime);
 
-                timeChoiceBox.getSelectionModel().select(0);
+                timeComboBox.getSelectionModel().select(0);
         });
 
         ArrayList<String> timeArrayList = new ArrayList<>();
@@ -120,8 +120,8 @@ public class QueryController implements Initializable {
             timeArrayList.add(((i < 10) ? "0" + i : i) + ":00");
         przyjazdTime.addAll(timeArrayList);
 
-        timeChoiceBox.setItems(odjazdTime);
-        timeChoiceBox.getSelectionModel().select(0);
+        timeComboBox.setItems(odjazdTime);
+        timeComboBox.getSelectionModel().select(0);
 
         searchConnectionButton.setOnMouseClicked(event -> {
             connectionsListView.setVisible(false);
@@ -131,9 +131,9 @@ public class QueryController implements Initializable {
                 allMatchingKursy.addAll(qdb.getConnections(
                     fromComboBox.getValue(),
                     toComboBox.getValue(),
-                    dayChoiceBox.getValue(),
+                    dayComboBox.getValue(),
                     postojTypeChoiceBox.getValue().split(" ")[0],
-                    timeChoiceBox.getValue(),
+                    timeComboBox.getValue(),
                     pospiesznyCheckBox.isSelected(),
                     ekspresCheckBox.isSelected(),
                     pendolinoCheckBox.isSelected(),
