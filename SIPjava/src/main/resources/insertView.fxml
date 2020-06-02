@@ -10,6 +10,7 @@
             pannable="true">
 
     <VBox>
+        <HBox>
         <VBox>
             <Label text="Dodaj/Modyfikuj stację">
                 <VBox.margin>
@@ -64,8 +65,8 @@
                 </VBox.margin>
             </HBox>
             <HBox spacing="10.0">
+                <Region HBox.hgrow="ALWAYS" />
                 <children>
-                    <Region HBox.hgrow="ALWAYS" />
                     <Button fx:id="insertStationButton" text="Dodaj" />
                 </children>
                 <VBox.margin>
@@ -73,11 +74,12 @@
                 </VBox.margin>
             </HBox>
         </VBox>
-
+        </HBox>
         <padding>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
         </padding>
 
+        <HBox>
         <VBox>
             <Label text="Dodaj odcinek">
                 <VBox.margin>
@@ -119,10 +121,108 @@
                 </VBox.margin>
             </HBox>
         </VBox>
+        </HBox>
+
+        <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+        </padding>
+
+        <HBox>
+        <VBox>
+            <Label text="Dodaj wagon">
+                <VBox.margin>
+                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                </VBox.margin>
+                <font>
+                    <Font name="System Bold" size="15.0" />
+                </font>
+            </Label>
+            <HBox spacing="10.0">
+                <Label text="Model wagonu:">
+                    <HBox.margin>
+                        <Insets top="5.0" />
+                    </HBox.margin>
+                </Label>
+                <TextField fx:id="insertWagonName" editable="true" />
+                <VBox.margin>
+                    <Insets bottom="5.0" left="10.0" right="10.0" top="10.0" />
+                </VBox.margin>
+            </HBox>
+            <HBox spacing="10.0">
+                <Label text="Typ wagonu:">
+                    <HBox.margin>
+                        <Insets top="5.0" />
+                    </HBox.margin>
+                </Label>
+                <ChoiceBox fx:id="insertWagonType"/>
+                <VBox.margin>
+                    <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+                </VBox.margin>
+            </HBox>
+            <HBox spacing="10.0">
+                <Label text="Długość wagonu:">
+                    <HBox.margin>
+                        <Insets top="5.0" />
+                    </HBox.margin>
+                </Label>
+                <TextField fx:id="insertWagonLength" editable="true" />
+                <VBox.margin>
+                    <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+                </VBox.margin>
+            </HBox>
+            <HBox spacing="10.0">
+                <Label text="Liczba miejsc (1 klasa):">
+                    <HBox.margin>
+                        <Insets top="5.0" />
+                    </HBox.margin>
+                </Label>
+                <TextField fx:id="insertWagon1klasa" editable="true"/>
+                <Label text="Liczba miejsc (2 klasa):">
+                    <HBox.margin>
+                        <Insets left="20.0" top="5.0"/>
+                    </HBox.margin>
+                </Label>
+                <TextField fx:id="insertWagon2klasa" editable="true"/>
+                <VBox.margin>
+                    <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+                </VBox.margin>
+            </HBox>
+            <HBox spacing="10.0">
+                <Label text="Liczba rowerów:">
+                    <HBox.margin>
+                        <Insets top="5.0" />
+                    </HBox.margin>
+                </Label>
+                <TextField fx:id="insertWagonBikes" editable="true"/>
+                <VBox.margin>
+                    <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+                </VBox.margin>
+            </HBox>
+            <HBox spacing="20.0">
+                <CheckBox fx:id="insertWagonPrzedzialy" selected="false" text="Przedziały"/>
+                <CheckBox fx:id="insertWagonAC" mnemonicParsing="false" selected="false" text="Klimatyzacja"/>
+                <CheckBox fx:id="insertWagonWifi" mnemonicParsing="false" selected="false" text="Wi-fi"/>
+                <CheckBox fx:id="insertWagonNiepelnosprawni" mnemonicParsing="false" selected="false" text="Miejsca dla niepełnosprawnych"/>
+                <VBox.margin>
+                    <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+                </VBox.margin>
+            </HBox>
+            <HBox spacing="10.0">
+                <children>
+                    <Region HBox.hgrow="ALWAYS" />
+                    <Button fx:id="insertWagonButton" text="Dodaj" />
+                </children>
+                <VBox.margin>
+                    <Insets bottom="10.0" left="100.0" right="10.0" top="10.0" />
+                </VBox.margin>
+            </HBox>
+        </VBox>
+        </HBox>
 
         <padding>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
         </padding>
     </VBox>
+
 
 </ScrollPane>

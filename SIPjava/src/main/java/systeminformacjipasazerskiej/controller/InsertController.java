@@ -11,9 +11,11 @@ import javafx.scene.layout.Region;
 import systeminformacjipasazerskiej.db.InsertDBService;
 import systeminformacjipasazerskiej.db.QueryDBService;
 import systeminformacjipasazerskiej.model.Stacja;
+import systeminformacjipasazerskiej.model.Wagon;
 
 import java.awt.*;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
@@ -41,8 +43,34 @@ public class InsertController implements Initializable {
     @FXML
     private Button insertOdcinekButton;
 
+    @FXML
+    private TextField insertWagonName;
+    @FXML
+    private ChoiceBox<String> insertWagonType;
+    @FXML
+    private TextField insertWagonLength;
+    @FXML
+    private TextField insertWagon1klasa;
+    @FXML
+    private TextField insertWagon2klasa;
+    @FXML
+    private TextField insertWagonBikes;
+    @FXML
+    private CheckBox insertWagonPrzedzialy;
+    @FXML
+    private CheckBox insertWagonAC;
+    @FXML
+    private CheckBox insertWagonWifi;
+    @FXML
+    private CheckBox insertWagonNiepelnosprawni;
+    @FXML
+    private Button insertWagonButton;
+
+
+
 
     private ObservableList<String> allStationsNames = FXCollections.observableArrayList();
+    private ObservableList<String> allWagonyTypes = FXCollections.observableArrayList("sypialny", "kuszetka", "barowy", "osobowy", "business");
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -76,7 +104,7 @@ public class InsertController implements Initializable {
                 dataCorrectness = false;
             if(perony <= 0 || perony >= 100)
                 dataCorrectness = false;
-            if(dlugosc <= 0 || dlugosc >= 1000)
+            if(dlugosc < 0.01 || dlugosc > 999.99)
                 dataCorrectness = false;
 
             if(!dataCorrectness) {
@@ -105,14 +133,14 @@ public class InsertController implements Initializable {
                         Alert info = new Alert(Alert.AlertType.INFORMATION);
                         info.setHeaderText("Modyfikacja zakończona niepowodzeniem.");
                         info.setContentText("Operacja nie powiodła się - zbyt mała liczba torów.");
-                        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                        info.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
                         info.showAndWait();
                         return;
                     } catch (InsertDBService.UpdateStationLengthException e) {
                         Alert info = new Alert(Alert.AlertType.INFORMATION);
                         info.setHeaderText("Modyfikacja zakończona niepowodzeniem.");
                         info.setContentText("Operacja nie powiodła się - zbyt krótkie perony.");
-                        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                        info.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
                         info.showAndWait();
                         return;
                     } catch (InsertDBService.UpdateStationException e) {
@@ -168,7 +196,7 @@ public class InsertController implements Initializable {
             String end = (String) insertOdcinekKoniec.getValue();
             boolean dataCorrectness = true;
 
-            if(start.isBlank() || end.isBlank()) {
+            if(start == null || end == null || start.isBlank() || end.isBlank()) {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setHeaderText("Błędne dane.");
                 alert.showAndWait();
@@ -220,6 +248,112 @@ public class InsertController implements Initializable {
                 info.showAndWait();
             }
         });
+
+
+        //insert wagon
+        insertWagonType.setItems(allWagonyTypes);
+        insertWagonType.getSelectionModel().select(0);
+        insertWagonName.setPromptText("np. Bautzen 86");
+        insertWagonLength.setPromptText("0.01 - 99.99");
+        insertWagon1klasa.setPromptText("0 - 99");
+        insertWagon2klasa.setPromptText("0 - 99");
+        insertWagonBikes.setPromptText("0 - 99");
+
+        insertWagonButton.setOnMouseClicked(event -> {
+            String nazwa = "";
+            String typ = "";
+            int klasa1 = 0, klasa2 = 0;
+            int rowery = 0;
+            double dlugosc = 0;
+            boolean przedzialy = false, klimatyzacja = false, wifi = false, niepelnosprawni = false;
+            boolean dataCorrectness = true;
+
+            try {
+                nazwa = insertWagonName.getText();
+                typ = insertWagonType.getValue();
+                if(!insertWagon1klasa.getText().isBlank())
+                    klasa1 = Integer.parseInt(insertWagon1klasa.getText());
+                if(!insertWagon2klasa.getText().isBlank())
+                    klasa2 = Integer.parseInt(insertWagon2klasa.getText());
+                if(!insertWagonBikes.getText().isBlank())
+                    rowery = Integer.parseInt(insertWagonBikes.getText());
+                dlugosc = Double.parseDouble(insertWagonLength.getText());
+                przedzialy = insertWagonPrzedzialy.isSelected();
+                klimatyzacja = insertWagonAC.isSelected();
+                wifi = insertWagonWifi.isSelected();
+                niepelnosprawni = insertWagonNiepelnosprawni.isSelected();
+            } catch(NumberFormatException nfe) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Błędne dane");
+                alert.showAndWait();
+                return;
+            }
+
+            if(nazwa == null || nazwa.isBlank())
+                dataCorrectness = false;
+            if(klasa1 < 0 || klasa1 >= 100)
+                dataCorrectness = false;
+            if(klasa2 < 0 || klasa2 >= 100)
+                dataCorrectness = false;
+            if(rowery < 0 || rowery >= 100)
+                dataCorrectness = false;
+            if(dlugosc < 0.01 || dlugosc > 99.99)
+                dataCorrectness = false;
+
+            if(!dataCorrectness) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Błędne dane");
+                alert.showAndWait();
+                return;
+            }
+
+            DecimalFormat df = new DecimalFormat("#.##");
+            dlugosc = Double.valueOf(df.format(dlugosc));
+
+            Wagon wagon = new Wagon();
+            wagon.setModel(nazwa);
+            wagon.setTyp(typ);
+            wagon.setMiejscaI(klasa1);
+            wagon.setMiejscaII(klasa2);
+            wagon.setRowery(rowery);
+            wagon.setCzyKlimatyzacja(klimatyzacja);
+            wagon.setCzyPrzedzialowy(przedzialy);
+            wagon.setCzyWifi(wifi);
+            wagon.setCzyNiepelnosprawni(niepelnosprawni);
+            wagon.setDlugosc(dlugosc);
+
+            if(idb.checkWagonExistence(wagon)) {
+                Alert info = new Alert(Alert.AlertType.INFORMATION);
+                info.setHeaderText("Dodawanie zakończona niepowodzeniem.");
+                info.setContentText("Operacja nie powiodła się - podany wagon już istnieje.");
+                info.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                info.showAndWait();
+                return;
+            }
+
+
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Potwierdź wybór");
+            alert.setHeaderText("Czy na pewno chcesz dodać ten wagon?");
+            Optional<ButtonType> result = alert.showAndWait();
+
+            if(result.get() == ButtonType.OK) {
+                try {
+                    idb.insertWagon(wagon);
+                } catch (InsertDBService.InsertWagonException e) {
+                    Alert info = new Alert(Alert.AlertType.INFORMATION);
+                    info.setHeaderText("Dodanie zakończone niepowodzeniem.");
+                    info.showAndWait();
+                    return;
+                }
+
+                Alert info = new Alert(Alert.AlertType.INFORMATION);
+                info.setHeaderText("Dodanie zakończone powodzeniem.");
+                info.showAndWait();
+            }
+
+        });
+
 
 
     }

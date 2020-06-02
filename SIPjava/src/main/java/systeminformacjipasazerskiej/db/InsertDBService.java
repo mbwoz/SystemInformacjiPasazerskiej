@@ -58,6 +58,41 @@ public class InsertDBService {
         return false;
     }
 
+    public boolean checkWagonExistence(Wagon wagon) {
+        char przedziały = (wagon.isCzyPrzedzialowy()) ? 'T' : 'N';
+        char klimatyzacja = (wagon.isCzyKlimatyzacja()) ? 'T' : 'N';
+        char wifi = (wagon.isCzyWifi()) ? 'T' : 'N';
+        char niepelnosprawni = (wagon.isCzyNiepelnosprawni()) ? 'T' : 'N';
+
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(
+                    "SELECT * FROM wagony WHERE " +
+                            "model_wagonu = '" + wagon.getModel() + "' AND " +
+                            "typ_wagonu = '" + wagon.getTyp() + "' AND " +
+                            "liczba_miejsc_i = " + wagon.getMiejscaI() + " AND " +
+                            "liczba_miejsc_ii = " + wagon.getMiejscaII() + " AND " +
+                            "liczba_rowerow = " + wagon.getRowery() + " AND " +
+                            "czy_przedzialowy = '" + przedziały + "' AND " +
+                            "czy_klimatyzacja = '" + klimatyzacja + "' AND " +
+                            "czy_wifi = '" + wifi + "' AND " +
+                            "czy_niepelnosprawni = '" + niepelnosprawni + "' AND " +
+                            "dlugosc_wagonu = " + wagon.getDlugosc() + ";"
+            );
+
+            if(resultSet.next())
+                return true;
+
+            resultSet.close();
+            statement.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
     public void insertStation(Stacja stacja) throws InsertStationException {
         try {
             Statement statement = connection.createStatement();
@@ -101,6 +136,26 @@ public class InsertDBService {
         }
     }
 
+
+    public void insertWagon(Wagon wagon) throws InsertWagonException {
+        char przedziały = (wagon.isCzyPrzedzialowy()) ? 'T' : 'N';
+        char klimatyzacja = (wagon.isCzyKlimatyzacja()) ? 'T' : 'N';
+        char wifi = (wagon.isCzyWifi()) ? 'T' : 'N';
+        char niepelnosprawni = (wagon.isCzyNiepelnosprawni()) ? 'T' : 'N';
+
+        try {
+            Statement statement = connection.createStatement();
+            statement.execute("INSERT INTO wagony(model_wagonu, typ_wagonu, liczba_miejsc_i, liczba_miejsc_ii, liczba_rowerow, " +
+                    "czy_przedzialowy, czy_klimatyzacja, czy_wifi, czy_niepelnosprawni, dlugosc_wagonu)" +
+                    "VALUES('" + wagon.getModel() + "', '" + wagon.getTyp() + "', " + wagon.getMiejscaI() + ", " +
+                    wagon.getMiejscaII() + ", " + wagon.getRowery() + ", '" + przedziały + "', '" +
+                    klimatyzacja + "', '" + wifi + "', '" + niepelnosprawni + "', " + wagon.getDlugosc() + ");");
+        } catch(SQLException e) {
+            System.out.println("Error with station insert.");
+            throw new InsertWagonException();
+        }
+    }
+
     public int getStationId(String stacja) throws NoStationException {
         int ans = 0;
 
@@ -133,4 +188,5 @@ public class InsertDBService {
     public static class InsertStationException extends Exception {}
     public static class NoStationException extends Exception {}
     public static class InsertOdcinekException extends Exception {}
+    public static class InsertWagonException extends Exception {}
 }
