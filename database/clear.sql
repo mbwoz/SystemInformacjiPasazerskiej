@@ -51,6 +51,8 @@ DROP FUNCTION checkStationOverflow;
 DROP FUNCTION checkStationLength;
 DROP FUNCTION getSkladLength;
 DROP FUNCTION getPreviousSklad;
+DROP FUNCTION checkSkladQuery;
+DROP FUNCTION insertSkladQuery;
 
 
 --tables

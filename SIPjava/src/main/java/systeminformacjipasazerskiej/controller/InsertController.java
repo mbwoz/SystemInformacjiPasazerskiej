@@ -4,15 +4,22 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import systeminformacjipasazerskiej.db.InsertDBService;
 import systeminformacjipasazerskiej.db.QueryDBService;
+import systeminformacjipasazerskiej.model.Sklad;
 import systeminformacjipasazerskiej.model.Stacja;
 import systeminformacjipasazerskiej.model.Wagon;
 
 import java.net.URL;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
@@ -66,11 +73,25 @@ public class InsertController implements Initializable {
     @FXML
     private Button insertWagonButton;
 
-
+    @FXML
+    private TextField insertSkladNumber;
+    @FXML
+    private CheckBox insertSkladPrzesylki;
+    @FXML
+    private Button insertSkladNumberOK;
+    @FXML
+    private Button insertSkladNumberClean;
+    @FXML
+    private Button insertSkladButton;
+    @FXML
+    private VBox insertSkladVBox;
+    private ArrayList<ComboBox<String>> insertSkladRodzaj = new ArrayList<>();
+    private ArrayList<TextField> insertSkladIlosc = new ArrayList<>();
 
 
     private ObservableList<String> allStationsNames = FXCollections.observableArrayList();
     private ObservableList<String> allWagonyTypes = FXCollections.observableArrayList("sypialny", "kuszetka", "barowy", "osobowy", "business");
+    private ObservableList<String> allWagonyDescriptions = FXCollections.observableArrayList();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -353,6 +374,154 @@ public class InsertController implements Initializable {
         });
 
 
+        //insert sklady
+        insertSkladNumber.setPromptText("1-99");
+        insertSkladNumberOK.setOnMouseClicked(event -> {
+            int num = 0;
+            try {
+                num = Integer.parseInt(insertSkladNumber.getText());
+            } catch(NumberFormatException nfe) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Błędne dane");
+                alert.showAndWait();
+                return;
+            }
+
+            if(num <= 0 || num >= 100) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Błędne dane");
+                alert.showAndWait();
+                return;
+            }
+
+            insertSkladVBox.getChildren().clear();
+            insertSkladRodzaj.clear();
+            insertSkladIlosc.clear();
+            for(int i = 0; i < num; i++) {
+                HBox hbox = new HBox();
+                hbox.setSpacing(10.0);
+                hbox.setAlignment(Pos.CENTER_LEFT);
+
+                Label rodzajText = new Label("Rodzaj wagonu:");
+                ComboBox<String> rodzajBox = new ComboBox<>();
+                rodzajBox.setEditable(false);
+                rodzajBox.setItems(allWagonyDescriptions);
+                rodzajBox.getSelectionModel().select(0);
+                insertSkladRodzaj.add(rodzajBox);
+
+                Label iloscText = new Label("Liczba wagonów:");
+                iloscText.setPadding(new Insets(0,0,0,20));
+                TextField iloscField = new TextField();
+                iloscField.setPromptText("1-99");
+                insertSkladIlosc.add(iloscField);
+
+                hbox.getChildren().addAll(rodzajText, rodzajBox, iloscText, iloscField);
+                insertSkladVBox.getChildren().add(hbox);
+            }
+        });
+        insertSkladNumberClean.setOnMouseClicked(event -> {
+            insertSkladVBox.getChildren().clear();
+            insertSkladRodzaj.clear();
+            insertSkladIlosc.clear();
+            insertSkladNumber.setText(null);
+        });
+
+        insertSkladButton.setOnMouseClicked(event -> {
+            int number = insertSkladRodzaj.size();
+            boolean przesylki = insertSkladPrzesylki.isSelected();
+            ArrayList<Integer> skladIlosc = new ArrayList<>();
+            ArrayList<Integer> skladIdWagonu = new ArrayList<>();
+
+            if(number == 0)
+                return;
+
+            HashSet<String> hashSet = new HashSet<>();
+
+            for(ComboBox<String> box : insertSkladRodzaj) {
+                String s = box.getValue();
+                hashSet.add(s);
+            }
+            if(hashSet.size() != number) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Błędne dane.");
+                alert.setContentText("Rodzaje wagonów muszą się różnić.");
+                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                alert.showAndWait();
+                return;
+            }
+
+            try {
+                for(TextField field : insertSkladIlosc) {
+                    int toAdd = Integer.parseInt(field.getText());
+                    skladIlosc.add(toAdd);
+
+                    if(toAdd >= 100 || toAdd <= 0) {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setHeaderText("Błędne dane");
+                        alert.showAndWait();
+                        return;
+                    }
+                }
+            } catch(NumberFormatException nfe) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Błędne dane");
+                alert.showAndWait();
+                return;
+            }
+
+            ArrayList<Wagon> allWagony = idb.getAllWagony();
+            for(ComboBox<String> box : insertSkladRodzaj) {
+                String s = box.getValue();
+                int id = idb.getIdWagonuByDescription(s, allWagony);
+
+                if(id == 0) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setHeaderText("Błędne dane");
+                    alert.setContentText("Nie znaleziono wagonu.");
+                    alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                    alert.showAndWait();
+                    return;
+                }
+
+                skladIdWagonu.add(id);
+            }
+
+            Alert info = new Alert(Alert.AlertType.CONFIRMATION);
+            info.setTitle("Potwierdź wybór");
+            info.setHeaderText("Czy na pewno chcesz dodać ten skład?");
+            Optional<ButtonType> result = info.showAndWait();
+
+            if(result.get() == ButtonType.OK) {
+                Sklad sklad = new Sklad();
+                sklad.setCzyPrzesylki(przesylki);
+                sklad.setIdWagonow(skladIdWagonu);
+                sklad.setLiczbaWagonow(skladIlosc);
+
+                try {
+                    idb.insertSklad(sklad);
+                } catch (InsertDBService.InsertSkladException e) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setHeaderText("Dodanie zakończona niepowodzeniem.");
+                    alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                    alert.showAndWait();
+                    return;
+                } catch (InsertDBService.InsertSkladExistsException e) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setHeaderText("Dodanie zakończona niepowodzeniem.");
+                    alert.setContentText("Operacja nie powiodła się - podany sklad już istnieje.");
+                    alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                    alert.showAndWait();
+                    return;
+                }
+
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Dodanie zakończona powodzeniem.");
+                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                alert.showAndWait();
+                return;
+
+            }
+        });
 
     }
 
@@ -368,6 +537,13 @@ public class InsertController implements Initializable {
 
     public void setDB(InsertDBService idb) {
         this.idb = idb;
+
+        allWagonyDescriptions.addAll(
+                idb.getAllWagony()
+                        .stream()
+                        .map(Wagon::getDescription)
+                        .collect(Collectors.toList()));
+
         System.out.println("insert db ready");
     }
 

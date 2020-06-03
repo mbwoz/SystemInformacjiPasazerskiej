@@ -222,6 +222,54 @@
         <padding>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
         </padding>
+
+        <HBox>
+            <VBox>
+                <Label text="Dodaj skład">
+                    <VBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                    </VBox.margin>
+                    <font>
+                        <Font name="System Bold" size="15.0" />
+                    </font>
+                </Label>
+                <HBox spacing="10.0">
+                    <Label text="Liczba różnych rodzajów wagonów:">
+                        <HBox.margin>
+                            <Insets top="5.0" />
+                        </HBox.margin>
+                    </Label>
+                    <TextField fx:id="insertSkladNumber" editable="true" />
+                    <Button fx:id="insertSkladNumberOK" text="OK" />
+                    <Button fx:id="insertSkladNumberClean" text="Wyczyść" />
+                    <VBox.margin>
+                        <Insets bottom="5.0" left="10.0" right="10.0" top="10.0" />
+                    </VBox.margin>
+                </HBox>
+                <VBox fx:id="insertSkladVBox" spacing="5.0">
+                    <VBox.margin>
+                        <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+                    </VBox.margin>
+                </VBox>
+                <HBox spacing="10.0">
+                    <children>
+                        <CheckBox fx:id="insertSkladPrzesylki" mnemonicParsing="false" selected="false" text="Przesyłki konduktorskie"/>
+                    </children>
+                    <VBox.margin>
+                        <Insets bottom="5.0" left="10.0" right="10.0" top="10.0" />
+                    </VBox.margin>
+                </HBox>
+                <HBox spacing="10.0">
+                    <children>
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Button fx:id="insertSkladButton" text="Dodaj" />
+                    </children>
+                    <VBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="5.0" />
+                    </VBox.margin>
+                </HBox>
+            </VBox>
+        </HBox>
     </VBox>
 
 

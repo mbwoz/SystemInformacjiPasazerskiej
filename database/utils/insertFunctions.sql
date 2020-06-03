@@ -164,3 +164,79 @@ BEGIN
     RETURN TRUE;
 END;
 $$ language plpgsql;
+----
+
+
+-- sprawdzanie czy dany sklad istnieje
+create or replace function checkSkladQuery(rodzaj integer[], ilosc integer[], n integer, przesylki char(1))
+    returns boolean as
+$$
+declare
+    i integer;
+    que varchar;
+    rec record;
+    wyn char(1);
+begin
+    que := 'SELECT fir.id_skladu as id, fir.suma, sec.ilosc
+            FROM (
+                SELECT id_skladu, COUNT(*) as suma
+                FROM sklady_wagony
+                GROUP BY 1
+                ORDER BY 1
+            ) fir LEFT JOIN (';
+
+    que := que || 'SELECT a.id_skladu, COUNT(*) as ilosc FROM sklady_wagony a WHERE (a.id_wagonu = ' ||
+        rodzaj[1]::varchar || ' AND a.liczba_wagonow = ' || ilosc[1]::varchar || ')';
+
+    for i in 2 .. n
+    loop
+        que := que || ' OR (a.id_wagonu = ' || rodzaj[i]::varchar || ' AND a.liczba_wagonow = ' || ilosc[i]::varchar || ')';
+    end loop;
+    que := que || ' GROUP BY 1 ) sec ON fir.id_skladu = sec.id_skladu WHERE fir.suma = sec.ilosc';
+
+    for rec in
+        execute que
+    loop
+        i := rec.id;
+        SELECT czy_przesylki INTO wyn
+            FROM sklady WHERE id_skladu = i;
+
+        RAISE NOTICE 'Value: %', wyn;
+
+        IF wyn = przesylki THEN
+            RETURN TRUE;
+        END IF;
+    end loop;
+
+    RETURN FALSE;
+end;
+$$
+language plpgsql;
+----
+
+
+-- dodanie danego skladu
+create or replace function insertSkladQuery(rodzaj integer[], ilosc integer[], n integer, przesylki char(1))
+    returns void as
+$$
+declare
+    val boolean;
+    id integer;
+    i integer;
+begin
+    SELECT checkSkladQuery(rodzaj, ilosc, n, przesylki) INTO val;
+    IF val = TRUE THEN
+        RAISE EXCEPTION 'Sklad exists';
+        RETURN;
+    END IF;
+
+    INSERT INTO sklady(czy_przesylki) VALUES(przesylki);
+    SELECT currval('sklady_seq') INTO id;
+    FOR i IN 1 .. n
+    LOOP
+        EXECUTE 'INSERT INTO sklady_wagony(id_skladu, id_wagonu, liczba_wagonow) VALUES(' ||
+            id || ', ' || rodzaj[i] || ', ' || ilosc[i] || ')';
+    END LOOP;
+end;
+$$
+language plpgsql;

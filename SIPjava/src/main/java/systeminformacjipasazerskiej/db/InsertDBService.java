@@ -156,6 +156,29 @@ public class InsertDBService {
         }
     }
 
+    public void insertSklad(Sklad sklad) throws InsertSkladException, InsertSkladExistsException {
+        String przesylki = (sklad.isCzyPrzesylki()) ? "'T'" : "'N'";
+        int n = sklad.getIdWagonow().size();
+        String idWagonow = arrayToQuery(sklad.getIdWagonow());
+        String ilosc = arrayToQuery(sklad.getLiczbaWagonow());
+
+        try {
+            String query = "SELECT insertSkladQuery(" + idWagonow + ", " + ilosc + ", " + n + ", " + przesylki + ");";
+            System.out.println(query);
+            Statement statement = connection.createStatement();
+            statement.execute(query);
+        } catch(SQLException e) {
+            System.out.println("Error with sklad insert.");
+            String mes = e.getMessage();
+            System.out.println(mes);
+
+            if(mes.contains("Sklad exists"))
+                throw new InsertSkladExistsException();
+            else
+                throw new InsertSkladException();
+        }
+    }
+
     public int getStationId(String stacja) throws NoStationException {
         int ans = 0;
 
@@ -179,8 +202,72 @@ public class InsertDBService {
         return ans;
     }
 
+    public ArrayList<Wagon> getAllWagony() {
+        ArrayList<Wagon> wagony = new ArrayList<>();
 
 
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(
+                    "SELECT * FROM wagony ORDER BY 3, 2, 4, 5, 6;"
+            );
+
+            while(resultSet.next()) {
+                Wagon wagon = new Wagon();
+                boolean przedzialy = (resultSet.getString("czy_przedzialowy") == "T");
+                boolean klimatyzacja = (resultSet.getString("czy_klimatyzacja") == "T");
+                boolean wifi = (resultSet.getString("czy_wifi") == "T");
+                boolean niepelnosprawni = (resultSet.getString("czy_niepelnosprawni") == "T");
+
+                wagon.setIdWagonu(resultSet.getInt("id_wagonu"));
+                wagon.setModel(resultSet.getString("model_wagonu"));
+                wagon.setTyp(resultSet.getString("typ_wagonu"));
+                wagon.setMiejscaI(resultSet.getInt("liczba_miejsc_i"));
+                wagon.setMiejscaII(resultSet.getInt("liczba_miejsc_ii"));
+                wagon.setRowery(resultSet.getInt("liczba_rowerow"));
+                wagon.setCzyPrzedzialowy(przedzialy);
+                wagon.setCzyKlimatyzacja(klimatyzacja);
+                wagon.setCzyWifi(wifi);
+                wagon.setCzyNiepelnosprawni(niepelnosprawni);
+                wagon.setDlugosc(resultSet.getDouble("dlugosc_wagonu"));
+
+                wagony.add(wagon);
+            }
+
+            resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return wagony;
+    }
+
+    public int getIdWagonuByDescription(String desc, ArrayList<Wagon> allWagony) {
+        for(Wagon wagon : allWagony) {
+            String s = wagon.getDescription();
+            if(s.equals(desc))
+                return wagon.getIdWagonu();
+        }
+        return 0;
+    }
+
+    public String arrayToQuery(ArrayList<Integer> array) {
+        String ans = "'{" + array.get(0);
+        boolean first = false;
+
+        for(Integer i : array) {
+            if(!first) {
+                first = true;
+                continue;
+            }
+
+            ans += (", " + i);
+        }
+        ans += "}'";
+
+        return ans;
+    }
 
     public static class UpdateStationOverflowException extends Exception {}
     public static class UpdateStationLengthException extends Exception {}
@@ -189,4 +276,6 @@ public class InsertDBService {
     public static class NoStationException extends Exception {}
     public static class InsertOdcinekException extends Exception {}
     public static class InsertWagonException extends Exception {}
+    public static class InsertSkladException extends Exception {}
+    public static class InsertSkladExistsException extends Exception {}
 }

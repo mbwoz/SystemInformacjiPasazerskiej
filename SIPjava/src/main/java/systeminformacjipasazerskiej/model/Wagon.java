@@ -100,4 +100,16 @@ public class Wagon {
     public void setDlugosc(double dlugosc) {
         this.dlugosc = dlugosc;
     }
+
+    public String getDescription() {
+        char przedziały = (this.isCzyPrzedzialowy()) ? 'T' : 'N';
+        char klimatyzacja = (this.isCzyKlimatyzacja()) ? 'T' : 'N';
+        char wifi = (this.isCzyWifi()) ? 'T' : 'N';
+        char niepelnosprawni = (this.isCzyNiepelnosprawni()) ? 'T' : 'N';
+
+        String ans = "\"" + this.getModel() + "\", " + this.getTyp() + ", " + this.getMiejscaI() + ", " +
+                this.getMiejscaII() + ", " + this.getRowery() + ", " + przedziały + ", " +
+                klimatyzacja + ", " + wifi + ", " + niepelnosprawni + ", " + this.getDlugosc();
+        return ans;
+    }
 }
