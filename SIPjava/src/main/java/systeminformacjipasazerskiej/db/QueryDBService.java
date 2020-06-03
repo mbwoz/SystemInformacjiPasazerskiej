@@ -226,6 +226,72 @@ public class QueryDBService {
         return pociagi;
     }
 
+    public ArrayList<Wagon> getAllWagony() {
+        ArrayList<Wagon> wagony = new ArrayList<>();
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(
+                    "SELECT * FROM wagony ORDER BY model_wagonu;"
+            );
+
+            while(resultSet.next()) {
+                Wagon wagon = new Wagon();
+                wagon.setIdWagonu(resultSet.getInt("id_wagonu"));
+                wagon.setModel(resultSet.getString("model_wagonu"));
+                wagon.setTyp(resultSet.getString("typ_wagonu"));
+                wagon.setMiejscaI(resultSet.getInt("liczba_miejsc_I"));
+                wagon.setMiejscaII(resultSet.getInt("liczba_miejsc_II"));
+                wagon.setRowery(resultSet.getInt("liczba_rowerow"));
+                wagon.setCzyPrzedzialowy(resultSet.getBoolean("czy_przedzialowy"));
+                wagon.setCzyKlimatyzacja(resultSet.getBoolean("czy_przedzialowy"));
+                wagon.setCzyWifi(resultSet.getBoolean("czy_wifi"));
+                wagon.setCzyNiepelnosprawni(resultSet.getBoolean("czy_niepelnosprawni"));
+                wagon.setDlugosc(resultSet.getDouble("dlugosc_wagonu"));
+                wagony.add(wagon);
+            }
+
+            resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return wagony;
+    }
+
+    public ArrayList<Wagon> getWagonsByModel(String model) throws NoSuchModelException {
+        ArrayList<Wagon> wagony = new ArrayList<>();
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(
+                    "SELECT * FROM wagony WHERE model_wagonu = '" + model + "';");
+            int cnt = 0;
+
+            while(resultSet.next()) {
+                cnt ++;
+                Wagon wagon = new Wagon();
+                wagon.setIdWagonu(resultSet.getInt("id_wagonu"));
+                wagon.setModel(resultSet.getString("model_wagonu"));
+                wagon.setTyp(resultSet.getString("typ_wagonu"));
+                wagon.setMiejscaI(resultSet.getInt("liczba_miejsc_I"));
+                wagon.setMiejscaII(resultSet.getInt("liczba_miejsc_II"));
+                wagon.setRowery(resultSet.getInt("liczba_rowerow"));
+                wagon.setCzyPrzedzialowy(resultSet.getBoolean("czy_przedzialowy"));
+                wagon.setCzyKlimatyzacja(resultSet.getBoolean("czy_przedzialowy"));
+                wagon.setCzyWifi(resultSet.getBoolean("czy_wifi"));
+                wagon.setCzyNiepelnosprawni(resultSet.getBoolean("czy_niepelnosprawni"));
+                wagon.setDlugosc(resultSet.getDouble("dlugosc_wagonu"));
+                wagony.add(wagon);
+            }
+            if(cnt == 0) throw new NoSuchModelException();
+
+            resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return wagony;
+    }
+
     public Sklad calculateSkladKursu(Kurs kurs) {
         ArrayList<Integer> idWagonow =
                 getSkladById(kurs.getListaPostojow().get(0).getNastepnySklad()).getIdWagonow();
@@ -633,6 +699,7 @@ public class QueryDBService {
         return wholeKurs;
     }
 
+
     public static class NoSuchStationException extends Exception {}
 
     public static class NoSuchTrainException extends Exception {}
@@ -640,6 +707,8 @@ public class QueryDBService {
     public static class NoMatchingKursyException extends Exception {}
 
     public static class NoMatchingTrasyException extends Exception {}
+
+    public static class NoSuchModelException extends Exception {}
 
 }
 

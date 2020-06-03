@@ -255,6 +255,49 @@ public class DeleteDBService {
         }
     }
 
+    public void deleteWagon(int idWagonu) {
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT id_skladu FROM sklady_wagony WHERE id_wagonu = " + idWagonu + ";");
+
+            //get sklady
+            HashSet<Integer> id_skladu = new HashSet<>();
+            while(resultSet.next()) id_skladu.add(resultSet.getInt("id_skladu"));
+
+            //get kursy
+            HashSet<Integer> id_kursu = new HashSet<>();
+            for(Integer i: id_skladu){
+                resultSet = statement.executeQuery("SELECT id_kursu FROM postoje WHERE nastepny_sklad = " + i + ";");
+                while (resultSet.next()) id_kursu.add(resultSet.getInt("id_kursu"));
+            }
+
+            System.out.println("Wagon: " + idWagonu);
+            System.out.println("Sklady: " + id_skladu.toString());
+            System.out.println("Kursy: " + id_kursu.toString());
+
+            //delete postoje, rozklady
+            for(Integer i: id_kursu) {
+                statement.execute("DELETE FROM postoje WHERE id_kursu = " + i + ";");
+                statement.execute("DELETE FROM rozklady WHERE id_kursu = " + i + ";");
+            }
+
+            //delete sklady_wagony
+            for(Integer i: id_skladu)
+            statement.execute("DELETE FROM sklady_wagony WHERE id_skladu = " + i + ";");
+
+            //delete sklady
+            for(Integer i: id_skladu) statement.execute("DELETE FROM sklady WHERE id_skladu = " + i + ";" );
+
+            //delete wagon
+            statement.execute("DELETE FROM wagony WHERE id_wagonu = " + idWagonu + ";");
+
+            statement.close();
+            resultSet.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static class NoSuchOdcinekException extends Exception {}
 
 

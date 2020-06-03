@@ -12,10 +12,7 @@ import javafx.scene.layout.*;
 import systeminformacjipasazerskiej.converter.DayConverter;
 import systeminformacjipasazerskiej.db.DeleteDBService;
 import systeminformacjipasazerskiej.db.QueryDBService;
-import systeminformacjipasazerskiej.model.Kurs;
-import systeminformacjipasazerskiej.model.Pociag;
-import systeminformacjipasazerskiej.model.Postoj;
-import systeminformacjipasazerskiej.model.Stacja;
+import systeminformacjipasazerskiej.model.*;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -62,6 +59,12 @@ public class DeleteController implements Initializable {
     private ComboBox<String> deleteOdcinekToBox;
     @FXML
     private Button deleteOdcinekButton;
+    @FXML
+    private ComboBox<String> deleteWagonBox;
+    @FXML
+    private Button deleteWagonButton;
+    @FXML
+    private ListView<Wagon> wagonList;
 
     class RideCell extends ListCell<Kurs> {
         HBox hbox = new HBox();
@@ -158,6 +161,48 @@ public class DeleteController implements Initializable {
             }
         }
 
+    class WagonCell extends ListCell<Wagon> {
+        HBox hbox = new HBox();
+        Label label = new Label("");
+        Pane pane = new Pane();
+        Button button = new Button("Usuń");
+
+        public WagonCell() {
+            super();
+            hbox.getChildren().addAll(label, pane, button);
+            HBox.setHgrow(pane, Priority.ALWAYS);
+            button.setOnAction(event -> {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Potwierdź wybór");
+                alert.setHeaderText("Czy na pewno chcesz usunąć ten wagon?");
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK) {
+                    Integer toDel = getItem().getIdWagonu();
+                    getListView().getItems().remove(getItem());
+                    ddb.deleteWagon(toDel);
+                    allWagonModels.clear();
+                    allWagonModels.addAll(
+                            qdb.getAllWagony()
+                                    .stream()
+                                    .map(Wagon::getModel)
+                                    .distinct()
+                                    .collect(Collectors.toList()));
+                }
+            });
+        }
+        protected void updateItem (Wagon item, boolean empty){
+            super.updateItem(item, empty);
+            setText(null);
+            setGraphic(null);
+            if (item != null && !empty) {
+                System.out.println("updatingItems");
+                label.setText("Typ: " + item.getTyp() +
+                        "  Liczba miejsc w I klasie: " + item.getMiejscaI() +
+                        "  Liczba miejsc w II klasie: " + item.getMiejscaII());
+                setGraphic(hbox);
+            }
+        }
+    }
 
 
 
@@ -166,6 +211,8 @@ public class DeleteController implements Initializable {
     private ObservableList<Kurs> allMatchingKursy = FXCollections.observableArrayList();
     private ObservableList<String> allPociagNames = FXCollections.observableArrayList();
     private ObservableList<Integer> allTrasy = FXCollections.observableArrayList();
+    private ObservableList<String> allWagonModels = FXCollections.observableArrayList();
+    private ObservableList<Wagon> allMatchingWagons = FXCollections.observableArrayList();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -404,8 +451,67 @@ public class DeleteController implements Initializable {
             }
 
         });
+        //******************************
+        //delete wagon
+
+        deleteWagonBox.setItems(allWagonModels);
+        deleteWagonBox.setPromptText("np. ED250");
+
+        deleteWagonButton.setOnMouseClicked(event -> {
+            try {
+                wagonList.setVisible(false);
+                allMatchingWagons.clear();
+                allMatchingWagons.addAll(qdb.getWagonsByModel(deleteWagonBox.getValue()));
+                wagonList.setVisible(true);
+
+                wagonList.setOnMouseClicked(e -> {
+                    Wagon wagon = wagonList.getSelectionModel().getSelectedItem();
 
 
+                    Label wagonInfo =
+                            new Label("Model wagonu: " + wagon.getModel() +
+                                    "\nTyp wagonu: " + wagon.getTyp() +
+                                    "\nLiczba miejsc w I klasie: " + wagon.getMiejscaI() +
+                                    "\nLiczba miejsc w II klasie: " + wagon.getMiejscaII() +
+                                    "\nLiczba miejsc dla rowerów: " + wagon.getRowery() +
+                                    "\nMiejsca dla niepełnosprawnych: " + printBool(wagon.isCzyNiepelnosprawni()) +
+                                    "\nPrzedziałowy: " + printBool(wagon.isCzyPrzedzialowy()) +
+                                    "\nKlimatyzacja: " + printBool(wagon.isCzyKlimatyzacja()) +
+                                    "\nWiFi: " + printBool(wagon.isCzyWifi()) +
+                                    "\nDługość wagonu: " + wagon.getDlugosc()
+                            );
+                    VBox popupContent = new VBox();
+                    popupContent.getChildren().addAll(wagonInfo);
+                    popupContent.setSpacing(20);
+
+                    Dialog<Kurs> kursDialog = new Dialog<>();
+                    kursDialog.getDialogPane().setMinWidth(400);
+                    kursDialog.getDialogPane().setContent(popupContent);
+                    kursDialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+                    kursDialog.showAndWait();
+                });
+            }
+            catch (QueryDBService.NoSuchModelException nsm) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Nie ma takiego modelu.");
+                alert.showAndWait();
+            }
+
+        });
+        wagonList.setItems(allMatchingWagons);
+        wagonList.setCursor(Cursor.HAND);
+        wagonList.setVisible(false);
+        wagonList.setCellFactory(param -> new WagonCell());
+        allMatchingWagons.addListener((ListChangeListener<Wagon>) change ->
+                wagonList.setMaxHeight(allMatchingWagons.size() * 34 + 2)
+        );
+
+
+
+    }
+
+    private String printBool(boolean b) {
+        return b ? "Tak" : "Nie";
     }
 
     public void setDB(DeleteDBService ddb) {
@@ -425,6 +531,12 @@ public class DeleteController implements Initializable {
                     .stream()
                     .map(Pociag::getNazwaPociagu)
                     .collect(Collectors.toList()));
+        allWagonModels.addAll(
+                qdb.getAllWagony()
+                .stream()
+                .map(Wagon::getModel)
+                        .distinct()
+                .collect(Collectors.toList()));
 
         System.out.println("delete db ready");
     }
