@@ -302,4 +302,13 @@ public class QueryController implements Initializable {
             .collect(Collectors.toList()));
     }
 
+    public void updateStationNames() {
+        allStationsNames.clear();
+        allStationsNames.addAll(
+                qdb.getAllStations()
+                        .stream()
+                        .map(Stacja::getNazwaStacji)
+                        .collect(Collectors.toList()));
+    }
+
 }

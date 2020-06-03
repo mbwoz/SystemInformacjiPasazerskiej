@@ -48,9 +48,15 @@ public class MainController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("deleteView.fxml"));
             deleteTab.setContent(loader.load());
             deleteController = loader.getController();
+
+            deleteController.setInsertController(insertController);
+            deleteController.setQueryController(queryController);
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        insertController.setQueryController(queryController);
+        insertController.setDeleteController(deleteController);
     }
 
     public void setDB(DatabaseService dbService) {

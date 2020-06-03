@@ -5,15 +5,12 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.Region;
 import systeminformacjipasazerskiej.db.InsertDBService;
 import systeminformacjipasazerskiej.db.QueryDBService;
 import systeminformacjipasazerskiej.model.Stacja;
 import systeminformacjipasazerskiej.model.Wagon;
 
-import java.awt.*;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.Optional;
@@ -24,6 +21,9 @@ public class InsertController implements Initializable {
 
     InsertDBService idb;
     QueryDBService qdb;
+
+    QueryController queryController;
+    DeleteController deleteController;
 
     @FXML
     private ComboBox<String> insertStationName;
@@ -162,12 +162,10 @@ public class InsertController implements Initializable {
                 if(result.get() == ButtonType.OK) {
                     try {
                         idb.insertStation(stacja);
-                        allStationsNames.clear();
-                        allStationsNames.addAll(
-                                qdb.getAllStations()
-                                        .stream()
-                                        .map(Stacja::getNazwaStacji)
-                                        .collect(Collectors.toList()));
+                        updateStationNames();
+                        queryController.updateStationNames();
+                        deleteController.updateStationNames();
+
                     } catch (InsertDBService.InsertStationException e) {
                         Alert info = new Alert(Alert.AlertType.INFORMATION);
                         info.setHeaderText("Dodanie zakończone niepowodzeniem.");
@@ -371,6 +369,23 @@ public class InsertController implements Initializable {
     public void setDB(InsertDBService idb) {
         this.idb = idb;
         System.out.println("insert db ready");
+    }
+
+    public void updateStationNames() {
+        allStationsNames.clear();
+        allStationsNames.addAll(
+                qdb.getAllStations()
+                        .stream()
+                        .map(Stacja::getNazwaStacji)
+                        .collect(Collectors.toList()));
+    }
+
+    public void setQueryController(QueryController queryController) {
+        this.queryController = queryController;
+    }
+
+    public void setDeleteController(DeleteController deleteController) {
+        this.deleteController = deleteController;
     }
 
 }

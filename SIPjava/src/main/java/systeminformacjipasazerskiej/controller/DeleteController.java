@@ -26,6 +26,9 @@ public class DeleteController implements Initializable {
     DeleteDBService ddb;
     QueryDBService qdb;
 
+    QueryController queryController;
+    InsertController insertController;
+
     @FXML
     private Button deleteStationButton;
     @FXML
@@ -233,12 +236,9 @@ public class DeleteController implements Initializable {
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.get() == ButtonType.OK) {
                     ddb.deleteStation(deleteStationBox.getValue());
-                    allStationsNames.clear();
-                    allStationsNames.addAll(
-                            qdb.getAllStations()
-                                    .stream()
-                                    .map(Stacja::getNazwaStacji)
-                                    .collect(Collectors.toList()));
+                    updateStationNames();
+                    queryController.updateStationNames();
+                    insertController.updateStationNames();
                 }
             } catch (QueryDBService.NoSuchStationException e) {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -540,6 +540,19 @@ public class DeleteController implements Initializable {
 
         System.out.println("delete db ready");
     }
+
+    public void updateStationNames() {
+        allStationsNames.clear();
+        allStationsNames.addAll(
+                qdb.getAllStations()
+                        .stream()
+                        .map(Stacja::getNazwaStacji)
+                        .collect(Collectors.toList()));
+    }
+
+    public void setQueryController(QueryController queryController) { this.queryController = queryController; }
+
+    public void setInsertController(InsertController insertController) { this.insertController = insertController; }
 }
 
 
