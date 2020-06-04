@@ -53,7 +53,8 @@ DROP FUNCTION getSkladLength;
 DROP FUNCTION getPreviousSklad;
 DROP FUNCTION checkSkladQuery;
 DROP FUNCTION insertSkladQuery;
-
+DROP FUNCTION checkTrasaQuery;
+DROP FUNCTION insertTrasaQuery;
 
 --tables
 DROP TABLE IF EXISTS wagony CASCADE;

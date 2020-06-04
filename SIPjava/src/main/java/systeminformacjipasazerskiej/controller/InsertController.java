@@ -88,6 +88,20 @@ public class InsertController implements Initializable {
     private ArrayList<ComboBox<String>> insertSkladRodzaj = new ArrayList<>();
     private ArrayList<TextField> insertSkladIlosc = new ArrayList<>();
 
+    @FXML
+    private TextField insertTrasaNumber;
+    @FXML
+    private CheckBox insertTrasaCzyPrzyspieszona;
+    @FXML
+    private Button insertTrasaNumberOK;
+    @FXML
+    private Button insertTrasaNumberClean;
+    @FXML
+    private Button insertTrasaButton;
+    @FXML
+    private VBox insertTrasaVBox;
+    private ArrayList<ComboBox<String>> insertTrasaStacja = new ArrayList<>();
+
 
     private ObservableList<String> allStationsNames = FXCollections.observableArrayList();
     private ObservableList<String> allWagonyTypes = FXCollections.observableArrayList("sypialny", "kuszetka", "barowy", "osobowy", "business");
@@ -523,6 +537,122 @@ public class InsertController implements Initializable {
             }
         });
 
+
+        //insert trasa
+        insertTrasaNumber.setPromptText("2-99");
+        insertTrasaNumberOK.setOnMouseClicked(event -> {
+            int num = 0;
+
+            try {
+                num = Integer.parseInt(insertTrasaNumber.getText());
+            } catch(NumberFormatException nfe) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Błędne dane");
+                alert.showAndWait();
+                return;
+            }
+
+            if(num <= 1 || num >= 100) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Błędne dane");
+                alert.showAndWait();
+                return;
+            }
+
+            insertTrasaVBox.getChildren().clear();
+            insertTrasaStacja.clear();
+            for(int i = 0; i < num; i++) {
+                HBox hbox = new HBox();
+                hbox.setSpacing(10.0);
+                hbox.setAlignment(Pos.CENTER_LEFT);
+
+                Label stacjaText = new Label("Stacja:");
+                ComboBox<String> stacjaBox = new ComboBox<>();
+                stacjaBox.setEditable(true);
+                stacjaBox.setItems(allStationsNames);
+                insertTrasaStacja.add(stacjaBox);
+
+                hbox.getChildren().addAll(stacjaText, stacjaBox);
+                insertTrasaVBox.getChildren().add(hbox);
+            }
+        });
+        insertTrasaNumberClean.setOnMouseClicked(event -> {
+            insertTrasaVBox.getChildren().clear();
+            insertTrasaStacja.clear();
+            insertTrasaNumber.setText(null);
+        });
+
+        insertTrasaButton.setOnMouseClicked(event -> {
+            ArrayList<Integer> insertStacjeId = new ArrayList<>();
+            HashSet<Integer> hashSet = new HashSet<>();
+            boolean przyspieszona = insertTrasaCzyPrzyspieszona.isSelected();
+
+            for(ComboBox<String> box : insertTrasaStacja) {
+                String s = box.getValue();
+                if(s == null || s.isBlank()) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setHeaderText("Błędne dane.");
+                    alert.setContentText("Nie znaleziono stacji.");
+                    alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                    alert.showAndWait();
+                    return;
+                }
+
+                try {
+                    int id = idb.getStationId(s);
+                    insertStacjeId.add(id);
+                    hashSet.add(id);
+                } catch (InsertDBService.NoStationException e) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setHeaderText("Błędne dane.");
+                    alert.setContentText("Nie znaleziono stacji.");
+                    alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                    alert.showAndWait();
+                    return;
+                }
+            }
+
+            if(hashSet.size() != insertStacjeId.size()) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Błędne dane.");
+                alert.setContentText("Każda stacja może pojawić się maksymalnie raz.");
+                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                alert.showAndWait();
+                return;
+            }
+
+            Alert info = new Alert(Alert.AlertType.CONFIRMATION);
+            info.setTitle("Potwierdź wybór");
+            info.setHeaderText("Czy na pewno chcesz dodać tę trasę?");
+            info.setContentText("Wszystkie nieistniejące odcinki dostaną automatycznie dodane.");
+            info.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+            Optional<ButtonType> result = info.showAndWait();
+
+            if(result.get() == ButtonType.OK) {
+                try {
+                    idb.insertTrasa(insertStacjeId, przyspieszona);
+                } catch (InsertDBService.InsertTrasaException e) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setHeaderText("Dodanie zakończona niepowodzeniem.");
+                    alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                    alert.showAndWait();
+                    return;
+                } catch (InsertDBService.InsertTrasaExistsException e) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setHeaderText("Dodanie zakończona niepowodzeniem.");
+                    alert.setContentText("Operacja nie powiodła się - podana trasa już istnieje.");
+                    alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                    alert.showAndWait();
+                    return;
+                }
+
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Dodanie zakończona powodzeniem.");
+                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                alert.showAndWait();
+                return;
+            }
+        });
     }
 
     public void setDB(QueryDBService qdb) {

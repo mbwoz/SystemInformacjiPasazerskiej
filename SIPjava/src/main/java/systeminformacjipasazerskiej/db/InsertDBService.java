@@ -179,6 +179,27 @@ public class InsertDBService {
         }
     }
 
+    public void insertTrasa(ArrayList<Integer> idStacji, boolean p) throws InsertTrasaException, InsertTrasaExistsException{
+        String przyspieszona = (p) ? "'T'" : "'N'";
+        String stacje = arrayToQuery(idStacji);
+        int n = idStacji.size();
+
+        try {
+            String query = "SELECT insertTrasaQuery(" + stacje + ", " + n + ", " + przyspieszona + ");";
+            Statement statement = connection.createStatement();
+            statement.execute(query);
+        } catch(SQLException e) {
+            System.out.println("Error with trasa insert.");
+            String mes = e.getMessage();
+//            System.out.println(mes);
+
+            if(mes.contains("Trasa exists"))
+                throw new InsertTrasaExistsException();
+            else
+                throw new InsertTrasaException();
+        }
+    }
+
     public int getStationId(String stacja) throws NoStationException {
         int ans = 0;
 
@@ -278,4 +299,6 @@ public class InsertDBService {
     public static class InsertWagonException extends Exception {}
     public static class InsertSkladException extends Exception {}
     public static class InsertSkladExistsException extends Exception {}
+    public static class InsertTrasaException extends Exception {}
+    public static class InsertTrasaExistsException extends Exception {}
 }

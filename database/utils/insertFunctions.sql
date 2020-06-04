@@ -192,7 +192,7 @@ begin
     loop
         que := que || ' OR (a.id_wagonu = ' || rodzaj[i]::varchar || ' AND a.liczba_wagonow = ' || ilosc[i]::varchar || ')';
     end loop;
-    que := que || ' GROUP BY 1 ) sec ON fir.id_skladu = sec.id_skladu WHERE fir.suma = sec.ilosc';
+    que := que || ' GROUP BY 1 ) sec ON fir.id_skladu = sec.id_skladu WHERE fir.suma = sec.ilosc AND fir.suma = ' || n;
 
     for rec in
         execute que
@@ -201,7 +201,7 @@ begin
         SELECT czy_przesylki INTO wyn
             FROM sklady WHERE id_skladu = i;
 
-        RAISE NOTICE 'Value: %', wyn;
+--        RAISE NOTICE 'Value: %', wyn;
 
         IF wyn = przesylki THEN
             RETURN TRUE;
@@ -236,6 +236,89 @@ begin
     LOOP
         EXECUTE 'INSERT INTO sklady_wagony(id_skladu, id_wagonu, liczba_wagonow) VALUES(' ||
             id || ', ' || rodzaj[i] || ', ' || ilosc[i] || ')';
+    END LOOP;
+end;
+$$
+language plpgsql;
+----
+
+
+-- sprawdzenie czy dana trasa instnieje
+create or replace function checkTrasaQuery(arr integer[], n integer)
+    returns boolean as
+$$
+DECLARE
+    i integer;
+    que varchar;
+    rec record;
+begin
+    que := 'SELECT fir.id_trasy as id, fir.suma, sec.ilosc
+            FROM (
+                SELECT id_trasy, COUNT(*) as suma
+                FROM trasy_odcinki
+                GROUP BY 1
+                ORDER BY 1
+            ) fir LEFT JOIN (';
+
+    que := que || 'SELECT a.id_trasy, COUNT(*) as ilosc FROM trasy_odcinki a WHERE (a.id_odcinka = ' || arr[1]::varchar || ')';
+
+    for i in 2 .. n
+    loop
+        que := que || ' OR (a.id_odcinka = ' || arr[i]::varchar || ')';
+    end loop;
+    que := que || ' GROUP BY 1 ) sec ON fir.id_trasy = sec.id_trasy WHERE fir.suma = sec.ilosc AND fir.suma = ' || n;
+
+    for rec in
+        execute que
+    loop
+        RETURN TRUE;
+    end loop;
+
+    RETURN FALSE;
+
+end;
+$$
+language plpgsql;
+----
+
+
+-- dodanie danej trasy
+create or replace function insertTrasaQuery(arr integer[], n integer, przyspieszona char(1))
+    returns void as
+$$
+DECLARE
+    id integer[];
+    i integer;
+    val integer;
+    exist boolean;
+begin
+    FOR i in 2 .. n
+    LOOP
+        val := (SELECT id_odcinka FROM odcinki
+            WHERE stacja_poczatkowa = arr[i-1] AND stacja_koncowa = arr[i]);
+
+        IF val IS NULL THEN
+            INSERT INTO odcinki(stacja_poczatkowa, stacja_koncowa)
+            VALUES(arr[i-1], arr[i]);
+
+            id[i-1] := (SELECT currval('odcinki_seq'));
+        ELSE
+            id[i-1] := val;
+        END IF;
+    END LOOP;
+
+    exist := (SELECT checkTrasaQuery(id, n-1));
+    IF exist = TRUE THEN
+        RAISE EXCEPTION 'Trasa exists';
+        RETURN;
+    END IF;
+
+    INSERT INTO trasy(czy_przyspieszona) VALUES(przyspieszona);
+    SELECT currval('trasy_seq') INTO val;
+    FOR i IN 1 .. (n-1)
+    LOOP
+        EXECUTE 'INSERT INTO trasy_odcinki(id_trasy, id_odcinka) VALUES(' ||
+            val || ', ' || id[i] ||  ')';
     END LOOP;
 end;
 $$

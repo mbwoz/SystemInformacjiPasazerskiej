@@ -270,6 +270,58 @@
                 </HBox>
             </VBox>
         </HBox>
+
+        <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+        </padding>
+
+        <HBox>
+            <VBox>
+                <Label text="Dodaj trasę">
+                    <VBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                    </VBox.margin>
+                    <font>
+                        <Font name="System Bold" size="15.0" />
+                    </font>
+                </Label>
+                <HBox spacing="10.0">
+                    <Label text="Liczba stacji na trasie:">
+                        <HBox.margin>
+                            <Insets top="5.0" />
+                        </HBox.margin>
+                    </Label>
+                    <TextField fx:id="insertTrasaNumber" editable="true" />
+                    <Button fx:id="insertTrasaNumberOK" text="OK" />
+                    <Button fx:id="insertTrasaNumberClean" text="Wyczyść" />
+                    <VBox.margin>
+                        <Insets bottom="5.0" left="10.0" right="10.0" top="10.0" />
+                    </VBox.margin>
+                </HBox>
+                <VBox fx:id="insertTrasaVBox" spacing="5.0">
+                    <VBox.margin>
+                        <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+                    </VBox.margin>
+                </VBox>
+                <HBox spacing="10.0">
+                    <children>
+                        <CheckBox fx:id="insertTrasaCzyPrzyspieszona" mnemonicParsing="false" selected="false" text="Trasa przyspieszona"/>
+                    </children>
+                    <VBox.margin>
+                        <Insets bottom="5.0" left="10.0" right="10.0" top="10.0" />
+                    </VBox.margin>
+                </HBox>
+                <HBox spacing="10.0">
+                    <children>
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Button fx:id="insertTrasaButton" text="Dodaj" />
+                    </children>
+                    <VBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="5.0" />
+                    </VBox.margin>
+                </HBox>
+            </VBox>
+        </HBox>
     </VBox>
 
 
