@@ -24,8 +24,6 @@ public class MainController implements Initializable {
     private InsertController insertController;
     private DeleteController deleteController;
 
-    DatabaseService dbService;
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
@@ -60,7 +58,6 @@ public class MainController implements Initializable {
     }
 
     public void setDB(DatabaseService dbService) {
-        this.dbService = dbService;
         queryController.setDB(dbService.getQueryDBService());
 
         insertController.setDB(dbService.getQueryDBService());

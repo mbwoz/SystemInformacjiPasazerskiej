@@ -3,9 +3,11 @@ package systeminformacjipasazerskiej.controller;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import systeminformacjipasazerskiej.db.DatabaseService;
 
@@ -39,6 +41,28 @@ public class IntroController implements Initializable {
         passwordTextField.setPromptText("np. qwerty");
 
         connectButton.setOnMouseClicked(event -> {
+            DatabaseService dbService;
+
+            try {
+                dbService = new DatabaseService(
+                    hostTextField.getText(),
+                    portTextField.getText(),
+                    databaseTextField.getText(),
+                    userTextField.getText(),
+                    passwordTextField.getText()
+                );
+            } catch (Exception e) {
+                e.printStackTrace();
+
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Próba połączenia zakończyła się niepowodzeniem.");
+                alert.setContentText("Zweryfikuj dane i spróbuj ponownie.");
+                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                alert.showAndWait();
+
+                return;
+            }
+
             FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("main.fxml"));
 
             Pane pane = null;
@@ -50,7 +74,7 @@ public class IntroController implements Initializable {
             stage.getScene().setRoot(pane);
 
             MainController mainController = loader.getController();
-            mainController.setDB(new DatabaseService());
+            mainController.setDB(dbService);
         });
     }
 

@@ -5,19 +5,15 @@ import java.sql.*;
 public class DatabaseService {
     private Connection connection;
 
-    public DatabaseService() {
-        try {
-            Class.forName("org.postgresql.Driver");
-            connection = DriverManager
-                    .getConnection("jdbc:postgresql://localhost:5432/michal",
-                            "michal", "123qwe");
+    public DatabaseService(String host, String port, String database, String user, String password)
+        throws Exception {
 
-            System.out.println("Opened database successfully");
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println(e.getClass().getName()+": "+e.getMessage());
-            System.exit(0);
-        }
+        Class.forName("org.postgresql.Driver");
+        connection = DriverManager
+                .getConnection("jdbc:postgresql://localhost:5432/michal",
+                        "michal", "123qwe");
+
+        System.out.println("Opened database successfully");
     }
 
     public QueryDBService getQueryDBService() {
