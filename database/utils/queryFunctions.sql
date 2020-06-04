@@ -278,3 +278,60 @@ BEGIN
 END;
 $$
 LANGUAGE plpgsql;
+----
+
+
+--gets all sklad with given number of models/model name
+CREATE OR REPLACE FUNCTION getSkladByNumber(
+    models int
+) RETURNS TABLE (idSkladu sklady_wagony.id_skladu%TYPE) AS
+$$
+BEGIN
+    RETURN QUERY
+    SELECT id FROM(
+        SELECT a.id_skladu AS id, COUNT(b.model_wagonu) 
+        AS x FROM sklady_wagony a
+        LEFT JOIN wagony b ON a.id_wagonu = b.id_wagonu
+        GROUP BY a.id_skladu
+    ) y WHERE x = models;
+END;
+$$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION getSkladByNumber(
+    models int,
+    wagon varchar
+) RETURNS TABLE (idSkladu sklady_wagony.id_skladu%TYPE) AS
+$$
+BEGIN
+    RETURN QUERY
+    SELECT id FROM(
+        SELECT a.id_skladu AS id, COUNT(b.model_wagonu) 
+        AS x FROM sklady_wagony a
+        LEFT JOIN wagony b ON a.id_wagonu = b.id_wagonu
+        GROUP BY a.id_skladu
+    ) y WHERE x = models AND id IN (SELECT a.id_skladu
+        FROM sklady_wagony a
+        LEFT JOIN wagony b ON a.id_wagonu = b.id_wagonu
+        WHERE b.model_wagonu = wagon
+    );
+END;
+$$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION getSkladByNumber(
+    wagon varchar
+) RETURNS TABLE (idSkladu sklady_wagony.id_skladu%TYPE) AS
+$$
+BEGIN
+    RETURN QUERY
+    SELECT a.id_skladu
+        FROM sklady_wagony a
+        LEFT JOIN wagony b ON a.id_wagonu = b.id_wagonu
+        WHERE b.model_wagonu = wagon
+        GROUP BY a.id_skladu;
+END;
+$$
+LANGUAGE plpgsql;
+
+

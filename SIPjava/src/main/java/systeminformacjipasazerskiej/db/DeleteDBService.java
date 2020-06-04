@@ -298,6 +298,36 @@ public class DeleteDBService {
         }
     }
 
+    public void deleteSklad(int idSkladu) {
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT id_kursu FROM postoje WHERE nastepny_sklad = " + idSkladu + ";");
+
+            //get id_kursu
+            HashSet<Integer> id_kursu = new HashSet<>();
+            while (resultSet.next()) id_kursu.add(resultSet.getInt("id_kursu"));
+
+            //delete postoje, rozklady
+            for(Integer i: id_kursu) {
+                statement.execute("DELETE FROM postoje WHERE id_kursu = " + i + ";");
+                statement.execute("DELETE FROM rozklady WHERE id_kursu = " + i + ";");
+            }
+
+            //delete sklady_wagony
+            statement.execute("DELETE FROM sklady_wagony WHERE id_skladu = " + idSkladu + ";");
+
+            //delete sklady
+            statement.execute("DELETE FROM sklady WHERE id_skladu = " + idSkladu + ";" );
+
+            System.out.println("Deleted sklad");
+
+            statement.close();
+            resultSet.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static class NoSuchOdcinekException extends Exception {}
 
 

@@ -699,6 +699,72 @@ public class QueryDBService {
         return wholeKurs;
     }
 
+    public ArrayList<Sklad> getSkladByNumber(int number, String model) throws NoSuchSkladException {
+        ArrayList<Sklad> sklady = new ArrayList<>();
+
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(
+                    "SELECT idskladu FROM getSkladByNumber( " + number +", '"+ model + "');"
+            );
+
+            if(resultSet.next()) {
+                sklady.add(getSkladById(resultSet.getInt("idskladu")));
+            } else throw new NoSuchSkladException();
+
+            while (resultSet.next()) sklady.add(getSkladById(resultSet.getInt("idskladu")));
+            resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return sklady;
+    }
+
+    public ArrayList<Sklad> getSkladByNumber(int number) throws NoSuchSkladException {
+        ArrayList<Sklad> sklady = new ArrayList<>();
+
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(
+                    "SELECT idskladu FROM getSkladByNumber( " + number +" );"
+            );
+
+            if(resultSet.next()) {
+                sklady.add(getSkladById(resultSet.getInt("idskladu")));
+            } else throw new NoSuchSkladException();
+
+            while (resultSet.next()) sklady.add(getSkladById(resultSet.getInt("idskladu")));
+            resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return sklady;
+    }
+
+    public ArrayList<Sklad> getSkladByNumber(String model) throws NoSuchSkladException {
+        ArrayList<Sklad> sklady = new ArrayList<>();
+
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(
+                    "SELECT idskladu FROM getSkladByNumber( '" + model + "');"
+            );
+
+            if(resultSet.next()) {
+                sklady.add(getSkladById(resultSet.getInt("idskladu")));
+            } else throw new NoSuchSkladException();
+
+            while (resultSet.next()) sklady.add(getSkladById(resultSet.getInt("idskladu")));
+            resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return sklady;
+    }
+
 
     public static class NoSuchStationException extends Exception {}
 
@@ -709,6 +775,8 @@ public class QueryDBService {
     public static class NoMatchingTrasyException extends Exception {}
 
     public static class NoSuchModelException extends Exception {}
+
+    public static class NoSuchSkladException extends Exception {}
 
 }
 

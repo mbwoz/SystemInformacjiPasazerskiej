@@ -68,6 +68,14 @@ public class DeleteController implements Initializable {
     private Button deleteWagonButton;
     @FXML
     private ListView<Wagon> wagonList;
+    @FXML
+    private TextField deleteSkladField;
+    @FXML
+    private Button deleteSkladButton;
+    @FXML
+    private ComboBox<String> deleteSkladBox;
+    @FXML
+    private ListView<Sklad> skladList;
 
     class RideCell extends ListCell<Kurs> {
         HBox hbox = new HBox();
@@ -208,6 +216,46 @@ public class DeleteController implements Initializable {
     }
 
 
+    class SkladCell extends ListCell<Sklad> {
+        HBox hbox = new HBox();
+        Label label = new Label("");
+        Pane pane = new Pane();
+        Button button = new Button("Usuń");
+
+        public SkladCell() {
+            super();
+            hbox.getChildren().addAll(label, pane, button);
+            HBox.setHgrow(pane, Priority.ALWAYS);
+            button.setOnAction(event -> {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Potwierdź wybór");
+                alert.setHeaderText("Czy na pewno chcesz usunąć ten skład?");
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK) {
+                    Integer toDel = getItem().getIdSkladu();
+                    getListView().getItems().remove(getItem());
+                    ddb.deleteSklad(toDel);
+                }
+            });
+        }
+        protected void updateItem (Sklad item, boolean empty){
+            super.updateItem(item, empty);
+            setText(null);
+            setGraphic(null);
+            if (item != null && !empty) {
+                System.out.println("updatingItems");
+                ArrayList<Wagon> wagony = item.getListaWagonow();
+                ArrayList<String> modele = new ArrayList<>();
+                for(Wagon w: wagony) modele.add(w.getModel());
+                label.setText("Modele: " + modele.toString() + "   I kl:  " + item.getLiczbaMiejscI() +
+                         "   II kl:  " + item.getLiczbaMiejscII());
+                setGraphic(hbox);
+            }
+        }
+    }
+
+
+
 
 
     private ObservableList<String> allStationsNames = FXCollections.observableArrayList();
@@ -216,6 +264,7 @@ public class DeleteController implements Initializable {
     private ObservableList<Integer> allTrasy = FXCollections.observableArrayList();
     private ObservableList<String> allWagonModels = FXCollections.observableArrayList();
     private ObservableList<Wagon> allMatchingWagons = FXCollections.observableArrayList();
+    private ObservableList<Sklad> allMatchingSklady = FXCollections.observableArrayList();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -506,6 +555,90 @@ public class DeleteController implements Initializable {
                 wagonList.setMaxHeight(allMatchingWagons.size() * 34 + 2)
         );
 
+        //****************************
+        //delete sklad
+        deleteSkladBox.setPromptText("np. ED250");
+        deleteSkladField.setPromptText("1-99");
+        skladList.setVisible(false);
+        skladList.setItems(allMatchingSklady);
+        deleteSkladBox.setItems(allWagonModels);
+        deleteSkladButton.setOnMouseClicked(e -> {
+            ArrayList<Sklad> sklady;
+            try {
+                if((deleteSkladBox.getValue() == null || deleteSkladBox.getValue().equals("") ) && deleteSkladField.getText().equals("")) {
+                    throw new NoGivenDataException();
+                }
+                else if(deleteSkladBox.getValue() == null || deleteSkladBox.getValue().equals("")) {
+                    sklady = qdb.getSkladByNumber(Integer.parseInt(deleteSkladField.getText()));
+                }
+                else if(deleteSkladField.getText().equals("")) {
+                    sklady = qdb.getSkladByNumber(deleteSkladBox.getValue());
+                }
+                else sklady = qdb.getSkladByNumber(Integer.parseInt(deleteSkladField.getText()), deleteSkladBox.getValue());
+                allMatchingSklady.clear();
+                allMatchingSklady.addAll(sklady);
+
+                skladList.setVisible(true);
+
+                skladList.setOnMouseClicked(click -> {
+                    Sklad sklad = skladList.getSelectionModel().getSelectedItem();
+
+
+                    Label skladInfo =
+                            new Label("\nWłaściwości składu:" +
+                                    "\nLiczba miejsc w I klasie: " + sklad.getLiczbaMiejscI() +
+                                    "\nLiczba miejsc w II klasie: " + sklad.getLiczbaMiejscII() +
+                                    "\nLiczba miejsc dla rowerów: " + sklad.getLiczbaMiejscDlaRowerow() +
+                                    "\nMiejsca dla niepełnosprawnych: " + printBool(sklad.checkIfNiepelnosprawni()) +
+                                    "\nKlimatyzacja: " + printBool(sklad.checkIfKlimatyzacja()) +
+                                    "\nWiFi: " + printBool(sklad.checkIfWifi())
+                            );
+                    ArrayList<Wagon> wagony = sklad.getListaWagonow();
+                    ArrayList<Integer> liczba = sklad.getLiczbaWagonow();
+                    int cnt = 0;
+                    for(Wagon w: wagony) {
+                        skladInfo = new Label(skladInfo.getText() + "\n\nModel: " + w.getModel()
+                        +"\nLiczba wagonów: " + liczba.get(cnt++)
+                        +"\nTyp wagonu: " + w.getTyp() +
+                                "\nLiczba miejsc w I klasie: " + w.getMiejscaI() +
+                                "\nLiczba miejsc w II klasie: " + w.getMiejscaII() +
+                                "\nLiczba miejsc dla rowerów: " + w.getRowery() +
+                                "\nMiejsca dla niepełnosprawnych: " + printBool(w.isCzyNiepelnosprawni()) +
+                                "\nPrzedziałowy: " + printBool(w.isCzyPrzedzialowy()) +
+                                "\nKlimatyzacja: " + printBool(w.isCzyKlimatyzacja()) +
+                                "\nWiFi: " + printBool(w.isCzyWifi())
+                                );
+                    }
+
+
+                    VBox popupContent = new VBox();
+                    popupContent.getChildren().addAll(skladInfo);
+                    popupContent.setSpacing(20);
+                    ScrollPane scroll = new ScrollPane(popupContent);
+                    Dialog<Kurs> kursDialog = new Dialog<>();
+                    kursDialog.getDialogPane().setMinWidth(400);
+                    kursDialog.getDialogPane().setContent(scroll);
+                    kursDialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+                    kursDialog.showAndWait();
+                });
+
+
+            } catch (QueryDBService.NoSuchSkladException ex) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Nie ma takiego składu.");
+                alert.showAndWait();
+            }
+            catch (NumberFormatException nfe) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Zła liczba.");
+                alert.showAndWait();
+            }
+            catch (NoGivenDataException ngd) {}
+        });
+        skladList.setCellFactory(param -> new SkladCell());
+        allMatchingSklady.addListener((ListChangeListener<Sklad>) change ->
+                skladList.setMaxHeight(allMatchingSklady.size() * 34 + 2)
+        );
 
 
     }
@@ -549,6 +682,7 @@ public class DeleteController implements Initializable {
                         .map(Stacja::getNazwaStacji)
                         .collect(Collectors.toList()));
     }
+    public static class NoGivenDataException extends Exception {};
 
     public void setQueryController(QueryController queryController) { this.queryController = queryController; }
 
@@ -556,4 +690,6 @@ public class DeleteController implements Initializable {
 }
 
 
-//TODO: Update station list in Query and Insert after deleting station
+
+
+//TODO: Update lists between insert and delete
