@@ -5,24 +5,23 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import systeminformacjipasazerskiej.controller.MainController;
-import systeminformacjipasazerskiej.db.DatabaseService;
+import systeminformacjipasazerskiej.controller.IntroController;
 
 public class SIPApplication extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("main.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("intro.fxml"));
 
         Pane pane = loader.load();
         stage.setTitle("System Informacji Pasażerskiej");
         stage.setScene(new Scene(pane, 1024, 768));
         stage.setResizable(false);
-        stage.show();
 
-        DatabaseService db = new DatabaseService();
-        MainController mainController = loader.getController();
-        mainController.setDB(db);
+        IntroController introController = loader.getController();
+        introController.setStage(stage);
+
+        stage.show();
     }
 
     public static void main(String[] args) {
