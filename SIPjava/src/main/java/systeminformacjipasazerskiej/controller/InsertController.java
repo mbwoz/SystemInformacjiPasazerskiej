@@ -379,7 +379,7 @@ public class InsertController implements Initializable {
                     info.showAndWait();
                     return;
                 }
-
+                deleteController.updateModelNames();
                 Alert info = new Alert(Alert.AlertType.INFORMATION);
                 info.setHeaderText("Dodanie zakończone powodzeniem.");
                 info.showAndWait();

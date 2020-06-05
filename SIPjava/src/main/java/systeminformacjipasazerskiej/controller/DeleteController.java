@@ -682,6 +682,17 @@ public class DeleteController implements Initializable {
                         .map(Stacja::getNazwaStacji)
                         .collect(Collectors.toList()));
     }
+
+    public void updateModelNames() {
+        allWagonModels.clear();
+        allWagonModels.addAll(
+                qdb.getAllWagony()
+                        .stream()
+                        .map(Wagon::getModel)
+                        .distinct()
+                        .collect(Collectors.toList()));
+    }
+
     public static class NoGivenDataException extends Exception {};
 
     public void setQueryController(QueryController queryController) { this.queryController = queryController; }
