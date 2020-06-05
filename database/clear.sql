@@ -55,6 +55,7 @@ DROP FUNCTION checkSkladQuery;
 DROP FUNCTION insertSkladQuery;
 DROP FUNCTION checkTrasaQuery;
 DROP FUNCTION insertTrasaQuery;
+DROP FUNCTION getIdTrasyExactlyFromTo;
 
 --tables
 DROP TABLE IF EXISTS wagony CASCADE;

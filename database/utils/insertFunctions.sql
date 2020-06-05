@@ -323,3 +323,19 @@ begin
 end;
 $$
 language plpgsql;
+----
+
+
+CREATE OR REPLACE FUNCTION getIdTrasyExactlyFromTo(
+    fromId odcinki.stacja_poczatkowa%TYPE,
+    toId odcinki.stacja_koncowa%TYPE
+) RETURNS TABLE (idTrasy trasy.id_trasy%TYPE) AS
+$$
+begin
+    RETURN QUERY
+    SELECT id_trasy AS do
+    FROM trasy
+    WHERE getFirstStation(id_trasy) = fromId AND getLastStation(id_trasy) = toId;
+end;
+$$
+language plpgsql;

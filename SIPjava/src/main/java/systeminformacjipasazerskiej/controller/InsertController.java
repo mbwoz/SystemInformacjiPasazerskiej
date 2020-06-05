@@ -1,17 +1,18 @@
 package systeminformacjipasazerskiej.controller;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import systeminformacjipasazerskiej.db.InsertDBService;
 import systeminformacjipasazerskiej.db.QueryDBService;
+import systeminformacjipasazerskiej.model.Pociag;
 import systeminformacjipasazerskiej.model.Sklad;
 import systeminformacjipasazerskiej.model.Stacja;
 import systeminformacjipasazerskiej.model.Wagon;
@@ -102,10 +103,75 @@ public class InsertController implements Initializable {
     private VBox insertTrasaVBox;
     private ArrayList<ComboBox<String>> insertTrasaStacja = new ArrayList<>();
 
+    @FXML
+    private TextField insertPociagName;
+    @FXML
+    private ComboBox<String> insertPociagType;
+    @FXML
+    private ComboBox<String> insertPociagOd;
+    @FXML
+    private ComboBox<String> insertPociagDo;
+    @FXML
+    private Button insertPociagSearch;
+    @FXML
+    private ListView<Integer> insertPociagListView;
+    @FXML
+    private Label insertPociagTrasa;
+    @FXML
+    private Button insertPociagButton;
+    private Integer insertPociagIdTrasy = null;
 
     private ObservableList<String> allStationsNames = FXCollections.observableArrayList();
     private ObservableList<String> allWagonyTypes = FXCollections.observableArrayList("sypialny", "kuszetka", "barowy", "osobowy", "business");
     private ObservableList<String> allWagonyDescriptions = FXCollections.observableArrayList();
+    private ObservableList<String> allPociagiTypes = FXCollections.observableArrayList("pospieszny", "ekspres", "pendolino");
+    private ObservableList<Integer> allTrasyFromTo = FXCollections.observableArrayList();
+
+    class TrasaCell extends ListCell<Integer> {
+        HBox hbox = new HBox();
+        Label label = new Label("");
+        Pane pane = new Pane();
+        Button button = new Button("Wybierz");
+
+        public TrasaCell() {
+            super();
+            hbox.getChildren().addAll(label, pane, button);
+            HBox.setHgrow(pane, Priority.ALWAYS);
+            button.setOnAction(event -> {
+                Integer picked = getItem();
+                insertPociagIdTrasy = picked;
+                allTrasyFromTo.clear();
+                insertPociagListView.setVisible(false);
+
+                ArrayList<Stacja> stacje = qdb.getAllStacjeOnTrasa(picked,
+                        qdb.getFirstStationFromTrasa(picked), qdb.getLastStationFromTrasa(picked));
+
+                ArrayList<String> stacjeName = (ArrayList<String>) stacje.stream().map(Stacja::getNazwaStacji).collect(Collectors.toList());
+                String trasa = "Trasa: " + stacjeName.get(0);
+                for(int i = 1; i < stacjeName.size(); i++)
+                    trasa += " - " + stacjeName.get(i);
+
+                insertPociagTrasa.setText(trasa);
+            });
+        }
+
+
+        protected void updateItem (Integer item, boolean empty){
+            super.updateItem(item, empty);
+            setText(null);
+            setGraphic(null);
+
+            if (item != null && !empty) {
+                int id_trasy = item;
+                int fromStationId = qdb.getFirstStationFromTrasa(id_trasy);
+                int lastStationId = qdb.getLastStationFromTrasa(id_trasy);
+                Stacja firstStation = qdb.getStacjaById(fromStationId);
+                Stacja lastStation = qdb.getStacjaById(lastStationId);
+                label.setText("Z: " + firstStation.getNazwaStacji() + "    Do: " + lastStation.getNazwaStacji());
+                setGraphic(hbox);
+            }
+        }
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -357,7 +423,7 @@ public class InsertController implements Initializable {
 
             if(idb.checkWagonExistence(wagon)) {
                 Alert info = new Alert(Alert.AlertType.INFORMATION);
-                info.setHeaderText("Dodawanie zakończona niepowodzeniem.");
+                info.setHeaderText("Dodawanie zakończone niepowodzeniem.");
                 info.setContentText("Operacja nie powiodła się - podany wagon już istnieje.");
                 info.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
                 info.showAndWait();
@@ -515,13 +581,13 @@ public class InsertController implements Initializable {
                     idb.insertSklad(sklad);
                 } catch (InsertDBService.InsertSkladException e) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setHeaderText("Dodanie zakończona niepowodzeniem.");
+                    alert.setHeaderText("Dodanie zakończone niepowodzeniem.");
                     alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
                     alert.showAndWait();
                     return;
                 } catch (InsertDBService.InsertSkladExistsException e) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setHeaderText("Dodanie zakończona niepowodzeniem.");
+                    alert.setHeaderText("Dodanie zakończone niepowodzeniem.");
                     alert.setContentText("Operacja nie powiodła się - podany sklad już istnieje.");
                     alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
                     alert.showAndWait();
@@ -529,7 +595,7 @@ public class InsertController implements Initializable {
                 }
 
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setHeaderText("Dodanie zakończona powodzeniem.");
+                alert.setHeaderText("Dodanie zakończone powodzeniem.");
                 alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
                 alert.showAndWait();
                 return;
@@ -624,7 +690,7 @@ public class InsertController implements Initializable {
             Alert info = new Alert(Alert.AlertType.CONFIRMATION);
             info.setTitle("Potwierdź wybór");
             info.setHeaderText("Czy na pewno chcesz dodać tę trasę?");
-            info.setContentText("Wszystkie nieistniejące odcinki dostaną automatycznie dodane.");
+            info.setContentText("Wszystkie nieistniejące odcinki zostaną automatycznie dodane.");
             info.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
             Optional<ButtonType> result = info.showAndWait();
 
@@ -633,13 +699,13 @@ public class InsertController implements Initializable {
                     idb.insertTrasa(insertStacjeId, przyspieszona);
                 } catch (InsertDBService.InsertTrasaException e) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setHeaderText("Dodanie zakończona niepowodzeniem.");
+                    alert.setHeaderText("Dodanie zakończone niepowodzeniem.");
                     alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
                     alert.showAndWait();
                     return;
                 } catch (InsertDBService.InsertTrasaExistsException e) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setHeaderText("Dodanie zakończona niepowodzeniem.");
+                    alert.setHeaderText("Dodanie zakończone niepowodzeniem.");
                     alert.setContentText("Operacja nie powiodła się - podana trasa już istnieje.");
                     alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
                     alert.showAndWait();
@@ -647,12 +713,138 @@ public class InsertController implements Initializable {
                 }
 
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setHeaderText("Dodanie zakończona powodzeniem.");
+                alert.setHeaderText("Dodanie zakończone powodzeniem.");
                 alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
                 alert.showAndWait();
                 return;
             }
         });
+
+        //insert pociag
+        insertPociagName.setPromptText("np. Wyspiański");
+        insertPociagType.setItems(allPociagiTypes);
+        insertPociagOd.setPromptText("np. Przemyśl Główny");
+        insertPociagOd.setItems(allStationsNames);
+        insertPociagDo.setPromptText("np. Wrocław Główny");
+        insertPociagDo.setItems(allStationsNames);
+        insertPociagType.getSelectionModel().select(0);
+
+
+        insertPociagSearch.setOnMouseClicked(event -> {
+            insertPociagListView.setVisible(false);
+            allTrasyFromTo.clear();
+            String odName = insertPociagOd.getValue();
+            String doName = insertPociagDo.getValue();
+
+            try {
+                ArrayList<Integer> trasa_id = idb.getTrasaIdExactlyFromTo(odName, doName);
+                allTrasyFromTo.addAll(trasa_id);
+                insertPociagListView.setItems(allTrasyFromTo);
+                insertPociagListView.setCursor(Cursor.HAND);
+
+                insertPociagListView.setOnMouseClicked(event2 -> {
+                    Integer id_trasy = insertPociagListView.getSelectionModel().getSelectedItem();
+
+                    ArrayList<Stacja> stacje = qdb.getAllStacjeOnTrasa(id_trasy,
+                            qdb.getFirstStationFromTrasa(id_trasy), qdb.getLastStationFromTrasa(id_trasy));
+                    ListView<String> stacjeList = new ListView<>();
+                    stacjeList.setItems(FXCollections.observableArrayList(
+                            stacje.stream().map(Stacja::getNazwaStacji).collect(Collectors.toList())));
+
+                    VBox popupContent = new VBox();
+                    popupContent.getChildren().addAll(stacjeList);
+                    popupContent.setSpacing(20);
+
+                    Dialog<String> kursDialog = new Dialog<>();
+                    kursDialog.getDialogPane().setMinWidth(600);
+                    kursDialog.getDialogPane().setContent(popupContent);
+                    kursDialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+                    kursDialog.showAndWait();
+                });
+
+                insertPociagListView.setVisible(true);
+
+            } catch (InsertDBService.NoStationException e) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Nie znaleziono danej stacji.");
+                alert.showAndWait();
+            } catch (InsertDBService.NoMatchingTrasyException e) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Nie znaleziono danej trasy.");
+                alert.showAndWait();
+            }
+        });
+
+        insertPociagListView.setItems(allTrasyFromTo);
+        insertPociagListView.setCursor(Cursor.HAND);
+        insertPociagListView.setVisible(false);
+        insertPociagListView.setCellFactory(param -> new TrasaCell());
+        allTrasyFromTo.addListener((ListChangeListener<Integer>) change ->
+                insertPociagListView.setMaxHeight(allTrasyFromTo.size() * 34 + 2));
+
+        insertPociagButton.setOnMouseClicked(event -> {
+            String name = insertPociagName.getText();
+            String type = insertPociagType.getValue();
+
+            if(name == null || name.isBlank()) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Błędne dane.");
+                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                alert.showAndWait();
+                return;
+            }
+
+            if(insertPociagIdTrasy == null) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Błędne dane.");
+                alert.setContentText("Nie wybrano trasy");
+                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                alert.showAndWait();
+                return;
+            }
+
+            if(idb.checkPociagExistence(name)) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Błędne dane.");
+                alert.setContentText("Podany pociąg już istnieje");
+                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                alert.showAndWait();
+                return;
+            }
+
+            Alert info = new Alert(Alert.AlertType.CONFIRMATION);
+            info.setTitle("Potwierdź wybór");
+            info.setHeaderText("Czy na pewno chcesz dodać ten pociąg?");
+            info.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+            Optional<ButtonType> result = info.showAndWait();
+
+            if(result.get() == ButtonType.OK) {
+                Pociag pociag = new Pociag();
+                pociag.setIdTrasy(insertPociagIdTrasy);
+                pociag.setNazwaPociagu(name);
+                pociag.setTypPociagu(type);
+                insertPociagIdTrasy = null;
+                insertPociagListView.setVisible(false);
+                insertPociagTrasa.setText("Trasa: ");
+
+                try {
+                    idb.insertPociag(pociag);
+                } catch (InsertDBService.InsertPociagException e) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setHeaderText("Dodanie zakończone niepowodzeniem.");
+                    alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                    alert.showAndWait();
+                    return;
+                }
+
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Dodanie zakończone powodzeniem.");
+                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                alert.showAndWait();
+
+            }
+        });
+
     }
 
     public void setDB(QueryDBService qdb) {
