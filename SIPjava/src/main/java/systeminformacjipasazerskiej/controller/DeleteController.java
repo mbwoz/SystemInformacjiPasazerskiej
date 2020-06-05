@@ -191,13 +191,8 @@ public class DeleteController implements Initializable {
                     Integer toDel = getItem().getIdWagonu();
                     getListView().getItems().remove(getItem());
                     ddb.deleteWagon(toDel);
-                    allWagonModels.clear();
-                    allWagonModels.addAll(
-                            qdb.getAllWagony()
-                                    .stream()
-                                    .map(Wagon::getModel)
-                                    .distinct()
-                                    .collect(Collectors.toList()));
+                    updateModelNames();
+                    insertController.updateWagonDescriptions();
                 }
             });
         }
@@ -690,6 +685,15 @@ public class DeleteController implements Initializable {
                         .stream()
                         .map(Wagon::getModel)
                         .distinct()
+                        .collect(Collectors.toList()));
+    }
+
+    public void updatePociagNames() {
+        allPociagNames.clear();
+        allPociagNames.addAll(
+                qdb.getAllPociagi()
+                        .stream()
+                        .map(Pociag::getNazwaPociagu)
                         .collect(Collectors.toList()));
     }
 

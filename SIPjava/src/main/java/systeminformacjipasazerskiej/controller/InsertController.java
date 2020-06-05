@@ -836,7 +836,7 @@ public class InsertController implements Initializable {
                     alert.showAndWait();
                     return;
                 }
-
+                deleteController.updatePociagNames();
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setHeaderText("Dodanie zakończone powodzeniem.");
                 alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
@@ -875,6 +875,15 @@ public class InsertController implements Initializable {
                 qdb.getAllStations()
                         .stream()
                         .map(Stacja::getNazwaStacji)
+                        .collect(Collectors.toList()));
+    }
+
+    public void updateWagonDescriptions() {
+        allWagonyDescriptions.clear();
+        allWagonyDescriptions.addAll(
+                idb.getAllWagony()
+                        .stream()
+                        .map(Wagon::getDescription)
                         .collect(Collectors.toList()));
     }
 
