@@ -93,6 +93,26 @@ public class InsertDBService {
         return false;
     }
 
+    public boolean checkPociagExistence(String name) {
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(
+                    "SELECT * FROM pociagi WHERE nazwa_pociagu = '" + name + "';"
+            );
+
+            if(resultSet.next())
+                return true;
+
+            resultSet.close();
+            statement.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
     public void insertStation(Stacja stacja) throws InsertStationException {
         try {
             Statement statement = connection.createStatement();
@@ -179,7 +199,7 @@ public class InsertDBService {
         }
     }
 
-    public void insertTrasa(ArrayList<Integer> idStacji, boolean p) throws InsertTrasaException, InsertTrasaExistsException{
+    public void insertTrasa(ArrayList<Integer> idStacji, boolean p) throws InsertTrasaException, InsertTrasaExistsException {
         String przyspieszona = (p) ? "'T'" : "'N'";
         String stacje = arrayToQuery(idStacji);
         int n = idStacji.size();
@@ -188,15 +208,26 @@ public class InsertDBService {
             String query = "SELECT insertTrasaQuery(" + stacje + ", " + n + ", " + przyspieszona + ");";
             Statement statement = connection.createStatement();
             statement.execute(query);
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             System.out.println("Error with trasa insert.");
             String mes = e.getMessage();
 //            System.out.println(mes);
 
-            if(mes.contains("Trasa exists"))
+            if (mes.contains("Trasa exists"))
                 throw new InsertTrasaExistsException();
             else
                 throw new InsertTrasaException();
+        }
+    }
+
+    public void insertPociag(Pociag pociag) throws InsertPociagException{
+        try {
+            Statement statement = connection.createStatement();
+            statement.execute("INSERT INTO pociagi(id_trasy, nazwa_pociagu, typ_pociagu)"
+                    + "VALUES(" + pociag.getIdTrasy() + ", '" + pociag.getNazwaPociagu() + "', '" + pociag.getTypPociagu() + "');");
+        } catch(SQLException e) {
+            System.out.println("Error with pociag insert.");
+            throw new InsertPociagException();
         }
     }
 
@@ -273,6 +304,56 @@ public class InsertDBService {
         return 0;
     }
 
+    public ArrayList<Integer> getTrasaIdExactlyFromTo (String fromStation, String toStation)
+            throws NoStationException, NoMatchingTrasyException {
+        ArrayList<Integer> id_trasy = new ArrayList<>();
+
+        try {
+            int fromStationId, toStationId;
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(
+                    "SELECT id_stacji FROM stacje WHERE nazwa_stacji = '" + fromStation + "';"
+            );
+            if(resultSet.next())
+                fromStationId = resultSet.getInt("id_stacji");
+            else {
+                statement.close();
+                resultSet.close();
+                throw new NoStationException();
+            }
+
+            resultSet = statement.executeQuery(
+                    "SELECT id_stacji FROM stacje WHERE nazwa_stacji = '" + toStation + "';"
+            );
+            if(resultSet.next())
+                toStationId = resultSet.getInt("id_stacji");
+            else {
+                statement.close();
+                resultSet.close();
+                throw new NoStationException();
+            }
+
+            resultSet = statement.executeQuery(
+                    "SELECT idTrasy " +
+                            "FROM getIdTrasyExactlyFromTo(" + fromStationId + ", " + toStationId + ") " +
+                            "ORDER BY idTrasy;"
+            );
+            while (resultSet.next())
+                id_trasy.add(resultSet.getInt("idTrasy"));
+
+            resultSet.close();
+            statement.close();
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        if(id_trasy.isEmpty())
+            throw new NoMatchingTrasyException();
+
+        return id_trasy;
+    }
+
     public String arrayToQuery(ArrayList<Integer> array) {
         String ans = "'{" + array.get(0);
         boolean first = false;
@@ -295,10 +376,12 @@ public class InsertDBService {
     public static class UpdateStationException extends Exception {}
     public static class InsertStationException extends Exception {}
     public static class NoStationException extends Exception {}
+    public static class NoMatchingTrasyException extends Exception {}
     public static class InsertOdcinekException extends Exception {}
     public static class InsertWagonException extends Exception {}
     public static class InsertSkladException extends Exception {}
     public static class InsertSkladExistsException extends Exception {}
     public static class InsertTrasaException extends Exception {}
     public static class InsertTrasaExistsException extends Exception {}
+    public static class InsertPociagException extends Exception {}
 }

@@ -58,6 +58,7 @@ DROP FUNCTION insertTrasaQuery;
 DROP FUNCTION getSkladByNumber(integer, varchar);
 DROP FUNCTION getSkladByNumber(varchar);
 DROP FUNCTION getSkladByNumber(integer);
+DROP FUNCTION getIdTrasyExactlyFromTo;
 
 --tables
 DROP TABLE IF EXISTS wagony CASCADE;
