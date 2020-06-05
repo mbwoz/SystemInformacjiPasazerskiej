@@ -398,7 +398,10 @@ public class DeleteController implements Initializable {
         rideList.setVisible(false);
         rideList.setCellFactory(param -> new RideCell());
         allMatchingKursy.addListener((ListChangeListener<Kurs>) change ->
-            rideList.setMaxHeight(allMatchingKursy.size() * 34 + 2)
+        {
+            rideList.setMaxHeight(allMatchingKursy.size() * 34 + 2);
+            if(allMatchingSklady.size() == 0) rideList.setVisible(false);
+        }
         );
 
         //********************************
@@ -458,7 +461,10 @@ public class DeleteController implements Initializable {
         trasyListView.setVisible(false);
         trasyListView.setCellFactory(param -> new TrasaCell());
         allTrasy.addListener((ListChangeListener<Integer>) change ->
-                trasyListView.setMaxHeight(allTrasy.size() * 34 + 2));
+        {
+            trasyListView.setMaxHeight(allTrasy.size() * 34 + 2);
+            if(allTrasy.size() == 0) trasyListView.setVisible(false);
+        });
 
         //***************************************
         //delete odcinek
@@ -630,9 +636,12 @@ public class DeleteController implements Initializable {
             }
             catch (NoGivenDataException ngd) {}
         });
+        skladList.setCursor(Cursor.HAND);
         skladList.setCellFactory(param -> new SkladCell());
-        allMatchingSklady.addListener((ListChangeListener<Sklad>) change ->
-                skladList.setMaxHeight(allMatchingSklady.size() * 34 + 2)
+        allMatchingSklady.addListener((ListChangeListener<Sklad>) change -> {
+                    skladList.setMaxHeight(allMatchingSklady.size() * 34 + 2);
+                    if (allMatchingSklady.size() == 0) skladList.setVisible(false);
+                }
         );
 
 
@@ -707,4 +716,6 @@ public class DeleteController implements Initializable {
 
 
 
-//TODO: Update lists between insert and delete
+//TODO: Update lists between insert and delete ???
+//TODO: Cursorhand
+//TODO: Make it look better

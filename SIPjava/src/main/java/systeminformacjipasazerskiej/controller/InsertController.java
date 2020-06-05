@@ -449,6 +449,8 @@ public class InsertController implements Initializable {
                 Alert info = new Alert(Alert.AlertType.INFORMATION);
                 info.setHeaderText("Dodanie zakończone powodzeniem.");
                 info.showAndWait();
+                updateWagonDescriptions();
+                deleteController.updateModelNames();
             }
 
         });
