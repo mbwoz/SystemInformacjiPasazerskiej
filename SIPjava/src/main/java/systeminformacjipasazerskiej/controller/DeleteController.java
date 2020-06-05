@@ -97,6 +97,9 @@ public class DeleteController implements Initializable {
                     Kurs toDel = getItem();
                     getListView().getItems().remove(getItem());
                     ddb.deleteRide(toDel);
+                    Alert alertInfo = new Alert(Alert.AlertType.INFORMATION);
+                    alertInfo.setHeaderText("Poprawnie usunięto");
+                    alertInfo.showAndWait();
                 }
 
             });
@@ -149,6 +152,9 @@ public class DeleteController implements Initializable {
                     Integer toDel = getItem();
                     getListView().getItems().remove(getItem());
                     ddb.deleteTrasa(toDel);
+                    Alert alertInfo = new Alert(Alert.AlertType.INFORMATION);
+                    alertInfo.setHeaderText("Poprawnie usunięto");
+                    alertInfo.showAndWait();
                 }
 
             });}
@@ -191,6 +197,9 @@ public class DeleteController implements Initializable {
                     Integer toDel = getItem().getIdWagonu();
                     getListView().getItems().remove(getItem());
                     ddb.deleteWagon(toDel);
+                    Alert alertInfo = new Alert(Alert.AlertType.INFORMATION);
+                    alertInfo.setHeaderText("Poprawnie usunięto");
+                    alertInfo.showAndWait();
                     updateModelNames();
                     insertController.updateWagonDescriptions();
                 }
@@ -230,6 +239,9 @@ public class DeleteController implements Initializable {
                     Integer toDel = getItem().getIdSkladu();
                     getListView().getItems().remove(getItem());
                     ddb.deleteSklad(toDel);
+                    Alert alertInfo = new Alert(Alert.AlertType.INFORMATION);
+                    alertInfo.setHeaderText("Poprawnie usunięto");
+                    alertInfo.showAndWait();
                 }
             });
         }
@@ -248,7 +260,6 @@ public class DeleteController implements Initializable {
             }
         }
     }
-
 
 
 
@@ -280,9 +291,13 @@ public class DeleteController implements Initializable {
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.get() == ButtonType.OK) {
                     ddb.deleteStation(deleteStationBox.getValue());
+                    Alert alertInfo = new Alert(Alert.AlertType.INFORMATION);
+                    alertInfo.setHeaderText("Poprawnie usunięto");
+                    alertInfo.showAndWait();
                     updateStationNames();
                     queryController.updateStationNames();
                     insertController.updateStationNames();
+
                 }
             } catch (QueryDBService.NoSuchStationException e) {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -306,12 +321,11 @@ public class DeleteController implements Initializable {
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.get() == ButtonType.OK) {
                     ddb.deletePociag(deletePociagBox.getValue());
-                    allPociagNames.clear();
-                    allPociagNames.addAll(
-                            qdb.getAllPociagi()
-                                    .stream()
-                                    .map(Pociag::getNazwaPociagu)
-                                    .collect(Collectors.toList()));
+                    Alert alertInfo = new Alert(Alert.AlertType.INFORMATION);
+                    alertInfo.setHeaderText("Poprawnie usunięto");
+                    alertInfo.showAndWait();
+                    updatePociagNames();
+
                 }
 
             } catch (QueryDBService.NoSuchTrainException ex) {
@@ -383,6 +397,12 @@ public class DeleteController implements Initializable {
                     kursDialog.showAndWait();
                 });
                 rideList.setVisible(true);
+                skladList.setVisible(false);
+                wagonList.setVisible(false);
+                trasyListView.setVisible(false);
+                skladList.setMaxHeight(0);
+                wagonList.setMaxHeight(0);
+                trasyListView.setMaxHeight(0);
             } catch (QueryDBService.NoSuchStationException nss) {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setHeaderText("Nie znaleziono podanej stacji.");
@@ -400,7 +420,7 @@ public class DeleteController implements Initializable {
         allMatchingKursy.addListener((ListChangeListener<Kurs>) change ->
         {
             rideList.setMaxHeight(allMatchingKursy.size() * 34 + 2);
-            if(allMatchingSklady.size() == 0) rideList.setVisible(false);
+            if(allMatchingKursy.size() == 0) rideList.setVisible(false);
         }
         );
 
@@ -444,6 +464,12 @@ public class DeleteController implements Initializable {
                 });
 
                  trasyListView.setVisible(true);
+                skladList.setVisible(false);
+                rideList.setVisible(false);
+                wagonList.setVisible(false);
+                skladList.setMaxHeight(0);
+                wagonList.setMaxHeight(0);
+                rideList.setMaxHeight(0);
 
             } catch (QueryDBService.NoSuchStationException nss) {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -513,7 +539,12 @@ public class DeleteController implements Initializable {
                 allMatchingWagons.clear();
                 allMatchingWagons.addAll(qdb.getWagonsByModel(deleteWagonBox.getValue()));
                 wagonList.setVisible(true);
-
+                skladList.setVisible(false);
+                rideList.setVisible(false);
+                trasyListView.setVisible(false);
+                skladList.setMaxHeight(0);
+                rideList.setMaxHeight(0);
+                trasyListView.setMaxHeight(0);
                 wagonList.setOnMouseClicked(e -> {
                     Wagon wagon = wagonList.getSelectionModel().getSelectedItem();
 
@@ -553,7 +584,10 @@ public class DeleteController implements Initializable {
         wagonList.setVisible(false);
         wagonList.setCellFactory(param -> new WagonCell());
         allMatchingWagons.addListener((ListChangeListener<Wagon>) change ->
-                wagonList.setMaxHeight(allMatchingWagons.size() * 34 + 2)
+        {
+            wagonList.setMaxHeight(allMatchingWagons.size() * 34 + 2);
+            if(allMatchingWagons.size() == 0) wagonList.setVisible(false);
+        }
         );
 
         //****************************
@@ -580,6 +614,12 @@ public class DeleteController implements Initializable {
                 allMatchingSklady.addAll(sklady);
 
                 skladList.setVisible(true);
+                rideList.setVisible(false);
+                wagonList.setVisible(false);
+                trasyListView.setVisible(false);
+                rideList.setMaxHeight(0);
+                wagonList.setMaxHeight(0);
+                trasyListView.setMaxHeight(0);
 
                 skladList.setOnMouseClicked(click -> {
                     Sklad sklad = skladList.getSelectionModel().getSelectedItem();
@@ -717,5 +757,4 @@ public class DeleteController implements Initializable {
 
 
 //TODO: Update lists between insert and delete ???
-//TODO: Cursorhand
-//TODO: Make it look better
+//TODO: push
