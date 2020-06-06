@@ -670,7 +670,7 @@ public class DeleteController implements Initializable {
                 if((deleteSkladBox.getValue() == null || deleteSkladBox.getValue().equals("") ) && deleteSkladField.getText().equals("")) {
                     throw new NoGivenDataException();
                 }
-                if(deleteSkladBox.getValue() != null && !deleteSkladBox.getValue().matches(pat)) {
+                if(deleteSkladBox.getValue() != null && !deleteSkladBox.getValue().isBlank() && !deleteSkladBox.getValue().matches(pat)) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setHeaderText("Błędne dane.");
                     alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);

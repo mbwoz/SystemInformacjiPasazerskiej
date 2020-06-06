@@ -429,6 +429,13 @@ public class InsertController implements Initializable {
                                 insidedeleteSkladField.getText().equals("")) {
                             throw new DeleteController.NoGivenDataException();
                         }
+                        if(insidedeleteSkladBox.getValue() != null && !insidedeleteSkladBox.getValue().isBlank() && !insidedeleteSkladBox.getValue().matches(pat)) {
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                            alert.setHeaderText("Błędne dane.");
+                            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                            alert.showAndWait();
+                            return;
+                        }
                         else if(insidedeleteSkladBox.getValue() == null || insidedeleteSkladBox.getValue().equals("")) {
                             insidesklady = qdb.getSkladByNumber(Integer.parseInt(insidedeleteSkladField.getText()));
                         }
@@ -1060,7 +1067,6 @@ public class InsertController implements Initializable {
                 if(s == null || s.isBlank() || !s.matches(pat)) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setHeaderText("Błędne dane.");
-                    alert.setContentText("Nie znaleziono stacji.");
                     alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
                     alert.showAndWait();
                     return;
