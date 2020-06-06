@@ -100,6 +100,8 @@ public class DeleteController implements Initializable {
                     Alert alertInfo = new Alert(Alert.AlertType.INFORMATION);
                     alertInfo.setHeaderText("Poprawnie usunięto");
                     alertInfo.showAndWait();
+                    queryController.hideTable();
+                    insertController.hideTable();
                 }
 
             });
@@ -155,6 +157,8 @@ public class DeleteController implements Initializable {
                     Alert alertInfo = new Alert(Alert.AlertType.INFORMATION);
                     alertInfo.setHeaderText("Poprawnie usunięto");
                     alertInfo.showAndWait();
+                    queryController.hideTable();
+                    insertController.hideTable();
                 }
 
             });}
@@ -202,6 +206,8 @@ public class DeleteController implements Initializable {
                     alertInfo.showAndWait();
                     updateModelNames();
                     insertController.updateWagonDescriptions();
+                    queryController.hideTable();
+                    insertController.hideTable();
                 }
             });
         }
@@ -242,6 +248,8 @@ public class DeleteController implements Initializable {
                     Alert alertInfo = new Alert(Alert.AlertType.INFORMATION);
                     alertInfo.setHeaderText("Poprawnie usunięto");
                     alertInfo.showAndWait();
+                    queryController.hideTable();
+                    insertController.hideTable();
                 }
             });
         }
@@ -297,6 +305,8 @@ public class DeleteController implements Initializable {
                     updateStationNames();
                     queryController.updateStationNames();
                     insertController.updateStationNames();
+                    queryController.hideTable();
+                    insertController.hideTable();
 
                 }
             } catch (QueryDBService.NoSuchStationException e) {
@@ -325,7 +335,8 @@ public class DeleteController implements Initializable {
                     alertInfo.setHeaderText("Poprawnie usunięto");
                     alertInfo.showAndWait();
                     updatePociagNames();
-
+                    queryController.hideTable();
+                    insertController.hideTable();
                 }
 
             } catch (QueryDBService.NoSuchTrainException ex) {
@@ -513,6 +524,8 @@ public class DeleteController implements Initializable {
                     Alert alertInfo = new Alert(Alert.AlertType.INFORMATION);
                     alertInfo.setHeaderText("Poprawnie usunięto");
                     alertInfo.showAndWait();
+                    queryController.hideTable();
+                    insertController.hideTable();
                 }
             }
             catch (DeleteDBService.NoSuchOdcinekException nso) {
@@ -744,6 +757,17 @@ public class DeleteController implements Initializable {
                         .stream()
                         .map(Pociag::getNazwaPociagu)
                         .collect(Collectors.toList()));
+    }
+
+    public void hideTable() {
+        rideList.setMaxHeight(0);
+        rideList.setVisible(false);
+        wagonList.setMaxHeight(0);
+        wagonList.setVisible(false);
+        skladList.setMaxHeight(0);
+        skladList.setVisible(false);
+        trasyListView.setMaxHeight(0);
+        trasyListView.setVisible(false);
     }
 
     public static class NoGivenDataException extends Exception {};

@@ -291,6 +291,13 @@ public class QueryController implements Initializable {
         );
     }
 
+    public void hideTable() {
+        destinationsListView.setMaxHeight(0);
+        destinationsListView.setVisible(false);
+        connectionsListView.setMaxHeight(0);
+        connectionsListView.setVisible(false);
+    }
+
     public void setDB(QueryDBService qdb) {
         this.qdb = qdb;
         System.out.println("query db ready");

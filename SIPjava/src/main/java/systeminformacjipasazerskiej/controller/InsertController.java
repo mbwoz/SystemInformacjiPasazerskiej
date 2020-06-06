@@ -836,6 +836,7 @@ public class InsertController implements Initializable {
                 info.showAndWait();
                 updateWagonDescriptions();
                 deleteController.updateModelNames();
+                deleteController.hideTable();
             }
 
         });
@@ -985,6 +986,7 @@ public class InsertController implements Initializable {
                 alert.setHeaderText("Dodanie zakończone powodzeniem.");
                 alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
                 alert.showAndWait();
+                deleteController.hideTable();
                 return;
 
             }
@@ -1103,6 +1105,8 @@ public class InsertController implements Initializable {
                 alert.setHeaderText("Dodanie zakończone powodzeniem.");
                 alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
                 alert.showAndWait();
+                queryController.hideTable();
+                deleteController.hideTable();
                 return;
             }
         });
@@ -1389,6 +1393,8 @@ public class InsertController implements Initializable {
                 alert.setHeaderText("Dodanie zakończone powodzeniem.");
                 alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
                 alert.showAndWait();
+                queryController.hideTable();
+                deleteController.hideTable();
                 insertKursIdPociag = null;
                 insertKursPostoje.getChildren().clear();
                 insertKursPrzyjazd.clear();
@@ -1441,6 +1447,20 @@ public class InsertController implements Initializable {
                         .stream()
                         .map(Wagon::getDescription)
                         .collect(Collectors.toList()));
+    }
+
+    public void hideTable() {
+        insertKursPociagListView.setMaxHeight(0);
+        insertKursPociagListView.setVisible(false);
+        insertPociagListView.setMaxHeight(0);
+        insertPociagListView.setVisible(false);
+        insertKursIdPociag = null;
+        insertKursPostoje.getChildren().clear();
+        insertKursPrzyjazd.clear();
+        insertKursOdjazd.clear();
+        insertKursZmianaSkladu.clear();
+        insertKursSklady.getChildren().clear();
+        insertKursSkladHBox.clear();
     }
 
     public void setQueryController(QueryController queryController) {
