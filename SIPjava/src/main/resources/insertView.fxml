@@ -294,6 +294,7 @@
                     <TextField fx:id="insertTrasaNumber" editable="true" />
                     <Button fx:id="insertTrasaNumberOK" text="OK" />
                     <Button fx:id="insertTrasaNumberClean" text="Wyczyść" />
+                    <Button fx:id="insertTrasaSwap" text="Odwróć" />
                     <VBox.margin>
                         <Insets bottom="5.0" left="10.0" right="10.0" top="10.0" />
                     </VBox.margin>

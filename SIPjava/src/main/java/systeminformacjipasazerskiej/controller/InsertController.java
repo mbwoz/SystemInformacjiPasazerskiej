@@ -97,6 +97,8 @@ public class InsertController implements Initializable {
     @FXML
     private Button insertTrasaNumberClean;
     @FXML
+    private Button insertTrasaSwap;
+    @FXML
     private Button insertTrasaButton;
     @FXML
     private VBox insertTrasaVBox;
@@ -1036,7 +1038,16 @@ public class InsertController implements Initializable {
             insertTrasaStacja.clear();
             insertTrasaNumber.setText(null);
         });
-
+        insertTrasaSwap.setOnMouseClicked(event -> {
+            int trasaSize = insertTrasaStacja.size();
+            ArrayList<String> stationList = new ArrayList<>();
+            for(ComboBox<String> box : insertTrasaStacja) {
+                stationList.add(box.getValue());
+            }
+            for(int i = 0; i < trasaSize; i++) {
+                insertTrasaStacja.get(i).setValue(stationList.get(trasaSize-1-i));
+            }
+        });
         insertTrasaButton.setOnMouseClicked(event -> {
             ArrayList<Integer> insertStacjeId = new ArrayList<>();
             HashSet<Integer> hashSet = new HashSet<>();

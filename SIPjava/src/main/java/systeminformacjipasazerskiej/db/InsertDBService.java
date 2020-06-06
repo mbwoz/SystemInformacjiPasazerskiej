@@ -192,7 +192,8 @@ public class InsertDBService {
                     wagon.getMiejscaII() + ", " + wagon.getRowery() + ", '" + przedziały + "', '" +
                     klimatyzacja + "', '" + wifi + "', '" + niepelnosprawni + "', " + wagon.getDlugosc() + ");");
         } catch(SQLException e) {
-            System.out.println("Error with station insert.");
+            System.out.println("Error with wagon insert.");
+            System.out.println(e.getMessage());
             throw new InsertWagonException();
         }
     }
@@ -310,10 +311,10 @@ public class InsertDBService {
 
             while(resultSet.next()) {
                 Wagon wagon = new Wagon();
-                boolean przedzialy = (resultSet.getString("czy_przedzialowy") == "T");
-                boolean klimatyzacja = (resultSet.getString("czy_klimatyzacja") == "T");
-                boolean wifi = (resultSet.getString("czy_wifi") == "T");
-                boolean niepelnosprawni = (resultSet.getString("czy_niepelnosprawni") == "T");
+                boolean przedzialy = (resultSet.getString("czy_przedzialowy").equals("T"));
+                boolean klimatyzacja = (resultSet.getString("czy_klimatyzacja").equals("T"));
+                boolean wifi = (resultSet.getString("czy_wifi").equals("T"));
+                boolean niepelnosprawni = (resultSet.getString("czy_niepelnosprawni").equals("T"));
 
                 wagon.setIdWagonu(resultSet.getInt("id_wagonu"));
                 wagon.setModel(resultSet.getString("model_wagonu"));
