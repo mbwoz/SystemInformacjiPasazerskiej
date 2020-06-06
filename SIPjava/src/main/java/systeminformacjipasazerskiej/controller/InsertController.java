@@ -146,6 +146,7 @@ public class InsertController implements Initializable {
     private ArrayList<SkladHBox> insertKursSkladHBox = new ArrayList<>();
     private int insertKursSkladNumber;
     private int insertKursPickedDay;
+    private String pat = "^[\\pL\\pN -]+$";
 
     private ObservableList<String> allStationsNames = FXCollections.observableArrayList();
     private ObservableList<String> allWagonyTypes = FXCollections.observableArrayList("sypialny", "kuszetka", "barowy", "osobowy", "business");
@@ -563,7 +564,7 @@ public class InsertController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         insertStationName.setItems(allStationsNames);
-        insertStationName.setPromptText("np. Kraków Płaszów");
+        insertStationName.setPromptText("np. Tarnów, max 100 znaków");
         insertStationTory.setPromptText("1 - 99");
         insertStationPerony.setPromptText("1 - 99");
         insertStationDlugosc.setPromptText("0.01 - 999.99");
@@ -586,7 +587,7 @@ public class InsertController implements Initializable {
 
 
 
-            if(nazwa == null || nazwa.isBlank())
+            if(nazwa == null || nazwa.isBlank() || !nazwa.matches(pat))
                 dataCorrectness = false;
             if(tory <= 0 || tory >= 100)
                 dataCorrectness = false;
@@ -682,7 +683,8 @@ public class InsertController implements Initializable {
             String end = (String) insertOdcinekKoniec.getValue();
             boolean dataCorrectness = true;
 
-            if(start == null || end == null || start.isBlank() || end.isBlank()) {
+            if(start == null || end == null || start.isBlank() || end.isBlank() ||
+                !start.matches(pat) || !end.matches(pat)) {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setHeaderText("Błędne dane.");
                 alert.showAndWait();
@@ -739,7 +741,7 @@ public class InsertController implements Initializable {
         //insert wagon
         insertWagonType.setItems(allWagonyTypes);
         insertWagonType.getSelectionModel().select(0);
-        insertWagonName.setPromptText("np. Bautzen 86");
+        insertWagonName.setPromptText("np. 110A, max 15 znaków");
         insertWagonLength.setPromptText("0.01 - 99.99");
         insertWagon1klasa.setPromptText("0 - 99");
         insertWagon2klasa.setPromptText("0 - 99");
@@ -775,7 +777,7 @@ public class InsertController implements Initializable {
                 return;
             }
 
-            if(nazwa == null || nazwa.isBlank())
+            if(nazwa == null || nazwa.isBlank() || !nazwa.matches(pat))
                 dataCorrectness = false;
             if(klasa1 < 0 || klasa1 >= 100)
                 dataCorrectness = false;
@@ -1055,7 +1057,7 @@ public class InsertController implements Initializable {
 
             for(ComboBox<String> box : insertTrasaStacja) {
                 String s = box.getValue();
-                if(s == null || s.isBlank()) {
+                if(s == null || s.isBlank() || !s.matches(pat)) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setHeaderText("Błędne dane.");
                     alert.setContentText("Nie znaleziono stacji.");
@@ -1137,6 +1139,14 @@ public class InsertController implements Initializable {
             allTrasyFromTo.clear();
             String odName = insertPociagOd.getValue();
             String doName = insertPociagDo.getValue();
+            if(odName == null || odName.isBlank() || !odName.matches(pat) ||
+                    doName == null || doName.isBlank() || !doName.matches(pat)) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Błędne dane.");
+                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                alert.showAndWait();
+                return;
+            }
 
             try {
                 ArrayList<Integer> trasa_id = idb.getTrasaIdExactlyFromTo(odName, doName);
@@ -1188,7 +1198,7 @@ public class InsertController implements Initializable {
             String name = insertPociagName.getText();
             String type = insertPociagType.getValue();
 
-            if(name == null || name.isBlank()) {
+            if(name == null || name.isBlank() || !name.matches(pat)) {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setHeaderText("Błędne dane.");
                 alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
@@ -1265,6 +1275,14 @@ public class InsertController implements Initializable {
             allPociagiFromTo.clear();
             String odName = insertKursOd.getValue();
             String doName = insertKursDo.getValue();
+            if(odName == null || odName.isBlank() || !odName.matches(pat) ||
+                    doName == null || doName.isBlank() || !doName.matches(pat)) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Błędne dane.");
+                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                alert.showAndWait();
+                return;
+            }
 
             try {
                 ArrayList<Integer> trasa_id = idb.getPociagIdExactlyFromTo(odName, doName);

@@ -8,6 +8,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import systeminformacjipasazerskiej.converter.DayConverter;
 
@@ -69,6 +70,7 @@ public class QueryController implements Initializable {
     private ListView<Destination> destinationsListView;
 
     private ObservableList<Destination> allDestinations = FXCollections.observableArrayList();
+    private String pat = "^[\\pL\\pN -]+$";
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -126,6 +128,17 @@ public class QueryController implements Initializable {
         searchConnectionButton.setOnMouseClicked(event -> {
             connectionsListView.setVisible(false);
             allMatchingKursy.clear();
+
+            String odName = fromComboBox.getValue();
+            String doName = toComboBox.getValue();
+            if(odName == null || odName.isBlank() || !odName.matches(pat) ||
+                    doName == null || doName.isBlank() || !doName.matches(pat)) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Błędne dane.");
+                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                alert.showAndWait();
+                return;
+            }
 
             try {
                 allMatchingKursy.addAll(qdb.getConnections(
@@ -245,6 +258,15 @@ public class QueryController implements Initializable {
         searchDestinationButton.setOnMouseClicked(event -> {
             destinationsListView.setVisible(false);
             allDestinations.clear();
+
+            String odName = departureComboBox.getValue();
+            if(odName == null || odName.isBlank() || !odName.matches(pat)) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Błędne dane.");
+                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                alert.showAndWait();
+                return;
+            }
 
             try {
                 allDestinations.addAll(qdb.getDestinations(

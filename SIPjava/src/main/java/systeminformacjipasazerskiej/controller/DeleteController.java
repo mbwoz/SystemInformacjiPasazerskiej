@@ -76,6 +76,7 @@ public class DeleteController implements Initializable {
     private ComboBox<String> deleteSkladBox;
     @FXML
     private ListView<Sklad> skladList;
+    private String pat = "^[\\pL\\pN -]+$";
 
     class RideCell extends ListCell<Kurs> {
         HBox hbox = new HBox();
@@ -287,7 +288,14 @@ public class DeleteController implements Initializable {
         deleteStationBox.setItems(allStationsNames);
         deleteStationBox.setPromptText("np. Kraków Główny");
         deleteStationButton.setOnMouseClicked(event -> {
-            if(deleteStationBox.getValue() == null) return;
+            String stationName = deleteStationBox.getValue();
+            if(stationName == null || stationName.isBlank() || !stationName.matches(pat)) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Błędne dane.");
+                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                alert.showAndWait();
+                return;
+            }
 
             try {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -321,7 +329,14 @@ public class DeleteController implements Initializable {
         deletePociagBox.setItems(allPociagNames);
         deletePociagBox.setPromptText("np. beuiddxb");
         deletePociagButton.setOnMouseClicked(e -> {
-            if(deletePociagBox.getValue() == null) return;
+            String pociagName = deletePociagBox.getValue();
+            if(pociagName == null || pociagName.isBlank() || !pociagName.matches(pat)) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Błędne dane.");
+                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                alert.showAndWait();
+                return;
+            }
             try {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle("Potwierdź wybór");
@@ -366,6 +381,16 @@ public class DeleteController implements Initializable {
         deleteRideButton.setOnMouseClicked(event -> {
             rideList.setVisible(false);
             allMatchingKursy.clear();
+            String odName = deleteRideFromBox.getValue();
+            String doName = deleteRideToBox.getValue();
+            if(odName == null || odName.isBlank() || !odName.matches(pat) ||
+                    doName == null || doName.isBlank() || !doName.matches(pat)) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Błędne dane.");
+                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                alert.showAndWait();
+                return;
+            }
 
             try {
                 allMatchingKursy.addAll(qdb.getConnections(
@@ -444,6 +469,17 @@ public class DeleteController implements Initializable {
 
         deleteTrasaButton.setOnMouseClicked(e -> {
             try {
+                String odName = deleteTrasaFromBox.getValue();
+                String doName = deleteTrasaToBox.getValue();
+                if(odName == null || odName.isBlank() || !odName.matches(pat) ||
+                        doName == null || doName.isBlank() || !doName.matches(pat)) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setHeaderText("Błędne dane.");
+                    alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                    alert.showAndWait();
+                    return;
+                }
+
                 ArrayList<Integer> trasa_id = qdb.getTrasaIdFromTo(deleteTrasaFromBox.getValue(), deleteTrasaToBox.getValue());
                 System.out.println("Znalezione trasy:" + trasa_id.stream().collect(Collectors.toList()));
 
@@ -511,6 +547,16 @@ public class DeleteController implements Initializable {
         deleteOdcinekToBox.setPromptText("np. Brzesko Okocim");
 
         deleteOdcinekButton.setOnMouseClicked(e -> {
+            String odName = deleteOdcinekFromBox.getValue();
+            String doName = deleteOdcinekToBox.getValue();
+            if(odName == null || odName.isBlank() || !odName.matches(pat) ||
+                    doName == null || doName.isBlank() || !doName.matches(pat)) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Błędne dane.");
+                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                alert.showAndWait();
+                return;
+            }
             try {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle("Potwierdź wybór");
@@ -547,6 +593,14 @@ public class DeleteController implements Initializable {
         deleteWagonBox.setPromptText("np. ED250");
 
         deleteWagonButton.setOnMouseClicked(event -> {
+            String wagonName = deleteWagonBox.getValue();
+            if(wagonName == null || wagonName.isBlank() || !wagonName.matches(pat)) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Błędne dane.");
+                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                alert.showAndWait();
+                return;
+            }
             try {
                 wagonList.setVisible(false);
                 allMatchingWagons.clear();
@@ -615,6 +669,13 @@ public class DeleteController implements Initializable {
             try {
                 if((deleteSkladBox.getValue() == null || deleteSkladBox.getValue().equals("") ) && deleteSkladField.getText().equals("")) {
                     throw new NoGivenDataException();
+                }
+                if(deleteSkladBox.getValue() != null && !deleteSkladBox.getValue().matches(pat)) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setHeaderText("Błędne dane.");
+                    alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                    alert.showAndWait();
+                    return;
                 }
                 else if(deleteSkladBox.getValue() == null || deleteSkladBox.getValue().equals("")) {
                     sklady = qdb.getSkladByNumber(Integer.parseInt(deleteSkladField.getText()));
