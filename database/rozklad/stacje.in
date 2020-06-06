@@ -7,7 +7,7 @@ COPY stacje FROM STDIN DELIMITER '|';
 5|Żyrardów|3|3|889.08
 6|Warszawa Zachodnia|13|5|400.63
 7|Warszawa Centralna|5|1|411.24
-8|Kraków Główny|2|1|986.84
+8|Kraków Główny|8|4|986.84
 9|Bochnia|12|8|976.23
 10|Brzesko Okocim|14|4|454.9
 11|Tarnów|5|4|879.15
@@ -50,7 +50,7 @@ COPY stacje FROM STDIN DELIMITER '|';
 48|Opole Główne|13|12|836.99
 49|Brzeg|7|2|980.02
 50|Oława|7|2|657.38
-51|Wrocław Główny|2|1|836.35
+51|Wrocław Główny|4|8|836.35
 52|Warszawa Wschodnia|8|4|786.73
 53|Legionowo|13|6|871.38
 54|Nowy Dwór Mazowiecki|3|1|964.03
@@ -200,4 +200,3 @@ COPY stacje FROM STDIN DELIMITER '|';
 198|Włoszczowa|12|7|750.27
 199|Elbląg|13|11|352.31
 \.
-
