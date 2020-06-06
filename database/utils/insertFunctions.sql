@@ -105,7 +105,7 @@ declare
 
 begin
     FOR rec in
-        SELECT a.przyjazd, a.odjazd, getday(id_kursu, id_stacji, 'Przyjazd') as przyjazdDay, getday(id_kursu, id_stacji, 'Odjazd') as odjazdDay
+        SELECT a.id_kursu, a.przyjazd, a.odjazd, getday(id_kursu, id_stacji, 'Przyjazd') as przyjazdDay, getday(id_kursu, id_stacji, 'Odjazd') as odjazdDay
         FROM postoje a
         WHERE id_stacji = stacja
     LOOP
@@ -113,6 +113,7 @@ begin
         end_number := EXTRACT(EPOCH FROM rec.odjazd::INTERVAL)/60 + (rec.odjazdDay * 1440);
 
         WHILE i != end_number LOOP
+
             IF tab[i] IS NULL THEN
                 tab[i] := 1;
             ELSE
@@ -120,6 +121,7 @@ begin
             END IF;
 
             IF tab[i] > tory THEN
+--                RAISE NOTICE 'godzina: %, %', i, tab[i];
                 RETURN FALSE;
             END IF;
 
@@ -336,6 +338,64 @@ begin
     SELECT id_trasy AS do
     FROM trasy
     WHERE getFirstStation(id_trasy) = fromId AND getLastStation(id_trasy) = toId;
+end;
+$$
+language plpgsql;
+----
+
+
+CREATE OR REPLACE FUNCTION getIdPociaguExactlyFromTo(
+    fromId odcinki.stacja_poczatkowa%TYPE,
+    toId odcinki.stacja_koncowa%TYPE
+) RETURNS TABLE (idPociagu pociagi.id_pociagu%TYPE) AS
+$$
+begin
+    RETURN QUERY
+    SELECT id_pociagu AS do
+    FROM pociagi
+    WHERE getFirstStation(id_trasy) = fromId AND getLastStation(id_trasy) = toId;
+end;
+$$
+language plpgsql;
+----
+
+
+-- dodawanie całego kursu
+CREATE OR REPLACE FUNCTION insertKurs(
+    idPociag integer, dzien integer, przyjazd time[], odjazd time[], sklad integer[]
+) RETURNS void AS
+$$
+declare
+    i integer;
+    rec record;
+    idTrasy integer;
+    idKursu integer;
+begin
+    begin
+    INSERT INTO rozklady(id_pociagu, dzien_tygodnia) VALUES(idPociag, dzien);
+    idTrasy := (SELECT id_trasy FROM pociagi
+        WHERE id_pociagu = idPociag);
+    i := 1;
+    idKursu := (SELECT currval('rozklady_seq'));
+    RAISE NOTICE 'trasa: %', idTrasy;
+
+    FOR rec IN
+    SELECT * FROM getStationsBetween(idKursu, getFirstStation(idTrasy), getLastStation(idTrasy))
+    LOOP
+        RAISE NOTICE 'insert %', i;
+        INSERT INTO postoje(id_kursu, id_stacji, przyjazd, odjazd, nastepny_sklad)
+        VALUES(idKursu, rec.idStacji, przyjazd[i], odjazd[i], sklad[i]);
+        i := i + 1;
+    END LOOP;
+
+    EXCEPTION
+        WHEN sqlstate 'OVERF' THEN
+        RAISE EXCEPTION 'Overflow on stage %', i;
+        WHEN sqlstate 'LENGT' THEN
+        RAISE EXCEPTION 'Length on stage %', i;
+        WHEN OTHERS THEN
+        RAISE EXCEPTION 'Unknown erorr on stage %', i;
+    end;
 end;
 $$
 language plpgsql;

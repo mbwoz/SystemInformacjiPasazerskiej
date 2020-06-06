@@ -10,12 +10,10 @@ import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import systeminformacjipasazerskiej.converter.DayConverter;
 import systeminformacjipasazerskiej.db.InsertDBService;
 import systeminformacjipasazerskiej.db.QueryDBService;
-import systeminformacjipasazerskiej.model.Pociag;
-import systeminformacjipasazerskiej.model.Sklad;
-import systeminformacjipasazerskiej.model.Stacja;
-import systeminformacjipasazerskiej.model.Wagon;
+import systeminformacjipasazerskiej.model.*;
 
 import java.net.URL;
 import java.text.DecimalFormat;
@@ -24,6 +22,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class InsertController implements Initializable {
 
@@ -121,11 +120,38 @@ public class InsertController implements Initializable {
     private Button insertPociagButton;
     private Integer insertPociagIdTrasy = null;
 
+    @FXML
+    private ComboBox<String> insertKursDay;
+    @FXML
+    private ComboBox<String> insertKursOd;
+    @FXML
+    private ComboBox<String> insertKursDo;
+    @FXML
+    private Button insertKursPociagSearch;
+    @FXML
+    private ListView<Integer> insertKursPociagListView;
+    @FXML
+    private VBox insertKursPostoje;
+    @FXML
+    private VBox insertKursSklady;
+    @FXML
+    private Button insertKursButton;
+    private Integer insertKursIdTrasy;
+    private Integer insertKursIdPociag;
+    private ArrayList<TextField> insertKursPrzyjazd = new ArrayList<>();
+    private ArrayList<TextField> insertKursOdjazd = new ArrayList<>();
+    private ArrayList<CheckBox> insertKursZmianaSkladu = new ArrayList<>();
+    private ArrayList<SkladHBox> insertKursSkladHBox = new ArrayList<>();
+    private int insertKursSkladNumber;
+    private int insertKursPickedDay;
+
     private ObservableList<String> allStationsNames = FXCollections.observableArrayList();
     private ObservableList<String> allWagonyTypes = FXCollections.observableArrayList("sypialny", "kuszetka", "barowy", "osobowy", "business");
     private ObservableList<String> allWagonyDescriptions = FXCollections.observableArrayList();
     private ObservableList<String> allPociagiTypes = FXCollections.observableArrayList("pospieszny", "ekspres", "pendolino");
     private ObservableList<Integer> allTrasyFromTo = FXCollections.observableArrayList();
+    private ObservableList<Integer> allPociagiFromTo = FXCollections.observableArrayList();
+    private ObservableList<String> allWagonModels = FXCollections.observableArrayList();
 
     class TrasaCell extends ListCell<Integer> {
         HBox hbox = new HBox();
@@ -170,6 +196,365 @@ public class InsertController implements Initializable {
                 label.setText("Z: " + firstStation.getNazwaStacji() + "    Do: " + lastStation.getNazwaStacji());
                 setGraphic(hbox);
             }
+        }
+    }
+
+    class PociagCell extends ListCell<Integer> {
+        HBox hbox = new HBox();
+        Label label = new Label("");
+        Pane pane = new Pane();
+        Button button = new Button("Wybierz");
+
+        public PociagCell() {
+            super();
+            hbox.getChildren().addAll(label, pane, button);
+            HBox.setHgrow(pane, Priority.ALWAYS);
+            button.setOnAction(event -> {
+
+                Integer picked = getItem();
+                Pociag pociag = qdb.getPociagById(picked);
+                Integer day = DayConverter.convertDay(insertKursDay.getValue());
+
+                if(idb.checkKursExistence(picked, day)) {
+                    Alert info = new Alert(Alert.AlertType.INFORMATION);
+                    info.setHeaderText("Podany kurs już istnieje.");
+                    info.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                    info.showAndWait();
+                    return;
+                }
+
+                insertKursIdPociag = picked;
+                insertKursIdTrasy = pociag.getIdTrasy();
+                insertKursPickedDay = day;
+                allPociagiFromTo.clear();
+                insertKursPociagListView.setVisible(false);
+                ArrayList<Stacja> stacje = qdb.getAllStacjeOnTrasa(insertKursIdTrasy,
+                        qdb.getFirstStationFromTrasa(insertKursIdTrasy), qdb.getLastStationFromTrasa(insertKursIdTrasy));
+
+                ArrayList<String> stacjeName = (ArrayList<String>) stacje.stream().map(Stacja::getNazwaStacji).collect(Collectors.toList());
+                String name = "Nazwa pociągu: " + pociag.getNazwaPociagu();
+                String type = "Typ pociągu: " + pociag.getTypPociagu();
+
+                Label labelName = new Label();
+                labelName.setText(name);
+                Label labelType = new Label();
+                labelType.setText(type);
+                Label labelDay = new Label();
+                labelDay.setText("Dzień odjazdu ze stacji początkowej: " + insertKursDay.getValue());
+
+                insertKursPostoje.getChildren().clear();
+                insertKursPostoje.getChildren().addAll(labelName, labelType, labelDay);
+                insertKursPrzyjazd.clear();
+                insertKursOdjazd.clear();
+                insertKursZmianaSkladu.clear();
+                insertKursSklady.getChildren().clear();
+                insertKursSkladHBox.clear();
+
+                int i = 0;
+                for(String stacja : stacjeName) {
+                    HBox hbox = new HBox();
+                    hbox.setSpacing(10.0);
+                    hbox.setAlignment(Pos.CENTER_LEFT);
+
+                    Label stacjaNameLabel = new Label();
+                    stacjaNameLabel.setText("           " + stacja);
+                    Label stacjaPrzyjazdLabel = new Label();
+                    stacjaPrzyjazdLabel.setText("Przyjazd: ");
+                    Label stacjaOdjazdLabel = new Label();
+                    stacjaOdjazdLabel.setText("Odjazd: ");
+
+                    TextField stacjaPrzyjazdField = new TextField();
+                    stacjaPrzyjazdField.setPromptText("__:__");
+                    stacjaPrzyjazdField.setMaxWidth(75);
+                    TextField stacjaOdjazdField = new TextField();
+                    stacjaOdjazdField.setPromptText("__:__");
+                    stacjaOdjazdField.setMaxWidth(75);
+                    CheckBox stacjaZmiana = new CheckBox();
+                    stacjaZmiana.setText("Zmiana składu");
+
+                    if(i == 0)
+                        stacjaZmiana.setDisable(true);
+                    i++;
+
+                    stacjaZmiana.setOnMouseClicked(event2 -> {
+                        System.out.println(stacjaZmiana.isSelected());
+                        if(stacjaZmiana.isSelected()) {
+                            SkladHBox s = new SkladHBox();
+                            insertKursSklady.getChildren().add(s);
+                            insertKursSkladHBox.add(s);
+                            insertKursSkladNumber++;
+                        } else {
+                            int size = insertKursSklady.getChildren().size() - 1;
+                            insertKursSklady.getChildren().remove(size);
+                            insertKursSkladHBox.remove(size);
+                            insertKursSkladNumber--;
+                        }
+                    });
+
+                    hbox.getChildren().addAll(stacjaPrzyjazdLabel, stacjaPrzyjazdField,
+                            stacjaOdjazdLabel, stacjaOdjazdField, stacjaZmiana, stacjaNameLabel);
+                    insertKursPostoje.getChildren().add(hbox);
+                    insertKursPrzyjazd.add(stacjaPrzyjazdField);
+                    insertKursOdjazd.add(stacjaOdjazdField);
+                    insertKursZmianaSkladu.add(stacjaZmiana);
+                }
+
+                SkladHBox s = new SkladHBox();
+                insertKursSklady.getChildren().add(s);
+                insertKursSkladHBox.add(s);
+            });
+        }
+
+
+        protected void updateItem (Integer item, boolean empty){
+            super.updateItem(item, empty);
+            setText(null);
+            setGraphic(null);
+
+            if (item != null && !empty) {
+                int id_pociagu = item;
+                Pociag pociag = qdb.getPociagById(id_pociagu);
+                label.setText("Nazwa: " + pociag.getNazwaPociagu() + "    Typ: " + pociag.getTypPociagu());
+                setGraphic(hbox);
+            }
+        }
+    }
+
+    class SkladCell extends ListCell<Sklad> {
+        HBox hbox = new HBox();
+        Label label = new Label("");
+        Pane pane = new Pane();
+        Button button = new Button("Wybierz");
+        SkladHBox outside;
+
+
+        public SkladCell(SkladHBox box) {
+            super();
+            hbox.setAlignment(Pos.CENTER_LEFT);
+            hbox.getChildren().addAll(label, pane, button);
+            HBox.setHgrow(pane, Priority.ALWAYS);
+            outside = box;
+            button.setOnAction(event -> {
+                outside.sklad = getItem();
+                outside.label.setText("Skład: wybrano");
+            });
+        }
+        protected void updateItem (Sklad item, boolean empty){
+            super.updateItem(item, empty);
+            setText(null);
+            setGraphic(null);
+            if (item != null && !empty) {
+                System.out.println("updatingItems");
+                ArrayList<Wagon> wagony = item.getListaWagonow();
+                ArrayList<String> modele = new ArrayList<>();
+                for(Wagon w: wagony) modele.add(w.getModel());
+                label.setText("Modele: " + modele.toString() + "   I kl:  " + item.getLiczbaMiejscI() +
+                        "   II kl:  " + item.getLiczbaMiejscII());
+                setGraphic(hbox);
+            }
+        }
+    }
+
+    class SkladHBox extends HBox {
+        Label label = new Label();
+        Button wybierz = new Button();
+        Button szczegoly = new Button();
+        Sklad sklad;
+
+        public SkladHBox() {
+            super();
+            label.setText("Skład: niewybrano ");
+            wybierz.setText("Wybierz");
+            szczegoly.setText("Szczegóły");
+            getChildren().addAll(label, wybierz, szczegoly);
+            setSpacing(10);
+            setAlignment(Pos.CENTER_LEFT);
+            sklad = null;
+
+            wybierz.setOnMouseClicked(event -> {
+                VBox first = new VBox();
+                first.setSpacing(10);
+                ComboBox<String> insidedeleteSkladBox = new ComboBox<>();
+                insidedeleteSkladBox.setEditable(true);
+                insidedeleteSkladBox.setPromptText("np. ED250");
+
+                TextField insidedeleteSkladField = new TextField();
+                insidedeleteSkladField.setPromptText("1-99");
+
+                ListView<Sklad> insideskladList = new ListView<>();
+                insideskladList.setVisible(false);
+                ObservableList<Sklad> insideallMatchingSklady = FXCollections.observableArrayList();
+
+                insideskladList.setItems(insideallMatchingSklady);
+                allWagonModels.addAll(
+                        qdb.getAllWagony()
+                                .stream()
+                                .map(Wagon::getModel)
+                                .distinct()
+                                .collect(Collectors.toList()));
+                insidedeleteSkladBox.setItems(allWagonModels);
+
+                Button insidedeleteSkladButton = new Button();
+                insidedeleteSkladButton.setText("Szukaj");
+
+                HBox one = new HBox();
+                one.setSpacing(10);
+                one.setAlignment(Pos.CENTER_LEFT);
+                HBox two = new HBox();
+                two.setSpacing(10);
+                two.setAlignment(Pos.CENTER_LEFT);
+                HBox three = new HBox();
+                three.setSpacing(10);
+                three.setAlignment(Pos.CENTER_LEFT);
+
+                Label oneLabel = new Label();
+                oneLabel.setText("Liczba różnych modeli: ");
+                Label twoLabel = new Label();
+                twoLabel.setText("Nazwa modelu występującego: ");
+                Label threeLabel = new Label();
+                threeLabel.setText("Podanie obu informacji jest opcjonalne, ale zawęża zakres poszukiwań. ");
+
+                one.getChildren().addAll(oneLabel, insidedeleteSkladField);
+                two.getChildren().addAll(twoLabel, insidedeleteSkladBox);
+                three.getChildren().addAll(threeLabel, insidedeleteSkladButton);
+                first.getChildren().addAll(one, two, three, insideskladList);
+
+                insidedeleteSkladButton.setOnMouseClicked(e -> {
+                    ArrayList<Sklad> insidesklady;
+                    try {
+                        if((insidedeleteSkladBox.getValue() == null || insidedeleteSkladBox.getValue().equals("") ) &&
+                                insidedeleteSkladField.getText().equals("")) {
+                            throw new DeleteController.NoGivenDataException();
+                        }
+                        else if(insidedeleteSkladBox.getValue() == null || insidedeleteSkladBox.getValue().equals("")) {
+                            insidesklady = qdb.getSkladByNumber(Integer.parseInt(insidedeleteSkladField.getText()));
+                        }
+                        else if(insidedeleteSkladField.getText().equals("")) {
+                            insidesklady = qdb.getSkladByNumber(insidedeleteSkladBox.getValue());
+                        }
+                        else insidesklady = qdb.getSkladByNumber(Integer.parseInt(insidedeleteSkladField.getText()), insidedeleteSkladBox.getValue());
+                        insideallMatchingSklady.clear();
+                        insideallMatchingSklady.addAll(insidesklady);
+
+                        insideskladList.setVisible(true);
+
+                        insideskladList.setOnMouseClicked(click -> {
+                            Sklad insidesklad = insideskladList.getSelectionModel().getSelectedItem();
+
+
+                            Label insideskladInfo =
+                                    new Label("\nWłaściwości składu:" +
+                                            "\nLiczba miejsc w I klasie: " + insidesklad.getLiczbaMiejscI() +
+                                            "\nLiczba miejsc w II klasie: " + insidesklad.getLiczbaMiejscII() +
+                                            "\nLiczba miejsc dla rowerów: " + insidesklad.getLiczbaMiejscDlaRowerow() +
+                                            "\nMiejsca dla niepełnosprawnych: " + printBool(insidesklad.checkIfNiepelnosprawni()) +
+                                            "\nKlimatyzacja: " + printBool(insidesklad.checkIfKlimatyzacja()) +
+                                            "\nWiFi: " + printBool(insidesklad.checkIfWifi())
+                                    );
+                            ArrayList<Wagon> insidewagony = insidesklad.getListaWagonow();
+                            ArrayList<Integer> insideliczba = insidesklad.getLiczbaWagonow();
+                            int insidecnt = 0;
+                            for(Wagon w: insidewagony) {
+                                insideskladInfo = new Label(insideskladInfo.getText() + "\n\nModel: " + w.getModel()
+                                        +"\nLiczba wagonów: " + insideliczba.get(insidecnt++)
+                                        +"\nTyp wagonu: " + w.getTyp() +
+                                        "\nLiczba miejsc w I klasie: " + w.getMiejscaI() +
+                                        "\nLiczba miejsc w II klasie: " + w.getMiejscaII() +
+                                        "\nLiczba miejsc dla rowerów: " + w.getRowery() +
+                                        "\nMiejsca dla niepełnosprawnych: " + printBool(w.isCzyNiepelnosprawni()) +
+                                        "\nPrzedziałowy: " + printBool(w.isCzyPrzedzialowy()) +
+                                        "\nKlimatyzacja: " + printBool(w.isCzyKlimatyzacja()) +
+                                        "\nWiFi: " + printBool(w.isCzyWifi())
+                                );
+                            }
+
+
+                            VBox popupContent = new VBox();
+                            popupContent.getChildren().addAll(insideskladInfo);
+                            popupContent.setSpacing(20);
+                            ScrollPane scroll = new ScrollPane(popupContent);
+                            Dialog<Kurs> kursDialog = new Dialog<>();
+                            kursDialog.getDialogPane().setMinWidth(600);
+                            kursDialog.getDialogPane().setContent(scroll);
+                            kursDialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+                            kursDialog.showAndWait();
+                        });
+
+
+                    } catch (QueryDBService.NoSuchSkladException ex) {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setHeaderText("Nie ma takiego składu.");
+                        alert.showAndWait();
+                    }
+                    catch (NumberFormatException nfe) {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setHeaderText("Zła liczba.");
+                        alert.showAndWait();
+                    }
+                    catch (DeleteController.NoGivenDataException ngd) {}
+                });
+                insideskladList.setCellFactory(param -> new SkladCell(this));
+                insideallMatchingSklady.addListener((ListChangeListener<Sklad>) change ->
+                        insideskladList.setMaxHeight(insideallMatchingSklady.size() * 34 + 2)
+                );
+                insideskladList.setMinWidth(500);
+
+                VBox popupContent2 = new VBox();
+                popupContent2.getChildren().addAll(first);
+                popupContent2.setSpacing(20);
+                ScrollPane scroll2 = new ScrollPane(popupContent2);
+                Dialog<Kurs> kursDialog2 = new Dialog<>();
+                kursDialog2.getDialogPane().setPrefSize(800,600);
+                kursDialog2.getDialogPane().setContent(scroll2);
+                kursDialog2.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+                kursDialog2.showAndWait();
+            });
+
+            szczegoly.setOnMouseClicked(event -> {
+                if(sklad == null) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setHeaderText("Nie wybrano żadnego składu");
+                    alert.showAndWait();
+                    return;
+                }
+
+                Label skladInfo =
+                        new Label("\nWłaściwości składu:" +
+                                "\nLiczba miejsc w I klasie: " + sklad.getLiczbaMiejscI() +
+                                "\nLiczba miejsc w II klasie: " + sklad.getLiczbaMiejscII() +
+                                "\nLiczba miejsc dla rowerów: " + sklad.getLiczbaMiejscDlaRowerow() +
+                                "\nMiejsca dla niepełnosprawnych: " + printBool(sklad.checkIfNiepelnosprawni()) +
+                                "\nKlimatyzacja: " + printBool(sklad.checkIfKlimatyzacja()) +
+                                "\nWiFi: " + printBool(sklad.checkIfWifi())
+                        );
+                ArrayList<Wagon> wagony = sklad.getListaWagonow();
+                ArrayList<Integer> liczba = sklad.getLiczbaWagonow();
+                int cnt = 0;
+                for(Wagon w: wagony) {
+                    skladInfo = new Label(skladInfo.getText() + "\n\nModel: " + w.getModel()
+                            +"\nLiczba wagonów: " + liczba.get(cnt++)
+                            +"\nTyp wagonu: " + w.getTyp() +
+                            "\nLiczba miejsc w I klasie: " + w.getMiejscaI() +
+                            "\nLiczba miejsc w II klasie: " + w.getMiejscaII() +
+                            "\nLiczba miejsc dla rowerów: " + w.getRowery() +
+                            "\nMiejsca dla niepełnosprawnych: " + printBool(w.isCzyNiepelnosprawni()) +
+                            "\nPrzedziałowy: " + printBool(w.isCzyPrzedzialowy()) +
+                            "\nKlimatyzacja: " + printBool(w.isCzyKlimatyzacja()) +
+                            "\nWiFi: " + printBool(w.isCzyWifi())
+                    );
+                }
+
+
+                VBox popupContent = new VBox();
+                popupContent.getChildren().addAll(skladInfo);
+                popupContent.setSpacing(20);
+                ScrollPane scroll = new ScrollPane(popupContent);
+                Dialog<Kurs> kursDialog = new Dialog<>();
+                kursDialog.getDialogPane().setMinWidth(400);
+                kursDialog.getDialogPane().setContent(scroll);
+                kursDialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+                kursDialog.showAndWait();
+            });
         }
     }
 
@@ -847,6 +1232,175 @@ public class InsertController implements Initializable {
             }
         });
 
+        //insert kurs
+        insertKursDay.setItems(FXCollections.observableArrayList(
+                Stream.iterate(0, i -> i+1)
+                        .limit(7)
+                        .map(DayConverter::convertDay)
+                        .collect(Collectors.toList())
+        ));
+        insertKursDay.getSelectionModel().select(0);
+        insertKursOd.setItems(allStationsNames);
+        insertKursOd.setPromptText("np. Przemyśl Główny");
+        insertKursDo.setItems(allStationsNames);
+        insertKursDo.setPromptText("np. Wrocław Główny");
+
+        insertKursPociagSearch.setOnMouseClicked(event -> {
+            insertKursPociagListView.setVisible(false);
+            allPociagiFromTo.clear();
+            String odName = insertKursOd.getValue();
+            String doName = insertKursDo.getValue();
+
+            try {
+                ArrayList<Integer> trasa_id = idb.getPociagIdExactlyFromTo(odName, doName);
+                allPociagiFromTo.addAll(trasa_id);
+                insertKursPociagListView.setItems(allPociagiFromTo);
+                insertKursPociagListView.setCursor(Cursor.HAND);
+
+                insertKursPociagListView.setOnMouseClicked(event2 -> {
+                    Integer id_pociagu = insertKursPociagListView.getSelectionModel().getSelectedItem();
+                    Integer id_trasy = qdb.getPociagById(id_pociagu).getIdTrasy();
+
+                    ArrayList<Stacja> stacje = qdb.getAllStacjeOnTrasa(id_trasy,
+                            qdb.getFirstStationFromTrasa(id_trasy), qdb.getLastStationFromTrasa(id_trasy));
+                    ListView<String> stacjeList = new ListView<>();
+                    stacjeList.setItems(FXCollections.observableArrayList(
+                            stacje.stream().map(Stacja::getNazwaStacji).collect(Collectors.toList())));
+
+                    VBox popupContent = new VBox();
+                    popupContent.getChildren().addAll(stacjeList);
+                    popupContent.setSpacing(20);
+
+                    Dialog<String> kursDialog = new Dialog<>();
+                    kursDialog.getDialogPane().setMinWidth(600);
+                    kursDialog.getDialogPane().setContent(popupContent);
+                    kursDialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+                    kursDialog.showAndWait();
+                });
+
+                insertKursPociagListView.setVisible(true);
+
+            } catch (InsertDBService.NoStationException e) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Nie znaleziono danej stacji.");
+                alert.showAndWait();
+            } catch (InsertDBService.NoMatchingTrasyException e) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Nie znaleziono pociągu na danej trasie.");
+                alert.showAndWait();
+            }
+        });
+
+        insertKursPociagListView.setItems(allTrasyFromTo);
+        insertKursPociagListView.setCursor(Cursor.HAND);
+        insertKursPociagListView.setVisible(false);
+        insertKursPociagListView.setCellFactory(param -> new PociagCell());
+        allPociagiFromTo.addListener((ListChangeListener<Integer>) change ->
+                insertKursPociagListView.setMaxHeight(allPociagiFromTo.size() * 34 + 2));
+
+        insertKursButton.setOnMouseClicked(event -> {
+            if(insertKursIdPociag == null)
+                return;
+
+            String pattern = "^([0-1]\\d|2[0-3]):([0-5]\\d)$";
+            ArrayList<String> przyjazd = new ArrayList<>();
+            ArrayList<String> odjazd = new ArrayList<>();
+            ArrayList<Integer> nextSklad = new ArrayList<>();
+
+            for(TextField t : insertKursPrzyjazd) {
+                if(!t.getText().matches(pattern)) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setHeaderText("Niepoprawna godzina.");
+                    alert.showAndWait();
+                    return;
+                }
+                przyjazd.add(t.getText());
+            }
+            for(TextField t : insertKursOdjazd) {
+                if(!t.getText().matches(pattern)) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setHeaderText("Niepoprawna godzina.");
+                    alert.showAndWait();
+                    return;
+                }
+                odjazd.add(t.getText());
+            }
+            for(SkladHBox s : insertKursSkladHBox) {
+                Sklad sklad = s.sklad;
+                if(sklad == null) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setHeaderText("Nie wybrano wszystkich składów.");
+                    alert.showAndWait();
+                    return;
+                }
+            }
+            int size = insertKursSkladHBox.size();
+            for(int i = 1; i < size; i++) {
+                Integer fir = insertKursSkladHBox.get(i-1).sklad.getIdSkladu();
+                Integer sec = insertKursSkladHBox.get(i).sklad.getIdSkladu();
+                if(fir.equals(sec)) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setHeaderText("Każde dwa kolejne składy muszą by różne.");
+                    alert.showAndWait();
+                    return;
+                }
+            }
+            int stacjeSize = przyjazd.size();
+            int ptr = 0;
+            for(int i = 0; i < stacjeSize; i++) {
+                if(insertKursZmianaSkladu.get(i).isSelected())
+                    ptr++;
+                nextSklad.add(insertKursSkladHBox.get(ptr).sklad.getIdSkladu());
+            }
+
+            System.out.println(nextSklad);
+            Alert info = new Alert(Alert.AlertType.CONFIRMATION);
+            info.setTitle("Potwierdź wybór");
+            info.setHeaderText("Czy na pewno chcesz dodać ten kurs?");
+            if(idb.checkKursLength(przyjazd, odjazd))
+                info.setContentText("Uwaga: próba dodania kursu trwającego ponad jedną dobę.");
+            info.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+            Optional<ButtonType> result = info.showAndWait();
+            if(result.get() == ButtonType.OK) {
+                try {
+                    idb.insertKurs(insertKursIdPociag, insertKursPickedDay, przyjazd, odjazd, nextSklad);
+                } catch (InsertDBService.InsertKursOverflowException e) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setHeaderText("Dodanie zakończone niepowodzeniem.");
+                    alert.setContentText("Nastąpiło przepełnienie stacji");
+                    alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                    alert.showAndWait();
+                    return;
+                } catch (InsertDBService.InsertKursLengthException e) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setHeaderText("Dodanie zakończone niepowodzeniem.");
+                    alert.setContentText("Za długie składy");
+                    alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                    alert.showAndWait();
+                    return;
+                } catch (InsertDBService.InsertKursException e) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setHeaderText("Dodanie zakończone niepowodzeniem.");
+                    alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                    alert.showAndWait();
+                    return;
+                }
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Dodanie zakończone powodzeniem.");
+                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                alert.showAndWait();
+                insertKursIdPociag = null;
+                insertKursPostoje.getChildren().clear();
+                insertKursPrzyjazd.clear();
+                insertKursOdjazd.clear();
+                insertKursZmianaSkladu.clear();
+                insertKursSklady.getChildren().clear();
+                insertKursSkladHBox.clear();
+
+                return;
+
+            }
+        });
     }
 
     public void setDB(QueryDBService qdb) {
@@ -897,4 +1451,7 @@ public class InsertController implements Initializable {
         this.deleteController = deleteController;
     }
 
+    private String printBool(boolean b) {
+        return b ? "Tak" : "Nie";
+    }
 }

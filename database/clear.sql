@@ -38,6 +38,10 @@ DROP TRIGGER stacjeOverflowUpdateTrigger ON stacje;
 DROP FUNCTION stacjeOverflowUpdate;
 DROP TRIGGER stacjeLengthUpdateTrigger ON stacje;
 DROP FUNCTION stacjeLengthUpdate;
+DROP TRIGGER kursStacjeLengthInsertTrigger ON postoje;
+DROP FUNCTION kursStacjeLengthInsert;
+DROP TRIGGER kursStacjeOverflowInsertTrigger ON postoje;
+DROP FUNCTION kursStacjeOverflowInsert;
 
 
 --utils
@@ -59,6 +63,8 @@ DROP FUNCTION getSkladByNumber(integer, varchar);
 DROP FUNCTION getSkladByNumber(varchar);
 DROP FUNCTION getSkladByNumber(integer);
 DROP FUNCTION getIdTrasyExactlyFromTo;
+DROP FUNCTION getIdPociaguExactlyFromTo;
+DROP FUNCTION insertKurs;
 
 --tables
 DROP TABLE IF EXISTS wagony CASCADE;

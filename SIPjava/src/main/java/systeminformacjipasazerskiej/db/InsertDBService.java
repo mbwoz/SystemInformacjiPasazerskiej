@@ -113,6 +113,27 @@ public class InsertDBService {
         return false;
     }
 
+    public boolean checkKursExistence(Integer idPociagu, Integer day) {
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(
+                    "SELECT * FROM rozklady WHERE id_pociagu = " + idPociagu +
+                            "AND dzien_tygodnia = " + day + ";"
+            );
+
+            if(resultSet.next())
+                return true;
+
+            resultSet.close();
+            statement.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
     public void insertStation(Stacja stacja) throws InsertStationException {
         try {
             Statement statement = connection.createStatement();
@@ -228,6 +249,29 @@ public class InsertDBService {
         } catch(SQLException e) {
             System.out.println("Error with pociag insert.");
             throw new InsertPociagException();
+        }
+    }
+
+    public void insertKurs(Integer pociag, int day, ArrayList<String> przyjazd, ArrayList<String> odjazd, ArrayList<Integer> nextSklad)
+        throws InsertKursOverflowException, InsertKursLengthException, InsertKursException{
+        try {
+            Statement statement = connection.createStatement();
+            String prep = "SELECT insertKurs(" + pociag + ", " + day + ", " + arrayToQuery2(przyjazd) +
+                    ", " + arrayToQuery2(odjazd) + ", " + arrayToQuery(nextSklad) + ");";
+            System.out.println(prep);
+            statement.execute(prep);
+        } catch (SQLException e) {
+            System.out.println("Error with kurs insert.");
+
+            String mes = e.getMessage();
+            System.out.println(mes);
+
+            if(mes.contains("Overflow"))
+                throw new InsertKursOverflowException();
+            else if(mes.contains("Length"))
+                throw new InsertKursLengthException();
+            else
+                throw new InsertKursException();
         }
     }
 
@@ -354,6 +398,56 @@ public class InsertDBService {
         return id_trasy;
     }
 
+    public ArrayList<Integer> getPociagIdExactlyFromTo (String fromStation, String toStation)
+            throws NoStationException, NoMatchingTrasyException {
+        ArrayList<Integer> id_pociagu = new ArrayList<>();
+
+        try {
+            int fromStationId, toStationId;
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(
+                    "SELECT id_stacji FROM stacje WHERE nazwa_stacji = '" + fromStation + "';"
+            );
+            if(resultSet.next())
+                fromStationId = resultSet.getInt("id_stacji");
+            else {
+                statement.close();
+                resultSet.close();
+                throw new NoStationException();
+            }
+
+            resultSet = statement.executeQuery(
+                    "SELECT id_stacji FROM stacje WHERE nazwa_stacji = '" + toStation + "';"
+            );
+            if(resultSet.next())
+                toStationId = resultSet.getInt("id_stacji");
+            else {
+                statement.close();
+                resultSet.close();
+                throw new NoStationException();
+            }
+
+            resultSet = statement.executeQuery(
+                    "SELECT idPociagu " +
+                            "FROM getIdPociaguExactlyFromTo(" + fromStationId + ", " + toStationId + ") " +
+                            "ORDER BY idPociagu;"
+            );
+            while (resultSet.next())
+                id_pociagu.add(resultSet.getInt("idPociagu"));
+
+            resultSet.close();
+            statement.close();
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        if(id_pociagu.isEmpty())
+            throw new NoMatchingTrasyException();
+
+        return id_pociagu;
+    }
+
     public String arrayToQuery(ArrayList<Integer> array) {
         String ans = "'{" + array.get(0);
         boolean first = false;
@@ -370,6 +464,56 @@ public class InsertDBService {
 
         return ans;
     }
+    public String arrayToQuery2(ArrayList<String> array) {
+        String ans = "'{" + array.get(0);
+        boolean first = false;
+
+        for(String i : array) {
+            if(!first) {
+                first = true;
+                continue;
+            }
+
+            ans += (", " + i);
+        }
+        ans += "}'";
+
+        return ans;
+    }
+
+    public boolean checkKursLength(ArrayList<String> przyjazd, ArrayList<String> odjazd) {
+        int ans = 0;
+        int a = toMins(przyjazd.get(0));
+        int b = toMins(odjazd.get(0));
+        if(b < a)
+            b += 1440;
+        int last = b;
+        int size = przyjazd.size();
+
+        for(int i = 1; i < size; i++) {
+            a = toMins(przyjazd.get(i));
+            b = toMins(odjazd.get(i));
+            while(a <= last)
+                a += 1440;
+            while(b < a)
+                b += 1440;
+            last = b;
+        }
+
+        ans = last - toMins(przyjazd.get(0));
+        if(ans > 1440)
+            return true;
+        else return false;
+    }
+
+    private int toMins(String s) {
+        String[] hourMin = s.split(":");
+        int hour = Integer.parseInt(hourMin[0]);
+        int mins = Integer.parseInt(hourMin[1]);
+        int hoursInMins = hour * 60;
+        return hoursInMins + mins;
+    }
+
 
     public static class UpdateStationOverflowException extends Exception {}
     public static class UpdateStationLengthException extends Exception {}
@@ -384,4 +528,7 @@ public class InsertDBService {
     public static class InsertTrasaException extends Exception {}
     public static class InsertTrasaExistsException extends Exception {}
     public static class InsertPociagException extends Exception {}
+    public static class InsertKursOverflowException extends Exception {}
+    public static class InsertKursLengthException extends Exception {}
+    public static class InsertKursException extends Exception {}
 }
