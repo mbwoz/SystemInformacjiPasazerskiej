@@ -16,7 +16,6 @@ import systeminformacjipasazerskiej.db.QueryDBService;
 import systeminformacjipasazerskiej.model.*;
 
 import java.net.URL;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Optional;
@@ -801,9 +800,6 @@ public class InsertController implements Initializable {
                 alert.showAndWait();
                 return;
             }
-
-            DecimalFormat df = new DecimalFormat("#.##");
-            dlugosc = Double.valueOf(df.format(dlugosc));
 
             Wagon wagon = new Wagon();
             wagon.setModel(nazwa);
