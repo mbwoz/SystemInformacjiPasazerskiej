@@ -3,6 +3,48 @@ System Informacji Pasażerskiej
 Projekt modeluje tygodniowy rozkład jazdy pociągów po Polsce. 
 
 
+Cześć II:
+
+W stosunku do przedstawionego w pierwszej części projektu wprowadziliśmy 
+następujące zmiany:
+
+    - wagony: liczba miejsc dla rowerów oraz dostosowanie wagonów dla niepełnosprawnych.
+    
+    
+W celu uruchomienia aplikacji należy:
+
+    1. postawić przykladową bazę danych, zawierającą wszystkie potrzebne tabele,
+    funkcje, trigger, itd. wraz z przykładowymi danymi. Całość znajduje się 
+    w pliku create.sql
+    
+    2. aplikacja komunikująca się z bazą danych wykorzystuje technologię JavaFX,
+    dlatego do uruchomienia aplikacji potrzebne będą odpowiednie moduły. Ze strony
+    https://gluonhq.com/products/javafx/ w pierwszej sekcji LTS należy wybrać
+    odpowienią paczkę JavaFX SDK i rozpakować. Do uruchomienia będziemy 
+    potrzebowali ścieżki do folderu lib z pobranej paczki.
+    
+    3. w folderze z dostarczonym plikiem JAR aplikacji należy wykonać poniższe
+    polecenie w celu uruchomienia aplikacji, podając ścieżkę do folderu lib
+    z paczki pobranej w poprzednim punkcie. 
+    
+    java --module-path /path/to/javafx/lib --add-modules=javafx.controls,javafx.fxml -jar SystemInformacjiPasazerskiej-1.0-SNAPSHOT-jar-with-dependencies.jar
+    
+    4. po uruchomieniu aplikacji wyświetli się ekran połączenia z bazą. 
+    Aplikacja wykorzystuje PostgreSQL JDBC Driver. Wszystkie podane na ekranie
+    dane służą połączeniu z odpowiednią bazą i uzupełniają odpowiednie pola
+    potrzebne do nawiązania połączenia. Więcej informacji odnośnie podawanych
+    informacji można znaleźć na stronie 
+    https://jdbc.postgresql.org/documentation/head/connect.html
+    
+    5. po nawiązaniu połączenia aplikacja przekieruje nas do ekranu głównego 
+    aplikacji, skąd możemy wykonywać odpowiednie operacje. W pierwszej zakładce
+    znajduje się wyszukiwarka dostępna dla standardowego użytkownika. 
+    Zakładki druga i trzecia zawierają sekcje dla administratora pozwalające
+    na modyfikację różnych elementów zawartych w bazie.
+
+
+Część I:
+
 W zaprojektowanej bazie danych zawarliśmy następujące informacje:
 
     - wagony: przedstawia wagony jakie są dostępne do naszej dyspozycji. 

@@ -10,8 +10,8 @@ public class DatabaseService {
 
         Class.forName("org.postgresql.Driver");
         connection = DriverManager
-                .getConnection("jdbc:postgresql://localhost:5432/michal",
-                        "michal", "123qwe");
+                .getConnection("jdbc:postgresql://" + host + ":" + port + "/" + database,
+                        user, password);
 
         System.out.println("Opened database successfully");
     }
